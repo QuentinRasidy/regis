@@ -1,0 +1,501 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/camera.css">
+<link rel="stylesheet" href="/css/button.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <%console.log(sx80Config)%>
+        <% if (cameras.length > 0) { %>
+        <div class="grid">
+            <% var c = 1 %>
+            <% for (let camera of cameras) { %>
+            <article class="card camera-item">
+                <header class="card__header">
+                    <div class="card__content">
+                        <h2 class="camera__price"><%= camera.name %></h2>
+                        <p class="camera__description"><%= camera.description %></p>
+                        <p class="camera__description"><%= camera.ip %></p>
+                    </div>
+                </header>
+                <div class="image-hover-text-container">
+                    <div class="image-hover-image">
+                        <img id="image<%=c%>" src="http://<%= camera.ip %>/cgi-bin/camera" alt="<%= camera.ip %>"
+                            data-ip="<%= camera.ip %>">
+                    </div>
+                    <div class="image-hover-text">
+                        <div class="image-hover-text-bubble">
+                            <span id="refresh_img<%=c%>" class="image-hover-text-title" data-ip="<%= camera.ip %>"
+                                data-img="image<%=c%>"><i class="fas fa-sync-alt"></i><br>Refresh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex;
+                justify-content: center;
+                flex-direction: column;
+                border-radius: 1000px;
+                border: 10px solid #4d4d4d;
+                height: 284px;
+                width: 90%;
+                margin: 5%;">
+                    <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>"><i
+                                class="fas fa-angle-double-up"></i></button></div>
+
+
+                    <div class="card__actions left-right-box">
+                        <button id="left<%=c%>" class="button-left" data-ip="<%= camera.ip %>"><i
+                                class="fas fa-angle-double-left"></i></button>
+                        <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                                class="far fa-dot-circle"></i></button>
+                        <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>"><i
+                                class="fas fa-angle-double-right"></i></button>
+                    </div>
+                    <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>"><i
+                                class="fas fa-angle-double-down"></i></button></div>
+                </div>
+
+                <div id="advanced-button<%=c%>" style="text-align: center; font-weight: bold; margin-bottom: 5%;"
+                    data-num="<%=c%>">
+                    <label>Advanced <i class="fas fa-sort-down"></i></label></div>
+                <div id="advanced-container<%=c%>" style="width: 100%;
+                height: 165px;
+                border: 5px solid #4d4d4d;
+                text-align: center;
+                display:none;">
+                    <form action="">
+                        <label for="pan">PAN:</label>
+                        <input type="number" id="pan<%=c%>" name="pan" min="0" max="65535">
+                        <input class="little-button" type="submit" value="Set">
+                    </form>
+                    <form action="">
+                        <label for="tilt">TILT:</label>
+                        <input type="number" id="tilt<%=c%>" name="tilt" min="0" max="65535">
+                        <input class="little-button" type="submit" value="Set">
+                    </form>
+
+                    <hr>
+                <form id="preset_submit<%=c%>" action="" method="get" class="card__actions">
+                    <div class="">
+                        <label for="preset" style="font-weight: bold;">Choose preset :</label>
+                        <select name="preset" id="preset<%=c%>" style="margin-bottom: 2%">
+                            <option value=""></option>
+                            <% for (var i = 0; i<100; i++) { %>
+                            <option value="<%=i%>"><%=i%></option>
+                            <%}%>
+                        </select>
+                        <input type="hidden" id="ip<%=c%>" name="ip" value="<%= camera.ip %>">
+                    </div>
+                    <div class="">
+                        <button type="submit" value="Move" class="little-button">Move <i
+                                class="fas fa-exchange-alt"></i></button>
+                        <button type="submit" value="Save" class="little-button">Save <i
+                                class="far fa-save"></i></button>
+                    </div>
+                </form>
+
+                </div>
+
+
+                <div style="text-align: center; font-weight: bold"><label>zoom</label></div>
+                <div class="card__actions" style="padding-top: 0%">
+                    <button id="max" class="plus-minus-button"
+                        style="font-size:1rem; margin-right: 10%; font-weight: bold; color: red"
+                        data-ip="<%= camera.ip %>">MAX</button>
+                    <button id="zoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                            class="far fa-plus-square"></i></button>
+                    <button id="dezoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                            class="far fa-minus-square"></i></button>
+                    <button id="min" class="plus-minus-button"
+                        style="font-size:1rem; margin-left: 10%; font-weight: bold; color: green"
+                        data-ip="<%= camera.ip %>">MIN</button>
+                </div>
+                
+
+            </article>
+            <% c++ %>
+            <% } %>
+        </div>
+        <div class="card" style="padding: 5px; margin: 1rem; text-align: center; border-radius: 30px">
+            <h2>Kandinsky-Spycam-SX80 <i class="fas fa-wrench"></i></h2>
+            <hr>
+            <div style="display: flex; justify-content:center">
+                <ul id="selection_list">
+                    <li>
+                        <form id="source_selection">
+                            <label for="sources" style="font-weight: bold;">Select Main Video Source:</label>
+                            <select name="mainVideoSource" id="mainVideoSource">
+                                <option value="1">Spycam Room55</option>
+                                <option value="2">Spycam Sarah</option>
+                                <option value="3">Spycam Room70D </option>
+                                <option value="4">GrilleHDMI</option>
+                            </select>
+                            <button type="submit" value="Select" class="little-button">Select</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form id="share_selection">
+                            <label for="share-sources" style="font-weight: bold;">Select Share Source:</label>
+                            <select name="shareSource" id="shareSource">
+                                <option value="" selected disabled hidden>Choose here</option>
+                                <option value="1">Spycam Room55</option>
+                                <option value="2">Spycam Sarah</option>
+                                <option value="3">Spycam Room70D </option>
+                                <option value="4">GrilleHDMI</option>
+                            </select>
+                            <button type="submit" value="Share" class="little-button"
+                                style="background-color: #42c542;">Select & Share</button>
+                            <button type="submit" value="Stop" class="little-button"
+                                style="background-color: #ff0000c9;">Stop Sharing</button>
+                        </form>
+                    </li>
+                    <li style="display: flex">
+                        <form id="audio_selection">
+                            <label style="font-weight: bold;">Audio</label>
+                            <select name="audioSource" id="audioSource">
+                                <option value="1">Microphone 1</option>
+                                <option value="2">Microphone 2</option>
+                                <option value="3">Microphone 3</option>
+                                <option value="4">Microphone 4</option>
+                                <option value="5">Microphone 5</option>
+                                <option value="6">Microphone 6</option>
+                                <option value="7">Microphone 7</option>
+                                <option value="8">Microphone 8</option>
+                            </select>
+                            <button type="submit" value="Set_Audio" class="little-button"
+                                style="background-color: #42c542;"><i class="fas fa-power-off"></i></button>
+                            <button type="submit" value="Stop_Audio" class="little-button"
+                                style="background-color: #ff0000c9;"><i class="fas fa-microphone-slash"></i></button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card"
+            style="padding: 5px; margin: 1rem; display: flex; flex-direction:column ;text-align: center; justify-content: center; border-radius: 30px">
+            <table id="grid" class="matrix">
+                <h2>Krammer matrix <i class="fas fa-table"></i></h2>
+                <hr>
+                <tr>
+                    <td></td>
+                    <td><b>Ecran Haut Droite</b></b><br>Output 1</td>
+                    <td><b>Ecran Haut Centre</b><br>Output 2</td>
+                    <td><b>Ecran Haut Gauche</b><br>Output 1</td>
+                    <td><b>R55</b><br>Output 4</td>
+                    <td><b>R70 Dual</b><br>Output 5</td>
+                    <td><b>...</b><br>Output 6</td>
+                    <td><b>...</b><br>Output 7</td>
+                    <td><b>SpyCam SX80</b><br>Output 8</td>
+                </tr>
+                <% var inputs = ["PC Simon", "PC Pierre", "PC Fabien", "Mac Sarah", "AppleTV", "...", "Output SX80", "Input R70D"] %>
+                <% for (var x = 1; x<=8; x++) { %>
+                <tr>
+                    <td><b><%=inputs[x-1]%></b><br>Input <%=x%></td>
+                    <td id="cell1-<%=x%>" class="cell"></td>
+                    <td id="cell2-<%=x%>" class="cell"></td>
+                    <td id="cell3-<%=x%>" class="cell"></td>
+                    <td id="cell4-<%=x%>" class="cell"></td>
+                    <td id="cell5-<%=x%>" class="cell"></td>
+                    <td id="cell6-<%=x%>" class="cell"></td>
+                    <td id="cell7-<%=x%>" class="cell"></td>
+                    <td id="cell8-<%=x%>" class="cell"></td>
+                </tr>
+                <%}%>
+              </table>
+              <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
+                <div style="margin: 1%;">
+                  <label for="output">Output: </label>
+                  <input id="output" type="number" name="output" >
+                </div>
+                <div style="margin: 1%;">
+                  <label for="input">Input: </label>
+                  <input id="input" type="number" name="input" >
+                </div>
+                <div style="margin: 1%;">
+                  <input id="SetInOut" class="little-button" style="display: none;" type="submit" value="Set">
+                </div>
+              </form>
+        </div>
+        <div style="    display: flex;
+        flex-direction: column; align-items: center;">
+            <label for="saveName">Save Name: </label>
+            <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%" >
+            <button id="btnSaveAll"class="little-button">Save All</button>
+        </div>
+        <% } else { %>
+                <h1>No cameras Found!</h1>
+                <% } %>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            //KRAMMER CELL COLORATION//
+            var krammerConfig1 = {
+                input: "<%=krammerConfig[0].input%>",
+                output: "<%=krammerConfig[0].output%>"
+            };
+            var krammerConfig2 = {
+                input: "<%=krammerConfig[1].input%>",
+                output: "<%=krammerConfig[1].output%>"
+            };
+            var krammerConfig3 = {
+                input: "<%=krammerConfig[2].input%>",
+                output: "<%=krammerConfig[2].output%>"
+            };
+            var krammerConfig4 = {
+                input: "<%=krammerConfig[3].input%>",
+                output: "<%=krammerConfig[3].output%>"
+            };
+            var krammerConfig5 = {
+                input: "<%=krammerConfig[4].input%>",
+                output: "<%=krammerConfig[4].output%>"
+            };
+            var krammerConfig6 = {
+                input: "<%=krammerConfig[5].input%>",
+                output: "<%=krammerConfig[5].output%>"
+            };
+            var krammerConfig7 = {
+                input: "<%=krammerConfig[6].input%>",
+                output: "<%=krammerConfig[6].output%>"
+            };
+            var krammerConfig8 = {
+                input: "<%=krammerConfig[7].input%>",
+                output: "<%=krammerConfig[7].output%>"
+            };
+            var krammerConfig = [krammerConfig1, krammerConfig2, krammerConfig3, krammerConfig4, krammerConfig5,
+                krammerConfig6, krammerConfig7, krammerConfig8
+            ];
+            console.log(krammerConfig[0].input);
+            var str = ""
+            Array.prototype.forEach.call(krammerConfig, element => {
+                str = "#cell" + element.output + "-" + element.input;
+                console.log(str);
+                $(str).css("background-color", "yellow");
+            });
+            //END KRAMMER CELL COLORATION//
+
+            //GET & SET SX80 STATUS//
+            $("#mainVideoSource").val("<%=sx80Config.mainVideoSource%>");
+            if("<%=sx80Config.shareSource%>" !== null){
+                $("#shareSource").val("<%=sx80Config.shareSource%>");
+            }
+
+            $('td').click(function () {
+                col = $(this).parent().children().index($(this));
+                row = $(this).parent().parent().children().index($(this).parent());
+                const nbCell = 8;
+                for (let index = 1; index <= nbCell; index++) {
+                    $("#cell"+col+"-"+index).css("background-color", "");
+                }
+                $(this).css("background-color", "yellow");
+                $('#input').val(row)
+                $('#output').val(col)
+                $('#SetInOut').show()
+                console.log(col, row);
+            });
+
+            $("div[id^='advanced-button']").click(function () {
+                var elem_id = $(this).data('num');
+                var element = $("#advanced-container" + elem_id)
+                if (element.is(':visible')) {
+                    element.hide("slow");
+                } else {
+                    element.show("slow");
+                }
+
+            });
+
+            $("span[id^='refresh_img']").click(function () {
+                var ip = $(this).data('ip');
+                var id_name_image = $(this).data('img');
+                console.log("refresh", ip, id_name_image);
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+            });
+
+            $("button[id^='button-center']").click(function () {
+                console.log('center');
+                var ip = $(this).data('ip');
+                $.ajax({
+                    url: '/center/' + ip,
+                    type: 'get',
+                    success: 'success',
+                });
+            });
+
+            $("button[id^='zoom']").click(function () { // s'active pour tous boutons ayant l'id zoom
+                console.log('zoom');
+                var ip = $(this).data('ip');
+                $.ajax({
+                    url: '/zoom/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='dezoom']").click(function () {
+                console.log('dezoom');
+                var ip = $(this).data('ip');
+                $.ajax({
+                    url: '/dezoom/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='max']").click(function () {
+                console.log('max');
+                var ip = $(this).data('ip');
+                var string = JSON.stringify({
+                    ip: ip,
+                    extremum: "min"
+                });
+                $.ajax({
+                    url: '/zoomExtremum',
+                    type: 'post',
+                    data: "ip=" + ip + "&extremum=max",
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='min']").click(function () {
+                console.log('min');
+                var ip = $(this).data('ip');
+                $.ajax({
+                    url: '/zoomExtremum',
+                    type: 'post',
+                    data: "ip=" + ip + "&extremum=min",
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='right']").click(function () {
+                console.log("right");
+                var ip = $(this).data('ip');
+                $.ajax({
+                    url: '/right/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='left']").click(function () {
+                var ip = $(this).data('ip');
+                console.log("left");
+                $.ajax({
+                    url: '/left/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+
+            $("button[id^='up']").click(function () {
+                var ip = $(this).data('ip');
+                console.log("up", ip);
+                $.ajax({
+                    url: '/up/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+            $("button[id^='down']").click(function () {
+                var ip = $(this).data('ip');
+                console.log("down", ip);
+                $.ajax({
+                    url: '/down/' + ip,
+                    type: 'get',
+                    success: 'success'
+                });
+            });
+
+            // Form for saving and setting preset
+            $('.card__actions').on('submit', function (e) {
+                e.preventDefault();
+                var data = $(this).serialize();
+                var button = $(document.activeElement).val();
+                if (button == "Move") {
+                    console.log('Move', data);
+                    $.ajax({
+                        url: '/preset',
+                        type: 'post',
+                        data: data,
+                        success: function () {}
+                    });
+                } else if (button == "Save") {
+                    console.log('Save', data);
+                    $.ajax({
+                        url: '/savePreset',
+                        type: 'post',
+                        data: data,
+                        success: function () {}
+                    });
+                }
+
+            });
+
+            $('#source_selection button').click(function (e) {
+                console.log($('#source_selection').serialize());
+                e.preventDefault();
+                $.ajax({
+                    url: '/setMainVideoSource',
+                    type: 'post',
+                    data: $('#source_selection').serialize(),
+                    success: function () {}
+                });
+            });
+
+            $('#share_selection button').click(function (e) {
+                console.log($('#share_selection').serialize());
+                e.preventDefault();
+                if ($(this).attr("value") == "Share") {
+                    $.ajax({
+                        url: '/setShareSource',
+                        type: 'post',
+                        data: $('#share_selection').serialize(),
+                        success: function () {}
+                    });
+                } else if ($(this).attr("value") == "Stop") {
+                    $.ajax({
+                        url: '/stopShare',
+                        type: 'get',
+                        success: function () {}
+                    });
+                }
+            });
+
+            $('#krammerForm').on('submit', function (e) {
+                e.preventDefault();
+                var data = $(this).serialize();
+                console.log('Set InOut', data);
+                $.ajax({
+                    url: '/setInOut',
+                    type: 'post',
+                    data: data,
+                    success: function () {}
+                });
+            });
+
+            $('#btnSaveAll').click(function (e) {
+                const mainVideoSource = $("#mainVideoSource").val();
+                const shareSelection = $("#shareSource").val();
+                const output = $("#output").val();
+                const input = $("#input").val();
+                const configName = $("#saveName").val();
+                $.ajax({
+                    url: '/saveConfig',
+                    type: 'post',
+                    data: "mainVideoSource=" + mainVideoSource + "&shareSelection=" +
+                        shareSelection + "&output=" + output + "&input=" + input +
+                        "&configName=" + configName,
+                    success: function () {
+                        alert("Current Configuration Saved Successfully !");
+                    }
+                });
+            });
+
+        });
+    </script>
+    <%- include('../includes/end.ejs') %>

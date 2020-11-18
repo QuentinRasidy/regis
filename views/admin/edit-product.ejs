@@ -1,0 +1,47 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="product-form" action="/admin/edit-product" method="POST">
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<%= product.name%>">
+            </div>
+            <div class="form-control">
+                <label for="mainVideoSource">mainVideoSource</label>
+                <input type="text" name="mainVideoSource" id="mainVideoSource" value="<%= product.mainVideoSource%>">
+            </div>
+            <div class="form-control">
+                <label for="shareSelection">shareSelection</label>
+                <input type="text" name="shareSelection" id="shareSelection" value="<%= product.shareSelection%>">
+            </div>
+            <div class="form-control">
+                <label for="output">output</label>
+                <input type="number" name="output" id="output" value="<%= product.output%>">
+            </div>
+            <div class="form-control">
+                <label for="input">input</label>
+                <input type="number" name="input" id="input" value="<%= product.input%>">
+            </div>
+            <% for (let cam of product.position) { %>
+            <label for="Name" style="font-weight: bold;"><%= cam.ip%></label>
+            <div class="form-control">
+                <label for="pan">PAN</label>
+                <input type="text" name="pan" id="pan" value="<%= cam.panTilt.pan%>">
+                <label for="tilt">TILT</label>
+                <input type="text" name="tilt" id="tilt" value="<%= cam.panTilt.tilt%>">
+                <label for="zoom">ZOOM</label>
+                <input type="text" name="zoom" id="zoom" value="<%= cam.zoom%>">
+            </div>
+            <input type="hidden" value="<%= cam.ip %>" name="ip">
+            <%}%>
+            <input type="hidden" value="<%= product.id %>" name="productId">
+
+            <button class="btn" type="submit">Update</button>
+        </form>
+    </main>
+    <%- include('../includes/end.ejs') %>

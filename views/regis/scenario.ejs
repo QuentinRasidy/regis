@@ -1,0 +1,45 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/camera.css">
+<link rel="stylesheet" href="/css/button.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <% if (saves.length > 0) { %>
+        <h1 class="camera__price">Scenario List</h1>
+        <hr>
+        <div class="grid">
+            <% for (let product of saves) { %>
+            <article class="card camera-item">
+                <div style="display: flex;
+                flex-direction: row-reverse;
+                margin-right: 8%;
+                margin-top: 3%;">
+                    <form action="/admin/delete-product" method="POST">
+                        <input type="hidden" value="<%= product._id %>" name="productId">
+                        <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </div>
+                <header class="card__header">
+                    <h1 class="camera__price">
+                        <%= product.name %>
+                    </h1>
+                </header>
+                <div class="card__actions" style="display: flex;
+                                justify-content: center;">
+                    <form action="/startScenario" method="post">
+                        <button type="submit" class="btn">Choose this one</button>
+                        <input type="hidden" name="saveId" value="<%= product._id %>">
+                    </form>
+                    <a href="/admin/edit-product/<%= product._id %>" class="btn">Edit</a>
+                </div>
+            </article>
+            <% } %>
+        </div>
+        <% } else { %>
+        <h1>No Scenario Found!</h1>
+        <% } %>
+    </main>
+    <%- include('../includes/end.ejs') %>

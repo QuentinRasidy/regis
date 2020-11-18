@@ -1,0 +1,38 @@
+/* .camera-form {
+    width: 20rem;
+    max-width: 90%;
+    margin: auto;
+    display: block;
+} */
+
+.camera-item {
+    width: 20rem;
+    max-width: 95%;
+    margin: 1rem;
+    border-radius: 30px;
+}
+
+.camera__title {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.camera__price {
+    text-align: center;
+    color: #4d4d4d;
+    margin-bottom: 0.5rem;
+}
+
+.camera__description {
+    text-align: center;
+}
+
+#selection_list {
+    list-style-type: none;
+    text-align: left; 
+    padding: 0%
+}
+
+#selection_list li{
+    margin: 0 0 3px 0;
+}
