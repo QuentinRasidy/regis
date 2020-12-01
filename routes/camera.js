@@ -5,10 +5,15 @@ const express = require('express');
 
 const regisController = require('../controllers/camera');
 
+const bodyParser = require('body-parser')
+
+const jsonParser = bodyParser.json() //a utiliser en cas de requete POST avec de la data JSON coté client
+
 const router = express.Router();
 
 router.get('/', regisController.getIndex);
 router.get('/scenario', regisController.getScenario);
+router.get('/demo', regisController.getDemo);
 
 // router.get('/products', regisController.getProducts);
 
@@ -26,8 +31,12 @@ router.post('/setMainVideoSource', regisController.setMainVideoSource);
 router.post('/setShareSource', regisController.setShareSource);
 router.get('/stopShare', regisController.stopSharing);
 router.post('/setInOut', regisController.setInOutKrammer);
-router.post('/saveConfig', regisController.saveConfig);
+router.post('/saveConfig', jsonParser, regisController.saveConfig);
 router.post('/startScenario', regisController.startScenario);
+router.post('/call', regisController.call);
+router.post('/endCall', regisController.endCall);
+
+router.post('/demo/:id', regisController.getDemoById);
 
 
 // router.get('/cart', regisController.getCart);

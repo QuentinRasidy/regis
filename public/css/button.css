@@ -91,6 +91,16 @@
   font-size: 1rem;
 }
 
+.little-button-activate {
+  background-color: green;
+  border: none;
+  color: white;
+  border-radius: 25px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
 .little-button:hover {
   background: #093344;
 }

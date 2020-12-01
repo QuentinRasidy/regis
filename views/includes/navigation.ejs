@@ -5,24 +5,30 @@
     <nav class="main-header__nav">
         <ul class="main-header__item-list">
             <li class="main-header__item">
+                <a class="<%= path === '/demo' ? 'active' : '' %>" href="/demo">Demo</a>
+            </li>
+            <li class="main-header__item">
                 <a class="<%= path === '/' ? 'active' : '' %>" href="/">Advanced</a>
             </li>
 
-            <li class="main-header__item">
+            <!-- <li class="main-header__item">
                 <a class="<%= path === '/scenario' ? 'active' : '' %>" href="/scenario">Scenario</a>
-            </li>
+            </li> -->
         </ul>
     </nav>
 </header>
 
 <nav class="mobile-nav">
-        <ul class="mobile-nav__item-list">
-                <li class="mobile-nav__item">
-                    <a class="<%= path === '/' ? 'active' : '' %>" href="/">Advanced</a>
-                </li>
+    <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/demo' ? 'active' : '' %>" href="/demo">Demo</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/' ? 'active' : '' %>" href="/">Advanced</a>
+        </li>
 
-                <li class="mobile-nav__item">
-                    <a class="<%= path === '/scenario' ? 'active' : '' %>" href="/scenario">Scenario</a>
-                </li>
-            </ul>
+        <!-- <li class="mobile-nav__item">
+            <a class="<%= path === '/scenario' ? 'active' : '' %>" href="/scenario">Scenario</a>
+        </li> -->
+    </ul>
 </nav>

@@ -9,7 +9,8 @@
     <main>
         <% if(typeof edit === 'undefined') { var edit = true;} else if(edit === null){var edit = true;}%>
         <% if (saves.length > 0) { %>
-        <h1 class="camera__price">Scenario List</h1>
+        <h2 class="camera__price">Demo "<%= demoName %>"</h2>
+        <h1 class="camera__price"> Scenes <%= edit === true ? 'Edition Mode' : '' %></h1>
         <hr>
         <div class="grid">
             <% for (let product of saves) { %>
@@ -21,6 +22,8 @@
                 margin-top: 3%;">
                     <form action="/admin/delete-product" method="POST">
                         <input type="hidden" value="<%= product._id %>" name="productId">
+                        <input type="hidden" value="<%= demoId
+                         %>" name="demoId">
                         <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </div>
@@ -32,19 +35,22 @@
                 </header>
                 <div class="card__actions" style="display: flex;
                                 justify-content: center;">
+                    <% if (edit == false) { %>
                     <form action="/startScenario" method="post">
                         <button type="submit" class="btn">Load</button>
                         <input type="hidden" name="saveId" value="<%= product._id %>">
                     </form>
+                    <% } %>
                     <% if (edit == true) { %>
-                    <a href="/admin/edit-product/<%= product._id %>" class="btn">Edit</a>
+                    <!-- <a href="/admin/edit-product/<%= product._id %>" class="btn">Edit</a> -->
+                    <a href="/admin/edit-product/<%= product._id %>?demoId=<%= demoId %>" class="btn">Edit</a>
                     <% } %>
                 </div>
             </article>
             <% } %>
         </div>
         <% } else { %>
-        <h1>No Scenario Found!</h1>
+        <h1>No Scene Found!</h1>
         <% } %>
     </main>
     <%- include('../includes/end.ejs') %>

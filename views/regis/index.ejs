@@ -1,13 +1,13 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/camera.css">
 <link rel="stylesheet" href="/css/button.css">
+<link rel="stylesheet" href="/css/modal.css">
 </head>
 
 <body>
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <%console.log(sx80Config)%>
         <% if (cameras.length > 0) { %>
         <div class="grid">
             <% var c = 1 %>
@@ -77,24 +77,24 @@
                     </form>
 
                     <hr>
-                <form id="preset_submit<%=c%>" action="" method="get" class="card__actions">
-                    <div class="">
-                        <label for="preset" style="font-weight: bold;">Choose preset :</label>
-                        <select name="preset" id="preset<%=c%>" style="margin-bottom: 2%">
-                            <option value=""></option>
-                            <% for (var i = 0; i<100; i++) { %>
-                            <option value="<%=i%>"><%=i%></option>
-                            <%}%>
+                    <form id="preset_submit<%=c%>" action="" method="get" class="card__actions">
+                        <div class="">
+                            <label for="preset" style="font-weight: bold;">Choose preset :</label>
+                            <select name="preset" id="preset<%=c%>" style="margin-bottom: 2%">
+                                <option value=""></option>
+                                <% for (var i = 0; i<100; i++) { %>
+                                <option value="<%=i%>"><%=i%></option>
+                                <%}%>
                         </select>
                         <input type="hidden" id="ip<%=c%>" name="ip" value="<%= camera.ip %>">
-                    </div>
-                    <div class="">
-                        <button type="submit" value="Move" class="little-button">Move <i
-                                class="fas fa-exchange-alt"></i></button>
-                        <button type="submit" value="Save" class="little-button">Save <i
-                                class="far fa-save"></i></button>
-                    </div>
-                </form>
+                        </div>
+                        <div class="">
+                            <button type="submit" value="Move" class="little-button">Move <i
+                                    class="fas fa-exchange-alt"></i></button>
+                            <button type="submit" value="Save" class="little-button">Save <i
+                                    class="far fa-save"></i></button>
+                        </div>
+                    </form>
 
                 </div>
 
@@ -112,7 +112,7 @@
                         style="font-size:1rem; margin-left: 10%; font-weight: bold; color: green"
                         data-ip="<%= camera.ip %>">MIN</button>
                 </div>
-                
+
 
             </article>
             <% c++ %>
@@ -121,40 +121,35 @@
         <div class="card" style="padding: 5px; margin: 1rem; text-align: center; border-radius: 30px">
             <h2>Kandinsky-Spycam-SX80 <i class="fas fa-wrench"></i></h2>
             <hr>
+            <button class="little-button" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button>
             <div style="display: flex; justify-content:center">
                 <ul id="selection_list">
                     <li>
-                        <form id="source_selection">
-                            <label for="sources" style="font-weight: bold;">Select Main Video Source:</label>
-                            <select name="mainVideoSource" id="mainVideoSource">
-                                <option value="1">Spycam Room55</option>
-                                <option value="2">Spycam Sarah</option>
-                                <option value="3">Spycam Room70D </option>
-                                <option value="4">GrilleHDMI</option>
-                            </select>
-                            <button type="submit" value="Select" class="little-button">Select</button>
+                        <form action="/" id="source_selection">
+                            <input id="mainVideoSource" value=""" hidden>
+                            <label for=" sources" style="font-weight: bold;">Select Main Video Source:</label>
+                            <button type="submit" value="1" class="little-button">Spycam Room55</button>
+                            <button type="submit" value="2" class="little-button">Spycam Sarah</button>
+                            <button type="submit" value="3" class="little-button">Spycam Room70D</button>
+                            <button type="submit" value="4" class="little-button">GrilleHDMI</button>
                         </form>
                     </li>
                     <li>
                         <form id="share_selection">
                             <label for="share-sources" style="font-weight: bold;">Select Share Source:</label>
-                            <select name="shareSource" id="shareSource">
-                                <option value="" selected disabled hidden>Choose here</option>
-                                <option value="1">Spycam Room55</option>
-                                <option value="2">Spycam Sarah</option>
-                                <option value="3">Spycam Room70D </option>
-                                <option value="4">GrilleHDMI</option>
-                            </select>
-                            <button type="submit" value="Share" class="little-button"
-                                style="background-color: #42c542;">Select & Share</button>
-                            <button type="submit" value="Stop" class="little-button"
-                                style="background-color: #ff0000c9;">Stop Sharing</button>
+                            <input id="shareSource" value="" hidden>
+                            <button type=" submit" value="1" class="little-button">Spycam Room55</button>
+                            <button type="submit" value="2" class="little-button">Spycam Sarah</button>
+                            <button type="submit" value="3" class="little-button">Spycam Room70D</button>
+                            <button type="submit" value="4" class="little-button">GrilleHDMI</button>
+                            <button id="btnStopSharing" type="submit" value="Stop" class="little-button"
+                                style="background-color: #ff0000c9;" hidden>Stop Sharing</button>
                         </form>
                     </li>
                     <li style="display: flex">
                         <form id="audio_selection">
                             <label style="font-weight: bold;">Audio</label>
-                            <select name="audioSource" id="audioSource">
+                            <select name="audioSource" id="audioSource" disabled>
                                 <option value="1">Microphone 1</option>
                                 <option value="2">Microphone 2</option>
                                 <option value="3">Microphone 3</option>
@@ -165,9 +160,20 @@
                                 <option value="8">Microphone 8</option>
                             </select>
                             <button type="submit" value="Set_Audio" class="little-button"
-                                style="background-color: #42c542;"><i class="fas fa-power-off"></i></button>
+                                style="background-color: #42c542;" disabled><i class="fas fa-power-off"></i></button>
                             <button type="submit" value="Stop_Audio" class="little-button"
-                                style="background-color: #ff0000c9;"><i class="fas fa-microphone-slash"></i></button>
+                                style="background-color: #ff0000c9;" disabled><i
+                                    class="fas fa-microphone-slash"></i></button>
+                        </form>
+                    </li>
+                    <li>
+                        <form id="callWebexNumber" action="/call" method="POST">
+                            <label style="font-weight: bold;">Call Webex Number:</label>
+                            <input id="webexNumber" name="webexNumber" type="text" value="">
+                            <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
+                                style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
+                            <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
+                                style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
                         </form>
                     </li>
                 </ul>
@@ -205,7 +211,7 @@
                 </tr>
                 <%}%>
               </table>
-              <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
+              <!-- <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
                 <div style="margin: 1%;">
                   <label for="output">Output: </label>
                   <input id="output" type="number" name="output" >
@@ -217,19 +223,42 @@
                 <div style="margin: 1%;">
                   <input id="SetInOut" class="little-button" style="display: none;" type="submit" value="Set">
                 </div>
-              </form>
+              </form> -->
         </div>
         <div style="    display: flex;
         flex-direction: column; align-items: center;">
-            <label for="saveName">Save Name: </label>
-            <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%" >
-            <button id="btnSaveAll"class="little-button">Save All</button>
+            <label for="demoChoose">Choose the Demo Package</label>
+            <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
+                <% for (let demo of demoList) { %>
+                <option value="<%=demo._id%>"><%=demo.name%></option>
+                <% } %>
+                </select>
+                <label style="margin: 5px">OR</label>
+                <button id="myBtn" class="little-button" style="margin-bottom: 1%;">Create New Demo</button>
+                <label for="saveName">Scene Name: </label>
+                <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
+                <button id="btnSaveAll" class="little-button">Save All</button>
+
+        </div>
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Choose a Name for the Demo</p>
+                <form action="/admin/addDemo" method="POST">
+                    <input type="text" id="demoName" name="demoName">
+                    <input class="little-button" type="submit" value="Add">
+                </form>
+            </div>
+
         </div>
         <% } else { %>
-                <h1>No cameras Found!</h1>
-                <% } %>
+        <h1>No cameras Found!</h1>
+        <% } %>
     </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/js/modal.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -279,9 +308,26 @@
             //END KRAMMER CELL COLORATION//
 
             //GET & SET SX80 STATUS//
-            $("#mainVideoSource").val("<%=sx80Config.mainVideoSource%>");
-            if("<%=sx80Config.shareSource%>" !== null){
-                $("#shareSource").val("<%=sx80Config.shareSource%>");
+            var $form = $('#source_selection');
+            var shareForm = $('#share_selection');
+            var buttons = $form.find(":submit").css("background-color", "#ff0000c9");
+            var shareButtons = shareForm.find(":submit").css("background-color", "#ff0000c9");
+
+            //ici je cherche à trouver quel btn correspond a la mainVideoSource et je le met en vert
+            for (let index = 0; index < buttons.length; index++) {
+                if (buttons[index].value === "<%=sx80Config.mainVideoSource%>") {
+                    buttons[index].style.backgroundColor = "#42c542";
+                    $('#mainVideoSource').val(buttons[index].value);
+                }
+            }
+            if ("<%=sx80Config.shareSource%>" != "Not_Sending") {
+                $('#btnStopSharing').show();
+                for (let index = 0; index < shareButtons.length; index++) {
+                    if (shareButtons[index].value === "<%=sx80Config.shareSource%>") {
+                        shareButtons[index].style.backgroundColor = "#42c542";
+                        $('#shareSource').val(shareButtons[index].value);
+                    }
+                }
             }
 
             $('td').click(function () {
@@ -289,13 +335,20 @@
                 row = $(this).parent().parent().children().index($(this).parent());
                 const nbCell = 8;
                 for (let index = 1; index <= nbCell; index++) {
-                    $("#cell"+col+"-"+index).css("background-color", "");
+                    $("#cell" + col + "-" + index).css("background-color", "");
                 }
                 $(this).css("background-color", "yellow");
-                $('#input').val(row)
-                $('#output').val(col)
-                $('#SetInOut').show()
+                // $('#input').val(row)
+                // $('#output').val(col)
+                // $('#SetInOut').show()
+                const data = "input=" + row + "&" + "output=" + col;
                 console.log(col, row);
+                $.ajax({
+                    url: '/setInOut',
+                    type: 'post',
+                    data: data,
+                    success: function () {}
+                });
             });
 
             $("div[id^='advanced-button']").click(function () {
@@ -437,27 +490,39 @@
             });
 
             $('#source_selection button').click(function (e) {
-                console.log($('#source_selection').serialize());
                 e.preventDefault();
+                var $form = $('#source_selection');
+                var $buttons = $form.find(":submit").css("background-color",
+                    "#ff0000c9"); //met tous les btn en rouge
+                $(this).css("background-color", "#42c542");
+                $('#mainVideoSource').val($(this).val());
                 $.ajax({
                     url: '/setMainVideoSource',
                     type: 'post',
-                    data: $('#source_selection').serialize(),
+                    data: 'mainVideoSource=' + $(this).attr("value"),
                     success: function () {}
                 });
             });
 
             $('#share_selection button').click(function (e) {
-                console.log($('#share_selection').serialize());
                 e.preventDefault();
-                if ($(this).attr("value") == "Share") {
+                if ($(this).attr("value") != "Stop") {
+                    $('#btnStopSharing').show();
+                    $('#share_selection').find(":submit").css("background-color",
+                        "#ff0000c9");
+                    $(this).css("background-color", "#42c542");
+                    $('#shareSource').val($(this).val());
                     $.ajax({
                         url: '/setShareSource',
                         type: 'post',
-                        data: $('#share_selection').serialize(),
+                        data: 'shareSource=' + $(this).attr("value"),
                         success: function () {}
                     });
                 } else if ($(this).attr("value") == "Stop") {
+                    $('#btnStopSharing').hide();
+                    $('#shareSource').val("");
+                    $('#share_selection').find(":submit").css("background-color",
+                        "#ff0000c9");
                     $.ajax({
                         url: '/stopShare',
                         type: 'get',
@@ -466,36 +531,83 @@
                 }
             });
 
-            $('#krammerForm').on('submit', function (e) {
-                e.preventDefault();
-                var data = $(this).serialize();
-                console.log('Set InOut', data);
-                $.ajax({
-                    url: '/setInOut',
-                    type: 'post',
-                    data: data,
-                    success: function () {}
-                });
+            $('#callWebexNumber button').click(function (e) {
+                if ($(this).attr("value") == "startCallWebex") {
+                    $("#callWebexNumber").attr('action', '/call');
+                    $(this).hide();
+                    $('#endCallWebex').show();
+
+                } else if ($(this).attr("value") == "endCallWebex") {
+                    $("#callWebexNumber").attr('action', '/endCall');
+                    $(this).hide();
+                    $('#startCallWebex').show();
+                }
             });
 
+            // $('#krammerForm').on('submit', function (e) {
+            //     e.preventDefault();
+            //     var data = $(this).serialize();
+            //     console.log('Set InOut', data);
+            //     $.ajax({
+            //         url: '/setInOut',
+            //         type: 'post',
+            //         data: data,
+            //         success: function () {}
+            //     });
+            // });
+
             $('#btnSaveAll').click(function (e) {
+                var myTableArray = [];
+                var string = "";
+                $("table#grid tr").each(function () {
+                    var arrayOfThisRow = [];
+                    var tableData = $(this).find('td');
+                    var index = 1;
+                    if (tableData.length > 0) {
+                        //je recupere l'etat courant de la matrice krammer
+                        tableData.each(function () {
+                            if ($(this).css("background-color") == "rgb(255, 255, 0)") {
+                                string += $(this).attr('id').substring(4).split('-')[
+                                        1] + ">" + $(this).attr('id').substring(4)
+                                    .split(
+                                        '-')[0] + ","
+                                arrayOfThisRow.push({
+                                    output: $(this).attr('id').substring(4)
+                                        .split('-')[0],
+                                    input: $(this).attr('id').substring(4)
+                                        .split('-')[1]
+                                });
+                            }
+                        });
+                        myTableArray.push(arrayOfThisRow);
+                    }
+                });
+                string = string.slice(0, -1); //remove last character ","
+                const allOutInput = myTableArray.filter(e => e.length > 0); //unused <===
+                console.log(allOutInput[0][0]);
                 const mainVideoSource = $("#mainVideoSource").val();
                 const shareSelection = $("#shareSource").val();
-                const output = $("#output").val();
-                const input = $("#input").val();
+
+                // const output = $("#output").val();
+                // const input = $("#input").val();
+                const demoId = $("#demoChoose").val();
                 const configName = $("#saveName").val();
+                var data = {};
+                data.mainVideoSource = mainVideoSource;
+                data.shareSelection = shareSelection;
+                data.allOutInput = string;
+                data.configName = configName;
+                data.demoId = demoId;
                 $.ajax({
                     url: '/saveConfig',
-                    type: 'post',
-                    data: "mainVideoSource=" + mainVideoSource + "&shareSelection=" +
-                        shareSelection + "&output=" + output + "&input=" + input +
-                        "&configName=" + configName,
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
                     success: function () {
                         alert("Current Configuration Saved Successfully !");
                     }
                 });
-            });
-
+            })
         });
     </script>
     <%- include('../includes/end.ejs') %>

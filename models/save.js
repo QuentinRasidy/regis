@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const saveSchema = mongoose.Schema(
   {
-    // _id: mongoose.Schema.Types.ObjectId,
+    //_id: mongoose.Schema.Types.ObjectId,
     name: {
       type: String,
       required: true,
@@ -18,15 +18,11 @@ const saveSchema = mongoose.Schema(
     },
     shareSelection: {
       type: String,
-      required: true,
+      //required: true,
     },
-    output: {
-      type: Number,
+    allInputOutput: {
+      type: String,
       required: true,
-    },
-    input: {
-        type: Number,
-        required: true,
     },
   },
 );

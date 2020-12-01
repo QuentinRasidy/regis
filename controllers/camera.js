@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 //const Cart = require('../models/cart');
 const request = require('request');
+
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser({
   attrkey: "ATTR"
@@ -15,6 +16,7 @@ mongoose.connect(
 mongoose.Promise = global.Promise;
 
 const Save = require('../models/save');
+const Demo = require('../models/demo');
 
 exports.zoom = async (req, res, next) => {
   const ip = req.params.ip;
@@ -255,6 +257,7 @@ exports.getIndex = (req, res, next) => {
         pageTitle: 'Regis',
         krammerConfig: config,
         sx80Config: await getMainVideoSourceAndshareSource(),
+        demoList: await getAllDemo(),
         path: '/'
       });
     })
@@ -267,6 +270,37 @@ exports.getScenario = (req, res, next) => {
       saves: save,
       pageTitle: 'Scene',
       path: '/scenario'
+    });
+  });
+};
+
+exports.getDemo = (req, res, next) => {
+  getAllDemo().then(demoDocs => {
+    res.render('regis/demo', {
+      demoList: demoDocs,
+      pageTitle: 'demo',
+      path: '/demo'
+    });
+  });
+};
+
+exports.getDemoById = async (req, res, next) => {
+  const demoId = req.params.id;
+  const edit = (req.query.edit === "true") ? true : false;
+  const demo = await Demo.findById(demoId);
+  if (!demo) {
+    return res.redirect('/');
+  }
+  const ids = demo.scene;
+  const demoName = demo.name;
+  Save.find().where('_id').in(ids).exec((err, records) => {
+    res.render('regis/scene-of-demo', {
+      saves: records,
+      pageTitle: 'Scene',
+      path: '/scene-of-demo',
+      demoId: demoId,
+      demoName: demoName,
+      edit: edit
     });
   });
 };
@@ -388,21 +422,40 @@ exports.saveConfig = async (req, res, next) => {
   const {
     mainVideoSource,
     shareSelection,
-    output,
-    input,
-    configName
+    allOutInput,
+    configName,
+    demoId
   } = req.body;
-  // console.log(mainVideoSource, shareSelection, output, input, configName);
+  console.log('body: ' + mainVideoSource, shareSelection, configName, allOutInput, demoId);
   getConfigOfAllCam().then((value) => {
     value.forEach(e => console.log(e));
     var save = new Save({
+      _id: new mongoose.Types.ObjectId().toHexString(),
       name: configName,
       position: value,
       mainVideoSource: mainVideoSource,
       shareSelection: shareSelection,
-      output: output,
-      input: input
+      allInputOutput: allOutInput,
     });
+    Demo.findById(demoId, function (err, demo) {
+      if (!demo) {
+        const date = new Date();
+        const currentDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        var defaultDemo = new Demo({
+          name: currentDate,
+          scene: [save._id]
+        });
+        defaultDemo.save(function (err, save) {
+          if (err) return console.error(err);
+        });
+      } else {
+        demo.scene.push(save._id);
+        demo.save(function (err, save) {
+          if (err) return console.error(err);
+        });
+      }
+    });
+
     save.save(function (err, save) {
       if (err) return console.error(err);
       console.log(save.name + " saved to REGIS db.");
@@ -413,23 +466,57 @@ exports.saveConfig = async (req, res, next) => {
 
 exports.startScenario = (req, res, next) => {
   const saveId = req.body.saveId;
-  Save.findById(saveId, function(err, save) {
-    if(!save) {
+  Save.findById(saveId, async function (err, save) {
+    if (!save) {
       return res.redirect('/');
     }
-    console.log(save);
+    const {
+      position,
+      name,
+      mainVideoSource,
+      shareSelection,
+      allInputOutput
+    } = save;
+    console.log(position,
+      name,
+      mainVideoSource,
+      shareSelection,
+      allInputOutput)
+    setAllInOut(allInputOutput);
+
+
+    if (shareSelection != null) {
+      setShareSource(shareSelection);
+    }
+    await sleep(1000);
+    setMainVideoSource(mainVideoSource);
+    //Si GRILLE HDMI ALORS ON NE SET PAS LES CAMERAS
+    position.forEach(cam => {
+      setZoom(cam.ip, cam.zoom);
+      setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt);
+    });
+
+
+    //console.log(save);
     res.sendStatus(200);
-    // res.render('admin/edit-product', {
-    //   pageTitle: 'Edit Save',
-    //   path: '/admin/edit-product',
-    //   //editing: editMode,// true or false
-    //   product: save
-    // });
   });
 
 }
 
-/* FUNCTION */
+exports.call = (req, res, next) => {
+  const webexNumber = req.body.webexNumber;
+  console.log(webexNumber);
+  callWebexNumber(webexNumber);
+  res.status(204).send();
+}
+
+exports.endCall = (req, res, next) => {
+  console.log("end call");
+  disconnectCall();
+  res.status(204).send();
+}
+
+/************************** FUNCTION **********************************/
 
 
 function getZoom(ip) {
@@ -447,6 +534,21 @@ function getZoom(ip) {
       console.log(response.body.substr(3))
       resolve(response.body.substr(3));
     });
+  });
+}
+
+function setZoom(ip, value) {
+  var options = {
+    'method': 'GET',
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ' + value + '&res=1',
+    'headers': {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log('reponse zoom: ' + response.body);
   });
 }
 
@@ -469,6 +571,22 @@ function getPanTiltValue(ip) {
       }
       resolve(values);
     });
+  });
+}
+
+function setPanTiltValue(ip, pan, tilt) {
+  var options = {
+    'method': 'GET',
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + pan + tilt + '&res=1',
+    'headers': {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
   });
 }
 
@@ -555,6 +673,28 @@ function setInOut(input, output) {
   });
 }
 
+/**
+ * Function qui permet de configurer tous les input/ouput de krammer en un appel HTTP
+ * @param {*} stringInOut exemple :"1>1,2>2,5>3,8>4,8>5,8>6,7>7,6>8" où INPUT>OUTPUT
+ */
+function setAllInOut(stringInOut) {
+  var options = {
+    'method': 'POST',
+    'url': 'http://websrv2.ciscofrance.com:15136/setAllInOut',
+    'headers': {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "allConfigString": stringInOut
+    })
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+  });
+}
+
 function getKrammerConfig() {
   return new Promise(resolve => {
     var options = {
@@ -583,6 +723,75 @@ function getSaves() {
   });
 }
 
+function getAllDemo() {
+  return Demo.find({}, (err, docs) => {
+    if (!err) {
+      return new Promise((resolve) => {
+        resolve(docs);
+      });
+    }
+    throw err;
+  });
+}
+
+function setMainVideoSource(source) {
+  var ip = "10.1.110.140"; // A surveiller car peut changer 
+  var xml =
+    "<Command>" +
+    "<Video>" +
+    "<Input>" +
+    "<SetMainVideoSource>" +
+    "<ConnectorId>" + source + "</ConnectorId>" +
+    "</SetMainVideoSource>" +
+    "</Input>" +
+    "</Video>" +
+    "</Command>";
+
+  var options = {
+    method: "POST",
+    url: "https://" + ip + "/putxml",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+    },
+    body: xml
+  };
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    console.log(error);
+  });
+}
+
+function setShareSource(source) {
+  var ip = "10.1.110.140"; // A surveiller car peut changer 
+  var xml =
+    "<Command>" +
+    "<Presentation>" +
+    "<Start>" +
+    "<ConnectorId>" + source + "</ConnectorId>" +
+    "</Start>" +
+    "</Presentation>" +
+    "</Command>";
+
+  var options = {
+    method: "POST",
+    url: "https://" + ip + "/putxml",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+    },
+    body: xml
+  };
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    console.log(error);
+  });
+}
+
 function getMainVideoSourceAndshareSource() {
   return new Promise(resolve => {
     var ip = "10.1.110.140"; // A surveiller car peut changer 
@@ -601,7 +810,7 @@ function getMainVideoSourceAndshareSource() {
       parser.parseString(response.body, function (error, result) {
         if (error === null) {
           var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
-          var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : null;
+          var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
           console.log(result.Status.Conference[0].Presentation[0].Mode[0])
           resolve({
             mainVideoSource: mainVideoSource,
@@ -612,5 +821,62 @@ function getMainVideoSourceAndshareSource() {
         }
       });
     });
+  });
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+function callWebexNumber(number) {
+  var ip = "10.1.110.140"; // A surveiller car peut changer 
+  var xml =
+    "<Command>" +
+    "<Dial>" +
+    "<Number>" + number + "</Number>" +
+    "</Dial>" +
+    "</Command>";
+
+  var options = {
+    method: "POST",
+    url: "https://" + ip + "/putxml",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+    },
+    body: xml
+  };
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    //console.log(error);
+  });
+}
+
+function disconnectCall() {
+  var ip = "10.1.110.140"; // A surveiller car peut changer 
+  var xml =
+    "<Command>" +
+    "<Call>" +
+    "<Disconnect>" + "</Disconnect>" +
+    "</Call>" +
+    "</Command>";
+
+  var options = {
+    method: "POST",
+    url: "https://" + ip + "/putxml",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+    },
+    body: xml
+  };
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    //console.log(error);
   });
 }

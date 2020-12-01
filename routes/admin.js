@@ -22,4 +22,10 @@ router.post('/edit-product', adminController.postEditProduct);
 
 router.post('/delete-product', adminController.postDeleteProduct);
 
+router.post('/addDemo', adminController.addDemo);
+
+router.post('/delete-demo', adminController.deleteDemo);
+
+router.post('/change-name-demo', adminController.changeNameDemo);
+
 module.exports = router;
