@@ -10,14 +10,18 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-.matrix tr, td {
+.matrix tr,
+td {
   padding: 0.6rem;
   border: 1px solid black;
   width: 50px;
   height: 50px;
 }
+
 @media (max-width: 800px) {
-  .matrix tr, td {
+
+  .matrix tr,
+  td {
     padding: 0.6rem;
     border: 1px solid black;
     font-size: x-small;
@@ -212,7 +216,8 @@ hr {
   background: white;
   border-radius: 3px;
   cursor: pointer;
-  border-radius: 30px
+  border-radius: 30px;
+  outline: none;
 }
 
 .btn:hover,

@@ -438,7 +438,7 @@ exports.saveConfig = async (req, res, next) => {
       allInputOutput: allOutInput,
     });
     Demo.findById(demoId, function (err, demo) {
-      if (!demo) {
+      if (!demo) {// si lié a aucune demo alors on créer une Demo par défaut
         const date = new Date();
         const currentDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
         var defaultDemo = new Demo({
@@ -446,7 +446,10 @@ exports.saveConfig = async (req, res, next) => {
           scene: [save._id]
         });
         defaultDemo.save(function (err, save) {
-          if (err) return console.error(err);
+          if (err){
+            // res.send(<script>alert("Duplicate Scene Name !"); window.location.href = "/"; </script>);
+            return console.error(err);
+          }
         });
       } else {
         demo.scene.push(save._id);
@@ -457,7 +460,10 @@ exports.saveConfig = async (req, res, next) => {
     });
 
     save.save(function (err, save) {
-      if (err) return console.error(err);
+      if (err){
+        res.status(401).end('Duplicate Scene Name !');
+        return console.error(err);
+      }
       console.log(save.name + " saved to REGIS db.");
       res.sendStatus(201);
     });
@@ -495,8 +501,6 @@ exports.startScenario = (req, res, next) => {
       setZoom(cam.ip, cam.zoom);
       setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt);
     });
-
-
     //console.log(save);
     res.sendStatus(200);
   });
@@ -594,23 +598,26 @@ function getConfigOfAllCam() {
   return new Promise((resolve, reject) => {
     Product.fetchAll(cameras => {
       var position = [];
-      cameras.forEach((cam, index, array) => {
-        Promise.all([getZoom(cam.ip), getPanTiltValue(cam.ip)]).then((values) => {
+      var count = cameras.length;
+      let completed = 0;
+      for (let i = 0; i < count; i++) {
+        Promise.all([
+          getZoom(cameras[i].ip),
+          getPanTiltValue(cameras[i].ip)
+        ]).then(values => {
           position.push({
-            ip: cam.ip,
+            ip: cameras[i].ip,
             zoom: values[0],
             panTilt: values[1]
           });
-          if (index === array.length - 1) {
-            //console.log(position)
+          completed++;
+          if (completed == count) {
             resolve(position);
           }
         });
-      });
+      }
     });
   });
-
-
 }
 
 function setPreset(ip, presetNumber, res) {

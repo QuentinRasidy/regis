@@ -1,6 +1,25 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/camera.css">
 <link rel="stylesheet" href="/css/button.css">
+
+<style>
+    .unactive-demo {
+        background-color: #80808054;
+        -webkit-transition: background-color 400ms linear;
+        -ms-transition: background-color 400ms linear;
+        transition: background-color 400ms linear;
+    }
+
+    .blink_me {
+        animation: blinker 1.5s linear infinite;
+    }
+
+    @keyframes blinker {
+        50% {
+            opacity: 0.3;
+        }
+    }
+</style>
 </head>
 
 <body>
@@ -13,8 +32,11 @@
         <h1 class="camera__price"> Scenes <%= edit === true ? 'Edition Mode' : '' %></h1>
         <hr>
         <div class="grid">
+            <%var c = 1;%>
             <% for (let product of saves) { %>
-            <article class="card camera-item">
+
+            <article id="container<%=c%>"
+                class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
                 <% if (edit == true) { %>
                 <div style="display: flex;
                 flex-direction: row-reverse;
@@ -36,9 +58,9 @@
                 <div class="card__actions" style="display: flex;
                                 justify-content: center;">
                     <% if (edit == false) { %>
-                    <form action="/startScenario" method="post">
-                        <button type="submit" class="btn">Load</button>
+                    <form class="launchScene" data-container="<%=c%>">
                         <input type="hidden" name="saveId" value="<%= product._id %>">
+                        <button type="submit" class="btn">Load</button>
                     </form>
                     <% } %>
                     <% if (edit == true) { %>
@@ -47,10 +69,34 @@
                     <% } %>
                 </div>
             </article>
+            <% c++ %>
             <% } %>
         </div>
         <% } else { %>
         <h1>No Scene Found!</h1>
         <% } %>
     </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.launchScene').on('submit', function (e) {
+                e.preventDefault();
+                var data = $(this).serialize();
+                const length = "<%=saves.length%>";
+                for (let index = 1; index <= length; index++) {
+                    $("#container" + index).css("background-color", "#ff0909b8");
+                    $("#container" + index).removeClass("blink_me");
+                }
+                var container_id = $(this).data('container');
+                $("#container" + container_id).css("background-color", "#06ff5f");
+                $("#container" + (parseInt(container_id)+1)).addClass("blink_me")
+                $.ajax({
+                    url: '/startScenario',
+                    type: 'post',
+                    data: data,
+                    success: function () {}
+                });
+            });
+        });
+    </script>
     <%- include('../includes/end.ejs') %>

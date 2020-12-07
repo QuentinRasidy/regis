@@ -119,9 +119,10 @@
             <% } %>
         </div>
         <div class="card" style="padding: 5px; margin: 1rem; text-align: center; border-radius: 30px">
-            <h2>Kandinsky-Spycam-SX80 <i class="fas fa-wrench"></i></h2>
+            <h2 style="display: flex;
+            justify-content: center;
+            align-items: center;">Kandinsky-Spycam-SX80 <button class="little-button" style="margin-left: 1%;" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
             <hr>
-            <button class="little-button" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button>
             <div style="display: flex; justify-content:center">
                 <ul id="selection_list">
                     <li>
@@ -183,7 +184,9 @@
         <div class="card"
             style="padding: 5px; margin: 1rem; display: flex; flex-direction:column ;text-align: center; justify-content: center; border-radius: 30px">
             <table id="grid" class="matrix">
-                <h2>Krammer matrix <i class="fas fa-table"></i></h2>
+                <h2 style="display: flex;
+                justify-content: center;
+                align-items: center;">Krammer matrix <button class="little-button" style="margin-left: 1%;" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
                 <hr>
                 <tr>
                     <td></td>
@@ -227,17 +230,19 @@
         </div>
         <div style="    display: flex;
         flex-direction: column; align-items: center;">
-            <label for="demoChoose">Choose the Demo Package</label>
-            <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
-                <% for (let demo of demoList) { %>
+            <div style="display: flex; width: 100%; justify-content: center;">
+                <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo</button>
+                <label style="margin-left: 10px; margin-right: 10px;">OR</label>
+                <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
+                <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
+                    <% for (let demo of demoList) { %>
                 <option value="<%=demo._id%>"><%=demo.name%></option>
                 <% } %>
                 </select>
-                <label style="margin: 5px">OR</label>
-                <button id="myBtn" class="little-button" style="margin-bottom: 1%;">Create New Demo</button>
-                <label for="saveName">Scene Name: </label>
-                <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
-                <button id="btnSaveAll" class="little-button">Save All</button>
+            </div>
+        <label for="saveName">Scene Name: </label>
+        <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
+        <button id="btnSaveAll" class="little-button">Save All</button>
 
         </div>
         <div id="myModal" class="modal">
@@ -605,6 +610,9 @@
                     contentType: 'application/json',
                     success: function () {
                         alert("Current Configuration Saved Successfully !");
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
                     }
                 });
             })

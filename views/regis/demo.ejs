@@ -31,8 +31,9 @@
                             <th>#<%= demo._id %></th>
                             <td>
                                 <form action="/admin/change-name-demo" method="POST">
-                                    <input name="demoName" id="inputDemoName<%=c%>" style="width: 60%; margin: 5px;"
-                                        type="text" value="<%= demo.name %>" data-num="<%=c%>" required>
+                                        <input name="demoName" id="inputDemoName<%=c%>"
+                                        onkeydown="this.style.width = ((this.value.length + 2) * 8) + 'px';" type="text" size='' style='width:100%' value="<%= demo.name %>" data-num="<%=c%>"
+                                        required>
                                     <input name="demoId" value="<%= demo._id %>" hidden>
                                     <button id="btnUpdateDemoName<%=c%>" class="little-button" type="submit"
                                         hidden>Ok</button></form>
@@ -121,8 +122,6 @@
                 modal.style.display = "none";
             }
         }
-
-
 
         $(document).ready(function () {
             $("input[id^='inputDemoName']").on('input', function () {
