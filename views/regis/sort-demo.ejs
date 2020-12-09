@@ -1,0 +1,86 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/camera.css">
+<link rel="stylesheet" href="/css/button.css">
+<link rel="stylesheet" href="/css/table.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <% if (scenes.length > 0) { %>
+        <h2 class="camera__price">Demo "<%= demoName %>"</h2>
+        <h1 class="camera__price">Sort Scenes</h1>
+        <hr>
+        <div class="grid">
+            <form id="sortForm" action="/" method="POST">
+                <table class="table table-bordered table-hover">
+                    <tr>
+                        <td>Scene List</td>
+                        <td>Order</td>
+                    </tr>
+                    <% var cmp = 1; %>
+                    <% for (let scene of scenes) { %>
+                    <tr>
+                        <td><%= scene.name %></td>
+                        <td><input name="<%= scene.id %>" type="number" value="<%= cmp %>" min="1"
+                                max="<%= scenes.length %>" required></td>
+                    </tr>
+                    <% cmp++ %>
+                    <% } %>
+                </table>
+                <div style="display: flex;
+                justify-content: center;
+                padding: 10%;"><input class="little-button" type="submit" value="Change"></div>
+            </form>
+        </div>
+        <% } else { %>
+        <h1>No Scene Found!</h1>
+        <% } %>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var a = "<%=listIdScene%>";
+            console.log(a);
+
+            function dynamicSort(property) {
+                var sortOrder = 1;
+                if (property[0] === "-") {
+                    sortOrder = -1;
+                    property = property.substr(1);
+                }
+                return function (a, b) {
+                    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+                    return result * sortOrder;
+                }
+            }
+
+            $("#sortForm").submit(function (event) {
+                event.preventDefault();
+                var inputs = [];
+                flag = false;
+                $('input').each(function () {
+                    if ($.inArray(this.value, inputs) != -1) flag = true;
+                    inputs.push(this.value);
+                });
+
+                if (flag == true) {
+                    alert("duplicates index exists");
+                } else {
+                    var values = $(this).serializeArray().sort(dynamicSort("value"));
+                    var sortedArray = Array.from(values, x => x.name);
+                    $.ajax({
+                        url: '/admin/change-order-scene-of-demo',
+                        type: 'post',
+                        data: 'newOrderedList=' + sortedArray + '&demoId=<%= demoId%>',
+                        success: function () {
+                            console.log("ok");
+                            document.location.reload(true);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <%- include('../includes/end.ejs') %>

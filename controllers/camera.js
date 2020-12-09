@@ -249,10 +249,10 @@ exports.test = (req, res, next) => {
   console.log(prodId);
 }
 
-exports.getIndex = (req, res, next) => {
+exports.getAdvanced = (req, res, next) => {
   Product.fetchAll(products => {
     getKrammerConfig().then(async config => {
-      res.render('regis/index', {
+      res.render('regis/advanced', {
         cameras: products,
         pageTitle: 'Regis',
         krammerConfig: config,
@@ -293,14 +293,37 @@ exports.getDemoById = async (req, res, next) => {
   }
   const ids = demo.scene;
   const demoName = demo.name;
-  Save.find().where('_id').in(ids).exec((err, records) => {
+  Save.find().where('_id').in(ids).exec(async (err, records) => {
+    var list = await sortListWithIds(records, ids);
     res.render('regis/scene-of-demo', {
-      saves: records,
+      saves: list,
       pageTitle: 'Scene',
       path: '/scene-of-demo',
       demoId: demoId,
       demoName: demoName,
       edit: edit
+    });
+  });
+};
+
+exports.getSortDemo = async (req, res, next) => {
+  const demoId = req.body.demoId;
+  const demo = await Demo.findById(demoId);
+  if (!demo) {
+    return res.redirect('/');
+  }
+  const ids = demo.scene;
+  const demoName = demo.name;
+  Save.find().where('_id').in(ids.reverse()).exec(async (err, records) => {
+    //mongoose ne renvoi pas les documents dans le meme ordre que ma list de ids
+    var list = await sortListWithIds(records, ids);
+    res.render('regis/sort-demo', {
+      scenes: list,
+      pageTitle: 'Sort Scene',
+      path: '/sort-demo',
+      demoId: demoId,
+      demoName: demoName,
+      listIdScene: ids
     });
   });
 };
@@ -319,7 +342,6 @@ exports.savePreset = (req, res, next) => {
 
 exports.setMainVideoSource = (req, res, next) => {
   var source = req.body.mainVideoSource;
-  console.log(source);
   var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
     "<Command>" +
@@ -353,7 +375,6 @@ exports.setMainVideoSource = (req, res, next) => {
 
 exports.setShareSource = (req, res, next) => {
   var source = req.body.shareSource;
-  console.log(source);
   var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
     "<Command>" +
@@ -426,7 +447,6 @@ exports.saveConfig = async (req, res, next) => {
     configName,
     demoId
   } = req.body;
-  console.log('body: ' + mainVideoSource, shareSelection, configName, allOutInput, demoId);
   getConfigOfAllCam().then((value) => {
     value.forEach(e => console.log(e));
     var save = new Save({
@@ -447,7 +467,6 @@ exports.saveConfig = async (req, res, next) => {
         });
         defaultDemo.save(function (err, save) {
           if (err){
-            // res.send(<script>alert("Duplicate Scene Name !"); window.location.href = "/"; </script>);
             return console.error(err);
           }
         });
@@ -483,11 +502,6 @@ exports.startScenario = (req, res, next) => {
       shareSelection,
       allInputOutput
     } = save;
-    console.log(position,
-      name,
-      mainVideoSource,
-      shareSelection,
-      allInputOutput)
     setAllInOut(allInputOutput);
 
 
@@ -886,4 +900,25 @@ function disconnectCall() {
     if (error) throw new Error(error);
     //console.log(error);
   });
+}
+
+/**
+ * 
+ * @param {*} items : Scene Object
+ * @param {*} idsList : Scene id List
+ */
+function sortListWithIds(items, idsList){
+  return new Promise(resolve => {
+    var list = [];
+    for (let index = 0; index < idsList.length; index++) {
+      for (let i = 0; i < items.length; i++) {
+        if(String(items[i]._id) == idsList[index]){
+          list.push(items[i]);
+          break;
+        }
+      }
+    }
+      resolve(list.reverse());
+  });
+  
 }

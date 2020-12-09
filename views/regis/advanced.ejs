@@ -231,7 +231,7 @@
         <div style="    display: flex;
         flex-direction: column; align-items: center;">
             <div style="display: flex; width: 100%; justify-content: center;">
-                <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo</button>
+                <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo <i class="fas fa-plus"></i></button>
                 <label style="margin-left: 10px; margin-right: 10px;">OR</label>
                 <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
                 <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
@@ -242,7 +242,7 @@
             </div>
         <label for="saveName">Scene Name: </label>
         <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
-        <button id="btnSaveAll" class="little-button">Save All</button>
+        <button id="btnSaveAll" class="little-button">Save All <i class="fas fa-save"></i></button>
 
         </div>
         <div id="myModal" class="modal">
@@ -603,18 +603,26 @@
                 data.allOutInput = string;
                 data.configName = configName;
                 data.demoId = demoId;
-                $.ajax({
+                if(!configName){
+                    alert("Your scene has no name!");
+                }
+                else{
+                    $.ajax({
                     url: '/saveConfig',
                     type: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json',
                     success: function () {
-                        alert("Current Configuration Saved Successfully !");
+                        $('#btnSaveAll').css('background-color','green');
+                        $('#btnSaveAll').html('<i class="fas fa-check"></i>');
+                        setTimeout(function(){ $('#btnSaveAll').css('background-color','#449abd'); $('#btnSaveAll').html('Save All <i class="fas fa-save"></i>')}, 1500);
+                        // alert("Current Configuration Saved Successfully !");
                     },
                     error: function (request, status, error) {
                         alert(request.responseText);
                     }
                 });
+                }
             })
         });
     </script>

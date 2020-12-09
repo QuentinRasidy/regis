@@ -114,7 +114,7 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
   Save.findByIdAndUpdate({
     _id: id
   }, updatedSave, () => {
-    res.redirect('/demo');
+    res.redirect('/');
     //res.sendStatus(200);
   });
 };
@@ -173,7 +173,7 @@ exports.deleteDemo = async (req, res, next) => {
   Save.deleteMany().where('_id').in(ids).exec((err, records) => { //delete all scene from this Demo
   });
   Demo.findByIdAndDelete(demoId, function () { //delete the demo
-    res.redirect('/demo');
+    res.redirect('/');
   });
 }
 
@@ -188,7 +188,20 @@ exports.changeNameDemo = (req, res, next) => {
     name: demoName
   }, function (err) {
     if (err) return console.error(err);
-    res.redirect('/demo');
+    res.redirect('/');
+  });
+}
+
+exports.changeOrderOfScene = (req, res, next) => {
+  const demoId = req.body.demoId;
+  const newArray = req.body.newOrderedList.split(',');
+  Demo.updateOne({
+    _id: demoId
+  }, {
+    scene: newArray
+  }, function (err) {
+    if (err) return console.error(err);
+    res.sendStatus(200);
   });
 }
 

@@ -11,9 +11,9 @@ const jsonParser = bodyParser.json() //a utiliser en cas de requete POST avec de
 
 const router = express.Router();
 
-router.get('/', regisController.getIndex);
+router.get('/', regisController.getDemo);
 router.get('/scenario', regisController.getScenario);
-router.get('/demo', regisController.getDemo);
+router.get('/advanced', regisController.getAdvanced);
 
 // router.get('/products', regisController.getProducts);
 
@@ -37,6 +37,8 @@ router.post('/call', regisController.call);
 router.post('/endCall', regisController.endCall);
 
 router.post('/demo/:id', regisController.getDemoById);
+
+router.post('/get-sort-demo', regisController.getSortDemo);
 
 
 // router.get('/cart', regisController.getCart);

@@ -1,56 +1,90 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/camera.css">
+
+<style>
+    hr {
+        width: 0%;
+    }
+
+    label {
+        font-weight: bold;
+    }
+</style>
 </head>
 
 <body>
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <form class="product-form" action="/admin/edit-product" method="POST">
+        <h2 class="camera__price" >Edit Scene "<%=product.name%>"</h2>
+
+        <form class="product-form card" style="border-radius: 30px; padding: 1%;" action="/admin/edit-product"
+            method="POST">
             <div class="form-control">
-                <label for="demoName">Demo Name</label>
+                <label for="demoName">This Scene belong to Demo</label>
                 <select name="demoName" id="demoName">
                     <% for (let demo of demoList) { %>
-                        <% if (demoId == demo._id){%>
-                        <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
-                        <%} else {%>
-                        <option value="<%=demo._id%>"> <%=demo.name%> </option>
-                        
+                    <% if (demoId == demo._id){%>
+                    <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                    <%} else {%>
+                    <option value="<%=demo._id%>"> <%=demo.name%> </option>
+
                     <% } } %>
                 </select>
             </div>
             <div class="form-control">
-                <label for="name">Name</label>
+                <label for="name">Scene Name</label>
                 <input type="text" name="name" id="name" value="<%= product.name%>">
             </div>
             <div class="form-control">
-                <label for="mainVideoSource">mainVideoSource</label>
+                <label for="mainVideoSource">Main Video Source of SX80</label>
                 <input type="text" name="mainVideoSource" id="mainVideoSource" value="<%= product.mainVideoSource%>">
             </div>
             <div class="form-control">
-                <label for="shareSelection">shareSelection</label>
+                <label for="shareSelection">Share Selection of SX80</label>
                 <input type="text" name="shareSelection" id="shareSelection" value="<%= product.shareSelection%>">
             </div>
             <div class="form-control">
-                <label for="allInputOutput">output & input (input>output)</label>
+                <label for="allInputOutput">Krammer Matrix output & input (input>output)</label>
                 <input type="text" name="allInputOutput" id="allInputOutput" value="<%= product.allInputOutput%>">
             </div>
-            <% for (let cam of product.position) { %>
-            <label for="Name" style="font-weight: bold;"><%= cam.ip%></label>
-            <div class="form-control">
-                <label for="pan">PAN</label>
-                <input type="text" name="pan" id="pan" value="<%= cam.panTilt.pan%>">
-                <label for="tilt">TILT</label>
-                <input type="text" name="tilt" id="tilt" value="<%= cam.panTilt.tilt%>">
-                <label for="zoom">ZOOM</label>
-                <input type="text" name="zoom" id="zoom" value="<%= cam.zoom%>">
-            </div>
-            <input type="hidden" value="<%= cam.ip %>" name="ip">
-            <%}%>
-            <input type="hidden" value="<%= product.id %>" name="productId">
-            <input type="hidden" value="<%= demoId %>" name="oldDemoId">
 
-            <button class="btn" type="submit">Update</button>
+            <h3>List <i class="fas fa-video"></i></h3>
+            <div style="display: flex;">
+                <% for (let cam of product.position) { %>
+                <hr>
+                <div style="padding: 2%">
+                    <label for="Name" style="font-weight: bold;"><%= cam.ip%></label>
+                    <div class="form-control">
+
+                        <details>
+                            <summary>PAN</summary>
+                            Interval 0 to FFFF (HEXADECIMAL).
+                        </details>
+                        <input type="text" name="pan" id="pan" value="<%= cam.panTilt.pan%>">
+
+                        <details>
+                            <summary>TILT</summary>
+                            Interval 0 to FFFF (HEXADECIMAL).
+                        </details>
+                        <input type="text" name="tilt" id="tilt" value="<%= cam.panTilt.tilt%>">
+
+                        <details>
+                            <summary>ZOOM</summary>
+                            Interval 555 to FFF (HEXADECIMAL).
+                        </details>
+                        <input type="text" name="zoom" id="zoom" value="<%= cam.zoom%>">
+                    </div>
+                </div>
+                <input type="hidden" value="<%= cam.ip %>" name="ip">
+                <%}%>
+                <hr>
+            </div>
+            <input type="hidden" value="<%= product.id %>" name="productId">
+                <input type="hidden" value="<%= demoId %>" name="oldDemoId">
+
+                <button class="btn" type="submit">Update</button>
         </form>
     </main>
     <%- include('../includes/end.ejs') %>

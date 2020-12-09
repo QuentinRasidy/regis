@@ -28,4 +28,6 @@ router.post('/delete-demo', adminController.deleteDemo);
 
 router.post('/change-name-demo', adminController.changeNameDemo);
 
+router.post('/change-order-scene-of-demo', adminController.changeOrderOfScene);
+
 module.exports = router;

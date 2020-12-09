@@ -33,6 +33,7 @@
         <hr>
         <div class="grid">
             <%var c = 1;%>
+            <% saves.reverse()%>
             <% for (let product of saves) { %>
 
             <article id="container<%=c%>"
@@ -72,6 +73,14 @@
             <% c++ %>
             <% } %>
         </div>
+        <% if (edit == true) { %>
+            <form style="display: flex;
+            justify-content: center;
+            padding: 2%;" action="/get-sort-demo" method="POST">
+                <input type="hidden" name="demoId" value="<%= demoId %>">
+                <button type="submit" class="btn">Sort Scene</button>
+            </form>
+        <% } %>
         <% } else { %>
         <h1>No Scene Found!</h1>
         <% } %>
