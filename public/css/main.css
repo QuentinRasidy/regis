@@ -9,7 +9,9 @@ body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
 }
-
+.matrix{
+  width: 100%;
+}
 .matrix tr,
 td {
   padding: 0.6rem;

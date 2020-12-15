@@ -119,6 +119,41 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
   });
 };
 
+exports.copyProduct = (req, res, next) => {
+  const sceneId = req.body.sceneId;
+  const demoId = req.body.demoId;
+  Save.findById(sceneId, function (err, save) {
+    if (!save) {
+      console.log("Scene not found in DataBase !")
+      return res.redirect('/');
+    } else {
+      var copy = new Save({
+        name: save.name + "_copy",
+        position: save.position,
+        mainVideoSource: save.mainVideoSource,
+        shareSelection: save.shareSelection,
+        allInputOutput: save.allInputOutput
+      });
+      copy.save(function (err, save) {
+        if (err) return console.error(err);
+      })
+    }
+
+    Demo.findById(demoId, function (err, demo) {
+      if (!demo) {
+        console.log("Demo not found in DataBase !")
+      } else {
+        demo.scene.push(copy._id);
+        demo.save(function (err, save) {
+          if (err) return console.error(err);
+          res.sendStatus(200);
+        });
+      }
+    });
+  });
+};
+
+
 // exports.getProducts = (req, res, next) => {
 //   Product.fetchAll(products => {
 //     res.render('admin/products', {
@@ -142,7 +177,7 @@ exports.postDeleteProduct = (req, res, next) => {
     const demoName = demo.name;
     Save.find().where('_id').in(ids).exec((err, records) => {
       res.render('regis/scene-of-demo', {
-        saves: records,
+        saves: records.reverse(),
         pageTitle: 'Scene',
         path: '/scene-of-demo',
         demoId: demoId,
@@ -162,7 +197,7 @@ exports.addDemo = (req, res, next) => {
   });
   demo.save(function (err, save) {
     if (err) return console.error(err);
-      res.redirect('back');
+    res.redirect('back');
   });
 }
 

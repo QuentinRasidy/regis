@@ -20,6 +20,8 @@ router.get('/edit-product/:productId', adminController.getEditProduct); // ne pa
 
 router.post('/edit-product', adminController.postEditProduct);
 
+router.post('/copy-product', adminController.copyProduct);
+
 router.post('/delete-product', adminController.postDeleteProduct);
 
 router.post('/addDemo', adminController.addDemo);

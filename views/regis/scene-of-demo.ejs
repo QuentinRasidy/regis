@@ -43,10 +43,9 @@
                 flex-direction: row-reverse;
                 margin-right: 8%;
                 margin-top: 3%;">
-                    <form action="/admin/delete-product" method="POST">
+                    <form class="delete-from" action="/admin/delete-product" method="POST">
                         <input type="hidden" value="<%= product._id %>" name="productId">
-                        <input type="hidden" value="<%= demoId
-                         %>" name="demoId">
+                        <input type="hidden" value="<%= demoId %>" name="demoId">
                         <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </div>
@@ -66,7 +65,15 @@
                     <% } %>
                     <% if (edit == true) { %>
                     <!-- <a href="/admin/edit-product/<%= product._id %>" class="btn">Edit</a> -->
-                    <a href="/admin/edit-product/<%= product._id %>?demoId=<%= demoId %>" class="btn">Edit</a>
+                    <a href="/admin/edit-product/<%= product._id %>?demoId=<%= demoId %>" class="btn"><i
+                            class="fas fa-cog"></i></a>
+                    <form class="copyScene">
+                        <input type="hidden" name="sceneId" value="<%= product._id %>">
+                        <input type="hidden" name="demoId" value="<%= demoId %>">
+                        <button type="submit" class="btn"><i class="far fa-clone"></i></button>
+                    </form>
+                    <a href="/admin/edit-product/<%= product._id %>?demoId=<%= demoId %>" class="btn"><i
+                            class="fas fa-file-import"></i></a>
                     <% } %>
                 </div>
             </article>
@@ -74,15 +81,19 @@
             <% } %>
         </div>
         <% if (edit == true) { %>
-            <form style="display: flex;
-            justify-content: center;
+        <div style="display: flex;justify-content: center;">
+            <form style="width:50%;display: flex;
+            justify-content: space-between;
             padding: 2%;" action="/get-sort-demo" method="POST">
                 <input type="hidden" name="demoId" value="<%= demoId %>">
                 <button type="submit" class="btn">Sort Scene</button>
+                <a href="/advanced" class="btn">Add Scene</a>
             </form>
+        </div>
         <% } %>
         <% } else { %>
         <h1>No Scene Found!</h1>
+        <a href="/advanced" class="btn">Add Scene</a>
         <% } %>
     </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -98,13 +109,32 @@
                 }
                 var container_id = $(this).data('container');
                 $("#container" + container_id).css("background-color", "#06ff5f");
-                $("#container" + (parseInt(container_id)+1)).addClass("blink_me")
+                $("#container" + (parseInt(container_id) + 1)).addClass("blink_me")
                 $.ajax({
                     url: '/startScenario',
                     type: 'post',
                     data: data,
                     success: function () {}
                 });
+            });
+
+            $('.copyScene').on('submit', function (e) {
+                e.preventDefault();
+                var data = $(this).serialize();
+                $.ajax({
+                    url: '/admin/copy-product',
+                    type: 'post',
+                    data: data,
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            $('.delete-from').submit(function (event) {
+                if (!confirm("Are You sure you Want to Delete this Scene ?")) {
+                    event.preventDefault();
+                }
             });
         });
     </script>
