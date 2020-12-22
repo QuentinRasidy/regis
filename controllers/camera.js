@@ -295,12 +295,14 @@ exports.getDemoById = async (req, res, next) => {
   const demoName = demo.name;
   Save.find().where('_id').in(ids).exec(async (err, records) => {
     var list = await sortListWithIds(records, ids);
+    var allDemo = await getAllDemo();
     res.render('regis/scene-of-demo', {
       saves: list,
       pageTitle: 'Scene',
       path: '/scene-of-demo',
       demoId: demoId,
       demoName: demoName,
+      demoList: allDemo,
       edit: edit
     });
   });
@@ -456,6 +458,7 @@ exports.saveConfig = async (req, res, next) => {
       mainVideoSource: mainVideoSource,
       shareSelection: shareSelection,
       allInputOutput: allOutInput,
+      subName: configName+demoId //to avoid duplicate key of scene name into a demo
     });
     Demo.findById(demoId, function (err, demo) {
       if (!demo) {// si lié a aucune demo alors on créer une Demo par défaut

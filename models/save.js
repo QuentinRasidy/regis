@@ -6,7 +6,7 @@ const saveSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     position: {
       type: Array,
@@ -23,6 +23,11 @@ const saveSchema = mongoose.Schema(
     allInputOutput: {
       type: String,
       required: true,
+    },
+    subName: {
+      type: String,
+      required: true,
+      unique: true,
     },
   },
 );

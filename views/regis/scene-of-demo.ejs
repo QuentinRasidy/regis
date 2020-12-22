@@ -72,11 +72,29 @@
                         <input type="hidden" name="demoId" value="<%= demoId %>">
                         <button type="submit" class="btn"><i class="far fa-clone"></i></button>
                     </form>
-                    <a href="/admin/edit-product/<%= product._id %>?demoId=<%= demoId %>" class="btn"><i
-                            class="fas fa-file-import"></i></a>
-                    <% } %>
+                    <a href="#ex<%=c%>" rel="modal:open" class="btn"><i class="fas fa-file-import"></i></a>
+                        <% } %>
                 </div>
             </article>
+
+            <!-- Modal HTML embedded directly into document -->
+            <div id="ex<%=c%>" class="modal">
+                <form class="moveScene">
+                    <p>Move to : </p>
+                    <select name="demoName" id="demoName">
+                            <% for (let demo of demoList) { %>
+                            <% if (demoId == demo._id){%>
+                            <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                            <%} else {%>
+                            <option value="<%=demo._id%>"> <%=demo.name%> </option>
+                            <% } } %>
+                    </select>
+                    <input type="hidden" name="demoId" value="<%= demoId %>">
+                    <input type="hidden" name="sceneId" value="<%= product._id %>">
+                    <button type="submit" class="btn">Move</button>
+                </form>
+            </div>
+
             <% c++ %>
             <% } %>
         </div>
@@ -95,8 +113,17 @@
         <h1>No Scene Found!</h1>
         <a href="/advanced" class="btn">Add Scene</a>
         <% } %>
+
     </main>
+
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- jQuery Modal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
     <script>
         $(document).ready(function () {
             $('.launchScene').on('submit', function (e) {
@@ -126,6 +153,20 @@
                     type: 'post',
                     data: data,
                     success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            $('.moveScene').on('submit', function (e) {
+                e.preventDefault();
+                var data = $(this).serialize();
+                $.ajax({
+                    url: '/admin/move-to-demo',
+                    type: 'post',
+                    data: data,
+                    success: function () {
+                        $('.modal').modal('toggle');
                         location.reload();
                     }
                 });

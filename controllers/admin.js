@@ -132,7 +132,8 @@ exports.copyProduct = (req, res, next) => {
         position: save.position,
         mainVideoSource: save.mainVideoSource,
         shareSelection: save.shareSelection,
-        allInputOutput: save.allInputOutput
+        allInputOutput: save.allInputOutput,
+        subName: save.name + "_copy"+demoId
       });
       copy.save(function (err, save) {
         if (err) return console.error(err);
@@ -164,9 +165,10 @@ exports.copyProduct = (req, res, next) => {
 //   });
 // };
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = async (req, res, next) => {
   const saveId = req.body.productId;
   const demoId = req.body.demoId;
+  const allDemo = await getAllDemo();
 
   Save.findByIdAndDelete(saveId, async function () {
     const demo = await Demo.findById(demoId);
@@ -182,6 +184,7 @@ exports.postDeleteProduct = (req, res, next) => {
         path: '/scene-of-demo',
         demoId: demoId,
         demoName: demoName,
+        demoList: allDemo,
         edit: true
       });
     });
@@ -225,6 +228,55 @@ exports.changeNameDemo = (req, res, next) => {
     if (err) return console.error(err);
     res.redirect('/');
   });
+}
+
+exports.moveToDemo = async (req, res, next) => {
+  const id = req.body.sceneId;
+  const demoId = req.body.demoName;
+  const oldDemoId = req.body.demoId;
+
+  console.log(id, demoId, oldDemoId);
+
+
+  //si on a changer le scene de Demo alors on la retire de la Demo actuelle et on la met dans la nouvelle
+  if (demoId != oldDemoId) {
+
+    const oldDemo = await Demo.findById(oldDemoId);
+    if (!oldDemo) {
+      console.log("Error demo: " + oldDemoId + " doesn't exist in data base");
+      return res.redirect('/');
+    }
+    console.log(id);
+    oldDemo.scene = oldDemo.scene.filter(e => e != id); // on retire la scene courante de l'ancienne demo;
+    oldDemo.save(function (err, save) {
+      if (err) return console.error(err);
+    });
+
+    const save = await Save.findById(id);
+
+    Save.updateOne({
+      _id: id
+    }, {
+      subName: save.name + demoId
+    }, function (err) {
+      if (err) return console.error(err);
+    });
+
+    const demo = await Demo.findById(demoId);
+    if (!demo) {
+      console.log("Error demo: " + demoId + "doesn't exist in data base");
+      return res.redirect('/');
+    }
+    demo.scene.push(id);
+    demo.save(function (err, save) {
+      if (err) return console.error(err);
+      console.log(save);
+      res.sendStatus(200);
+    });
+  }
+  else{
+    res.sendStatus(200);
+  }
 }
 
 exports.changeOrderOfScene = (req, res, next) => {

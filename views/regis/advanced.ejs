@@ -61,11 +61,11 @@
                     data-num="<%=c%>">
                     <label>Advanced <i class="fas fa-sort-down"></i></label></div>
                 <div id="advanced-container<%=c%>" style="width: 100%;
-                height: 165px;
+                /* height: 165px; */
                 border: 5px solid #4d4d4d;
                 text-align: center;
                 display:none;">
-                    <form action="">
+                    <!-- <form action="">
                         <label for="pan">PAN:</label>
                         <input type="number" id="pan<%=c%>" name="pan" min="0" max="65535">
                         <input class="little-button" type="submit" value="Set">
@@ -74,7 +74,7 @@
                         <label for="tilt">TILT:</label>
                         <input type="number" id="tilt<%=c%>" name="tilt" min="0" max="65535">
                         <input class="little-button" type="submit" value="Set">
-                    </form>
+                    </form> -->
 
                     <hr>
                     <form id="preset_submit<%=c%>" action="" method="get" class="card__actions">
@@ -170,7 +170,7 @@
                     <li>
                         <form id="callWebexNumber" action="/call" method="POST">
                             <label style="font-weight: bold;">Call Webex Number:</label>
-                            <input id="webexNumber" name="webexNumber" type="text" value="">
+                            <input id="webexNumber" name="webexNumber" type="text" value="" required>
                             <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
                                 style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
                             <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
@@ -537,7 +537,7 @@
             });
 
             $('#callWebexNumber button').click(function (e) {
-                if ($(this).attr("value") == "startCallWebex") {
+                if ($(this).attr("value") == "startCallWebex" && $("#webexNumber").val().length !== 0) {
                     $("#callWebexNumber").attr('action', '/call');
                     $(this).hide();
                     $('#endCallWebex').show();
