@@ -175,11 +175,20 @@ exports.postDeleteProduct = async (req, res, next) => {
     if (!demo) {
       return res.redirect('/');
     }
+    Demo.updateOne({
+      _id: demoId
+    }, {
+      scene: demo.scene.pull(saveId)
+    }, function (err) {
+      if (err) return console.error(err);
+    });
+
     const ids = demo.scene;
     const demoName = demo.name;
-    Save.find().where('_id').in(ids).exec((err, records) => {
+    Save.find().where('_id').in(ids).exec(async (err, records) => {
+      var list = await sortListWithIds(records, ids);
       res.render('regis/scene-of-demo', {
-        saves: records.reverse(),
+        saves: list,
         pageTitle: 'Scene',
         path: '/scene-of-demo',
         demoId: demoId,
@@ -188,7 +197,6 @@ exports.postDeleteProduct = async (req, res, next) => {
         edit: true
       });
     });
-
   });
 }
 
@@ -292,6 +300,13 @@ exports.changeOrderOfScene = (req, res, next) => {
   });
 }
 
+exports.getRegisSetting = (req, res, next) => {
+  res.render('regis/setting', {
+    pageTitle: 'Setting',
+    path: '/setting'
+  });
+}
+
 
 function getAllDemo() {
   return Demo.find({}, (err, docs) => {
@@ -302,4 +317,28 @@ function getAllDemo() {
     }
     throw err;
   });
+}
+
+
+/* utils function */
+
+/**
+ * 
+ * @param {*} items : Scene Object
+ * @param {*} idsList : Scene id List
+ */
+function sortListWithIds(items, idsList){
+  return new Promise(resolve => {
+    var list = [];
+    for (let index = 0; index < idsList.length; index++) {
+      for (let i = 0; i < items.length; i++) {
+        if(String(items[i]._id) == idsList[index]){
+          list.push(items[i]);
+          break;
+        }
+      }
+    }
+      resolve(list.reverse());
+  });
+  
 }

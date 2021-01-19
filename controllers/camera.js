@@ -407,32 +407,7 @@ exports.setShareSource = (req, res, next) => {
 }
 
 exports.stopSharing = (req, res, next) => {
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
-  var xml =
-    "<Command>" +
-    "<Presentation>" +
-    "<Stop>" +
-    "</Stop>" +
-    "</Presentation>" +
-    "</Command>";
-
-  var options = {
-    method: "POST",
-    url: "https://" + ip + "/putxml",
-    headers: {
-      "Content-Type": "text/xml",
-      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
-    },
-    body: xml
-  };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
-
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
-
-    res.send("ok");
-  });
+  stopSharing();
 }
 
 exports.setInOutKrammer = (req, res, next) => {
@@ -458,10 +433,10 @@ exports.saveConfig = async (req, res, next) => {
       mainVideoSource: mainVideoSource,
       shareSelection: shareSelection,
       allInputOutput: allOutInput,
-      subName: configName+demoId //to avoid duplicate key of scene name into a demo
+      subName: configName + demoId //to avoid duplicate key of scene name into a demo
     });
     Demo.findById(demoId, function (err, demo) {
-      if (!demo) {// si lié a aucune demo alors on créer une Demo par défaut
+      if (!demo) { // si lié a aucune demo alors on créer une Demo par défaut
         const date = new Date();
         const currentDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
         var defaultDemo = new Demo({
@@ -469,7 +444,7 @@ exports.saveConfig = async (req, res, next) => {
           scene: [save._id]
         });
         defaultDemo.save(function (err, save) {
-          if (err){
+          if (err) {
             return console.error(err);
           }
         });
@@ -482,7 +457,7 @@ exports.saveConfig = async (req, res, next) => {
     });
 
     save.save(function (err, save) {
-      if (err){
+      if (err) {
         res.status(401).end('Duplicate Scene Name !');
         return console.error(err);
       }
@@ -508,8 +483,10 @@ exports.startScenario = (req, res, next) => {
     setAllInOut(allInputOutput);
 
 
-    if (shareSelection != null) {
+    if (shareSelection != "") {
       setShareSource(shareSelection);
+    } else {
+      stopSharing();
     }
     await sleep(1000);
     setMainVideoSource(mainVideoSource);
@@ -879,6 +856,35 @@ function callWebexNumber(number) {
   });
 }
 
+function stopSharing() {
+  var ip = "10.1.110.140"; // A surveiller car peut changer 
+  var xml =
+    "<Command>" +
+    "<Presentation>" +
+    "<Stop>" +
+    "</Stop>" +
+    "</Presentation>" +
+    "</Command>";
+
+  var options = {
+    method: "POST",
+    url: "https://" + ip + "/putxml",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+    },
+    body: xml
+  };
+  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    console.log(error);
+
+    //res.send("ok");
+  });
+}
+
 function disconnectCall() {
   var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
@@ -910,18 +916,18 @@ function disconnectCall() {
  * @param {*} items : Scene Object
  * @param {*} idsList : Scene id List
  */
-function sortListWithIds(items, idsList){
+function sortListWithIds(items, idsList) {
   return new Promise(resolve => {
     var list = [];
     for (let index = 0; index < idsList.length; index++) {
       for (let i = 0; i < items.length; i++) {
-        if(String(items[i]._id) == idsList[index]){
+        if (String(items[i]._id) == idsList[index]) {
           list.push(items[i]);
           break;
         }
       }
     }
-      resolve(list.reverse());
+    resolve(list.reverse());
   });
-  
+
 }

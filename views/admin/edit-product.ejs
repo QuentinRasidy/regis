@@ -39,11 +39,34 @@
             </div>
             <div class="form-control">
                 <label for="mainVideoSource">Main Video Source of SX80</label>
-                <input type="text" name="mainVideoSource" id="mainVideoSource" value="<%= product.mainVideoSource%>">
+                <select name="mainVideoSource" id="mainVideoSource">
+                    <% for (let source of [
+                     {num:1, name: "Spycam Room55" }, 
+                     {num:2, name:"Spycam Sarah"}, 
+                     {num:3, name:"Spycam Room70D"}, 
+                     {num:4, name:"GrilleHDMI"}]) { %>
+                    <% if (source.num == product.mainVideoSource){%>
+                    <option value="<%=product.mainVideoSource%>" selected><%=source.name%></option>
+                    <%} else {%>
+                    <option value="<%=source.num%>"> <%=source.name%> </option>
+                    <% } } %>
+                </select>
             </div>
             <div class="form-control">
                 <label for="shareSelection">Share Selection of SX80</label>
-                <input type="text" name="shareSelection" id="shareSelection" value="<%= product.shareSelection%>">
+                <select name="shareSelection" id="shareSelection">
+                    <% for (let source of [{num:"", name:"Don't Share"},
+                     {num:1, name: "Spycam Room55" }, 
+                     {num:2, name:"Spycam Sarah"}, 
+                     {num:3, name:"Spycam Room70D"}, 
+                     {num:4, name:"GrilleHDMI"}]) { %>
+                    <% if (source.num == product.shareSelection){%>
+                    <option value="<%=product.shareSelection%>" selected><%=source.name%></option>
+                    <%} else {%>
+                    <option value="<%=source.num%>"> <%=source.name%> </option>
+                    <% } } %>
+                </select>
+                <!-- <input type="text" name="shareSelection" id="shareSelection" value="<%= product.shareSelection%>"> -->
             </div>
             <div class="form-control">
                 <label for="allInputOutput">Krammer Matrix output & input (input>output)</label>

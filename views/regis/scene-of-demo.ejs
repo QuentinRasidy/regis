@@ -36,21 +36,33 @@
             <% saves.reverse()%>
             <% for (let product of saves) { %>
 
+
             <article id="container<%=c%>"
                 class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
                 <% if (edit == true) { %>
-                <div style="display: flex;
-                flex-direction: row-reverse;
-                margin-right: 8%;
-                margin-top: 3%;">
-                    <form class="delete-from" action="/admin/delete-product" method="POST">
-                        <input type="hidden" value="<%= product._id %>" name="productId">
-                        <input type="hidden" value="<%= demoId %>" name="demoId">
-                        <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
-                    </form>
+                <div style="display: flex;justify-content: space-between;">
+                        <div style="display: flex;
+                        flex-direction: row-reverse;
+                        margin-left: 8%;
+                        margin-top: 3%;
+                        font-weight: bold;"><%= c %></div>
+                        <div style="display: flex;
+                        flex-direction: row-reverse;
+                        margin-right: 8%;
+                        margin-top: 3%;">
+                            <form class="delete-from" action="/admin/delete-product" method="POST">
+                                <input type="hidden" value="<%= product._id %>" name="productId">
+                                <input type="hidden" value="<%= demoId %>" name="demoId">
+                                <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
                 </div>
+                
                 <% } %>
                 <header class="card__header">
+                    <% if (edit == false) { %>
+                    <h1 style="background-color: white;width: 15%;border-radius: 39px; text-align: center"><%= c %></h1>
+                    <% } %>
                     <h1 class="camera__price">
                         <%= product.name %>
                     </h1>
@@ -73,7 +85,7 @@
                         <button type="submit" class="btn"><i class="far fa-clone"></i></button>
                     </form>
                     <a href="#ex<%=c%>" rel="modal:open" class="btn"><i class="fas fa-file-import"></i></a>
-                        <% } %>
+                    <% } %>
                 </div>
             </article>
 
@@ -82,12 +94,12 @@
                 <form class="moveScene">
                     <p>Move to : </p>
                     <select name="demoName" id="demoName">
-                            <% for (let demo of demoList) { %>
-                            <% if (demoId == demo._id){%>
-                            <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
-                            <%} else {%>
-                            <option value="<%=demo._id%>"> <%=demo.name%> </option>
-                            <% } } %>
+                        <% for (let demo of demoList) { %>
+                        <% if (demoId == demo._id){%>
+                        <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                        <%} else {%>
+                        <option value="<%=demo._id%>"> <%=demo.name%> </option>
+                        <% } } %>
                     </select>
                     <input type="hidden" name="demoId" value="<%= demoId %>">
                     <input type="hidden" name="sceneId" value="<%= product._id %>">

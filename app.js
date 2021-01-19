@@ -1,6 +1,8 @@
 const path = require('path');
 var favicon = require('serve-favicon');
 var cors = require('cors')
+const https = require('https')
+const fs = require('fs')
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -26,3 +28,9 @@ app.use(regisRoutes);
 app.use(errorController.get404);
 
 app.listen(3000);
+// https.createServer({
+//     key: fs.readFileSync('server.key'),
+//     cert: fs.readFileSync('server.cert')
+//   }, app).listen(3000, () => {
+//     console.log('Listening...')
+//   })

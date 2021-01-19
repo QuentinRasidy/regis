@@ -34,4 +34,6 @@ router.post('/move-to-demo', adminController.moveToDemo);
 
 router.post('/change-order-scene-of-demo', adminController.changeOrderOfScene);
 
+router.get('/setting', adminController.getRegisSetting);
+
 module.exports = router;
