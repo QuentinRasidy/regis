@@ -11,6 +11,8 @@ mongoose.Promise = global.Promise;
 const Save = require('../models/save');
 const Demo = require('../models/demo');
 
+const camFunctions = require('../util/camera-move');
+
 // exports.getAddProduct = (req, res, next) => {
 //   res.render('admin/edit-product', {
 //     pageTitle: 'Add Product',
@@ -39,18 +41,34 @@ exports.getEditProduct = (req, res, next) => {
     if (!save) {
       return res.redirect('/');
     }
-    getAllDemo().then(allDemo => {
-      res.render('admin/edit-product', {
-        pageTitle: 'Edit Save',
-        path: '/admin/edit-product',
-        demoList: allDemo,
-        //editing: editMode,// true or false
-        product: save,
-        demoId: demoId
-      });
-    }).catch(function () {
-      console.log("Promise Rejected: see getAllDemo() function in file admin.js");
+
+
+    save.position.forEach(cam => {
+      camFunctions.setZoom(cam.ip, cam.zoom);
+      camFunctions.setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt);
     });
+
+    
+
+    setTimeout( () => {
+      Product.fetchAll(products => {
+        getAllDemo().then(allDemo => {
+          res.render('admin/edit-product', {
+            pageTitle: 'Edit Save',
+            path: '/admin/edit-product',
+            demoList: allDemo,
+            //editing: editMode,// true or false
+            product: save,
+            demoId: demoId,
+            cameras: products
+          });
+        }).catch(function () {
+          console.log("Promise Rejected: see getAllDemo() function in file admin.js");
+        });
+      });
+    }, 800); // on attend 0.8 sec pour laisser le temps au cameras de ce configurer
+
+
   });
 };
 
@@ -60,10 +78,15 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
   const mainVideoSource = req.body.mainVideoSource;
   const shareSelection = req.body.shareSelection;
   const allInputOutput = req.body.allInputOutput;
-  const ip = req.body.ip;
-  const pan = req.body.pan;
-  const tilt = req.body.tilt;
-  const zoom = req.body.zoom;
+
+  //OLD//
+  //const ip = req.body.ip;
+  // const pan = req.body.pan;
+  // const tilt = req.body.tilt;
+  // const zoom = req.body.zoom;
+  //OLD//
+
+
   const demoId = req.body.demoName;
   const oldDemoId = req.body.oldDemoId;
 
@@ -93,29 +116,47 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
     });
   }
 
-  var postion = [];
-  for (let index = 0; index < ip.length; index++) {
-    postion.push({
-      ip: ip[index],
-      zoom: zoom[index],
-      panTilt: {
-        pan: pan[index],
-        tilt: tilt[index]
-      }
-    })
-  }
+  //OLD//
+  //var postion = [];
+  // for (let index = 0; index < ip.length; index++) {
+  //   postion.push({
+  //     ip: ip[index],
+  //     zoom: zoom[index],
+  //     panTilt: {
+  //       pan: pan[index],
+  //       tilt: tilt[index]
+  //     }
+  //   })
+  // }
+  //OLD//
+
   var updatedSave = {
     name: name,
-    position: postion,
+    position: await camFunctions.getConfigOfAllCam(),
     mainVideoSource: mainVideoSource,
     shareSelection: shareSelection,
     allInputOutput: allInputOutput
   };
+
   Save.findByIdAndUpdate({
     _id: id
-  }, updatedSave, () => {
-    res.redirect('/');
-    //res.sendStatus(200);
+  }, updatedSave, async () => {
+    const demo = await Demo.findById(oldDemoId);
+    const ids = demo.scene;
+    const demoName = demo.name;
+    Save.find().where('_id').in(ids).exec(async (err, records) => {
+      var list = await sortListWithIds(records, ids);
+      var allDemo = await getAllDemo();
+      res.render('regis/scene-of-demo', {
+        saves: list,
+        pageTitle: 'Scene',
+        path: '/scene-of-demo',
+        demoId: demoId,
+        demoName: demoName,
+        demoList: allDemo,
+        edit: true
+      });
+    });
   });
 };
 
@@ -133,7 +174,7 @@ exports.copyProduct = (req, res, next) => {
         mainVideoSource: save.mainVideoSource,
         shareSelection: save.shareSelection,
         allInputOutput: save.allInputOutput,
-        subName: save.name + "_copy"+demoId
+        subName: save.name + "_copy" + demoId
       });
       copy.save(function (err, save) {
         if (err) return console.error(err);
@@ -281,8 +322,7 @@ exports.moveToDemo = async (req, res, next) => {
       console.log(save);
       res.sendStatus(200);
     });
-  }
-  else{
+  } else {
     res.sendStatus(200);
   }
 }
@@ -327,18 +367,18 @@ function getAllDemo() {
  * @param {*} items : Scene Object
  * @param {*} idsList : Scene id List
  */
-function sortListWithIds(items, idsList){
+function sortListWithIds(items, idsList) {
   return new Promise(resolve => {
     var list = [];
     for (let index = 0; index < idsList.length; index++) {
       for (let i = 0; i < items.length; i++) {
-        if(String(items[i]._id) == idsList[index]){
+        if (String(items[i]._id) == idsList[index]) {
           list.push(items[i]);
           break;
         }
       }
     }
-      resolve(list.reverse());
+    resolve(list.reverse());
   });
-  
+
 }

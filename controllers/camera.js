@@ -18,66 +18,51 @@ mongoose.Promise = global.Promise;
 const Save = require('../models/save');
 const Demo = require('../models/demo');
 
-exports.zoom = async (req, res, next) => {
+exports.zoom = (req, res, next) => {
+  console.log("startStop");
   const ip = req.params.ip;
-  console.log(ip);
-
-  var value = await getZoom(ip);
-  console.log('HERE =>' + value);
-  value = parseInt("0x" + value, 16)
-
-  value += 50 * 3;
-
-  if (value < 4095) {
-    value = (value.toString(16)).toUpperCase();
-    console.log("HEX==> " + value);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ' + value + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log('reponse zoom: ' + response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
-
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z80&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.dezoom = async (req, res, next) => {
   const ip = req.params.ip;
-  var value = await getZoom(ip);
-  console.log('HERE =>' + value);
-  value = parseInt("0x" + value, 16)
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z20&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
+}
 
-  value -= 50 * 3;
-
-  if (value >= 1365) {
-    value = (value.toString(16)).toUpperCase();
-    console.log("HEX==> " + value);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ' + value + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
-
+exports.stopZoom = (req, res, next) => {
+  console.log("zoomStop");
+  const ip = req.params.ip;
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z50&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.zoomExtremum = async (req, res, next) => {
@@ -108,122 +93,77 @@ exports.zoomExtremum = async (req, res, next) => {
 
 exports.left = async (req, res, next) => {
   const ip = req.params.ip;
-  var values = await getPanTiltValue(ip);
-  console.log('HERE PAN=>' + values);
-  var panValue = parseInt("0x" + values.pan, 16)
-
-  panValue -= 200 * 3;
-
-  if (panValue >= 0) {
-    panValue = (panValue.toString(16)).toUpperCase();
-    console.log("HEX==> " + panValue);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + panValue + values.tilt + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
-
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS2050&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.right = async (req, res, next) => {
   const ip = req.params.ip;
-  var values = await getPanTiltValue(ip);
-  console.log('HERE PAN=>' + values);
-  var panValue = parseInt("0x" + values.pan, 16)
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS8050&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
+}
 
-  panValue += 200 * 3;
-
-  if (panValue < 65535) {
-    panValue = (panValue.toString(16)).toUpperCase();
-    console.log("HEX==> " + panValue);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + panValue + values.tilt + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
-
+exports.stopPanTilt = async (req, res, next) => {
+  const ip = req.params.ip;
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5050&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.up = async (req, res, next) => {
   const ip = req.params.ip;
-  var values = await getPanTiltValue(ip);
-  console.log('HERE PAN=>' + values);
-  var tiltValue = parseInt("0x" + values.tilt, 16);
-
-  tiltValue += 200 * 3;
-
-  if (tiltValue < 65535) {
-    tiltValue = (tiltValue.toString(16)).toUpperCase();
-    console.log("HEX==> " + tiltValue);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + values.pan + tiltValue + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5080&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.down = async (req, res, next) => {
   const ip = req.params.ip;
-  var values = await getPanTiltValue(ip);
-  console.log('HERE PAN=>' + values);
-  var tiltValue = parseInt("0x" + values.tilt, 16);
-
-  tiltValue -= 200 * 3;
-
-  if (tiltValue >= 0) {
-    tiltValue = (tiltValue.toString(16)).toUpperCase();
-    console.log("HEX==> " + tiltValue);
-    var options = {
-      'method': 'GET',
-      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + values.pan + tiltValue + '&res=1',
-      'headers': {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    };
-    request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      res.send("ok");
-    });
-  } else {
-    res.send("Limit");
-  }
+  var options = {
+    'method': 'GET',
+    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5020&res=1',
+    'headers': {
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    res.send("ok");
+  });
 }
 
 exports.center = (req, res, next) => {
@@ -250,6 +190,7 @@ exports.test = (req, res, next) => {
 }
 
 exports.getAdvanced = (req, res, next) => {
+  const demoName = (req.query.demoName != undefined) ? req.query.demoName : "";
   Product.fetchAll(products => {
     getKrammerConfig().then(async config => {
       res.render('regis/advanced', {
@@ -258,6 +199,7 @@ exports.getAdvanced = (req, res, next) => {
         krammerConfig: config,
         sx80Config: await getMainVideoSourceAndshareSource(),
         demoList: await getAllDemo(),
+        demoName: demoName,
         path: '/'
       });
     })
@@ -342,37 +284,11 @@ exports.savePreset = (req, res, next) => {
   savePreset(ip, presetNumber, res);
 };
 
-exports.setMainVideoSource = (req, res, next) => {
+exports.setMainVideoSource = async (req, res, next) => {
   var source = req.body.mainVideoSource;
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
-  var xml =
-    "<Command>" +
-    "<Video>" +
-    "<Input>" +
-    "<SetMainVideoSource>" +
-    "<ConnectorId>" + source + "</ConnectorId>" +
-    "</SetMainVideoSource>" +
-    "</Input>" +
-    "</Video>" +
-    "</Command>";
-
-  var options = {
-    method: "POST",
-    url: "https://" + ip + "/putxml",
-    headers: {
-      "Content-Type": "text/xml",
-      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
-    },
-    body: xml
-  };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
-
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
-
-    res.send("ok");
-  });
+  disableAllTally();
+  await sleep(500);
+  setMainVideoSource(source, res);
 }
 
 exports.setShareSource = (req, res, next) => {
@@ -488,8 +404,11 @@ exports.startScenario = (req, res, next) => {
     } else {
       stopSharing();
     }
+
+    disableAllTally();
     await sleep(1000);
     setMainVideoSource(mainVideoSource);
+
     //Si GRILLE HDMI ALORS ON NE SET PAS LES CAMERAS
     position.forEach(cam => {
       setZoom(cam.ip, cam.zoom);
@@ -498,7 +417,12 @@ exports.startScenario = (req, res, next) => {
     //console.log(save);
     res.sendStatus(200);
   });
+}
 
+exports.endDemo = (req, res, next) => {
+  stopSharing();
+  disableAllTally();
+  res.redirect('/');
 }
 
 exports.call = (req, res, next) => {
@@ -735,7 +659,29 @@ function getAllDemo() {
   });
 }
 
-function setMainVideoSource(source) {
+function setMainVideoSource(source, res = undefined) {
+  /* Attention les IP peuvent changer */
+  Product.fetchAll(camera => {
+    switch (source) {
+      case "1":
+        console.log("1")
+        setTally(1, camera[0].ip);
+        break;
+      case "2":
+          console.log("2")
+        setTally(1, camera[1].ip);
+        break;
+
+      case "3":
+          console.log("3")
+        setTally(1, camera[2].ip);
+        break;
+
+      default:
+        disableAllTally();
+        break;
+    }
+  });
   var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
     "<Command>" +
@@ -762,6 +708,10 @@ function setMainVideoSource(source) {
   request(options, function (error, response, body) {
     if (error) throw new Error(error);
     console.log(error);
+
+    if(res != undefined){
+      res.send('ok');
+    }
   });
 }
 
@@ -910,6 +860,42 @@ function disconnectCall() {
     //console.log(error);
   });
 }
+
+
+/**
+ * Enable/Disable red light of the panasonic camera
+ * @param {*} mode: 1  -> enable
+ * @param {*} mode: 0 -> disable
+ * @param {*} ip: ip adress of the camera
+ */
+function setTally(mode, ip) {
+  var options = {
+    'method': 'GET',
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23DA' + mode + '&res=1',
+    'headers': {
+      'Cookie': 'Session=0'
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log("set TALLY :")
+    console.log("BODY: " + response.body);
+  });
+}
+
+function disableAllTally() {
+  Product.fetchAll(products => {
+    products.forEach(element => {
+      setTally(0, element.ip);
+    });
+  });
+}
+
+
+
+
+
+
 
 /**
  * 

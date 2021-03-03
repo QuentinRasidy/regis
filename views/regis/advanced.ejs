@@ -121,7 +121,8 @@
         <div class="card" style="padding: 5px; margin: 1rem; text-align: center; border-radius: 30px">
             <h2 style="display: flex;
             justify-content: center;
-            align-items: center;">Kandinsky-Spycam-SX80 <button class="little-button" style="margin-left: 1%;" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
+            align-items: center;">Kandinsky-Spycam-SX80 <button class="little-button" style="margin-left: 1%;"
+                    onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
             <hr>
             <div style="display: flex; justify-content:center">
                 <ul id="selection_list">
@@ -186,7 +187,8 @@
             <table id="grid" class="matrix">
                 <h2 style="display: flex;
                 justify-content: center;
-                align-items: center;">Krammer matrix <button class="little-button" style="margin-left: 1%;" onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
+                align-items: center;">Krammer matrix <button class="little-button" style="margin-left: 1%;"
+                        onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
                 <hr>
                 <tr>
                     <td></td>
@@ -236,10 +238,14 @@
                 <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
                 <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
                     <% for (let demo of demoList) { %>
-                <option value="<%=demo._id%>"><%=demo.name%></option>
+                <% if (demoName == demo.name){%>
+                <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                <%} else {%>
+                <option value="<%=demo._id%>"> <%=demo.name%> </option>
+                <% }%>
                 <% } %>
                 </select>
-            </div>
+        </div>
         <label for="saveName">Scene Name: </label>
         <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
         <button id="btnSaveAll" class="little-button">Save All <i class="fas fa-save"></i></button>
@@ -335,6 +341,12 @@
                 }
             }
 
+
+            /* Check Device Type (touch or mouse) */
+            var isTouchSupported = "ontouchend" in document; //boolean
+            var myDown = isTouchSupported ? "touchstart" : "mousedown";
+            var myUp = isTouchSupported ? "touchend" : "mouseup";
+
             $('td').click(function () {
                 col = $(this).parent().children().index($(this));
                 row = $(this).parent().parent().children().index($(this).parent());
@@ -384,23 +396,76 @@
                 });
             });
 
-            $("button[id^='zoom']").click(function () { // s'active pour tous boutons ayant l'id zoom
-                console.log('zoom');
+            // $("button[id^='zoom']").click(function () { // s'active pour tous boutons ayant l'id zoom
+            //     console.log('zoom');
+            //     var ip = $(this).data('ip');
+            //     $.ajax({
+            //         url: '/zoom/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            // $("button[id^='dezoom']").click(function () {
+            //     console.log('dezoom');
+            //     var ip = $(this).data('ip');
+            //     $.ajax({
+            //         url: '/dezoom/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            $("button[id^='zoom']").bind(myDown, function () {
                 var ip = $(this).data('ip');
+                console.log("zoom in");
                 $.ajax({
                     url: '/zoom/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
-            $("button[id^='dezoom']").click(function () {
-                console.log('dezoom');
+            $("button[id^='zoom']").bind(myUp, function () {
                 var ip = $(this).data('ip');
+                console.log("stop zoom in");
+                $.ajax({
+                    url: '/stopZoom/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+
+
+            $("button[id^='dezoom']").bind(myDown, function () {
+                var ip = $(this).data('ip');
+                console.log("zoom out");
                 $.ajax({
                     url: '/dezoom/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+
+            $("button[id^='dezoom']").bind(myUp, function () {
+                var ip = $(this).data('ip');
+                console.log("stop zoom out");
+                $.ajax({
+                    url: '/stopZoom/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
@@ -430,42 +495,147 @@
                 });
             });
 
-            $("button[id^='right']").click(function () {
-                console.log("right");
+            // $("button[id^='right']").click(function () {
+            //     console.log("right");
+            //     var ip = $(this).data('ip');
+            //     $.ajax({
+            //         url: '/right/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            $("button[id^='right']").bind(myDown, function () {
                 var ip = $(this).data('ip');
+                console.log("right");
                 $.ajax({
                     url: '/right/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
-            $("button[id^='left']").click(function () {
+            $("button[id^='right']").bind(myUp, function () {
+                var ip = $(this).data('ip');
+                console.log("stop right");
+                $.ajax({
+                    url: '/stopPanTilt/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+
+            // $("button[id^='left']").click(function () {
+            //     var ip = $(this).data('ip');
+            //     console.log("left");
+            //     $.ajax({
+            //         url: '/left/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            $("button[id^='left']").bind(myDown, function () {
                 var ip = $(this).data('ip');
                 console.log("left");
                 $.ajax({
                     url: '/left/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
-            $("button[id^='up']").click(function () {
+            $("button[id^='left']").bind(myUp, function () {
                 var ip = $(this).data('ip');
-                console.log("up", ip);
+                console.log("stop left");
+                $.ajax({
+                    url: '/stopPanTilt/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+
+            // $("button[id^='up']").click(function () {
+            //     var ip = $(this).data('ip');
+            //     console.log("up", ip);
+            //     $.ajax({
+            //         url: '/up/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            $("button[id^='up']").bind(myDown, function () {
+                var ip = $(this).data('ip');
+                console.log("left");
                 $.ajax({
                     url: '/up/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
-            $("button[id^='down']").click(function () {
+
+            $("button[id^='up']").bind(myUp, function () {
                 var ip = $(this).data('ip');
-                console.log("down", ip);
+                console.log("stop left");
+                $.ajax({
+                    url: '/stopPanTilt/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+            
+            // $("button[id^='down']").click(function () {
+            //     var ip = $(this).data('ip');
+            //     console.log("down", ip);
+            //     $.ajax({
+            //         url: '/down/' + ip,
+            //         type: 'get',
+            //         success: 'success'
+            //     });
+            // });
+
+            $("button[id^='down']").bind(myDown, function () {
+                var ip = $(this).data('ip');
+                console.log("left");
                 $.ajax({
                     url: '/down/' + ip,
                     type: 'get',
-                    success: 'success'
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            });
+
+            $("button[id^='down']").bind(myUp, function () {
+                var ip = $(this).data('ip');
+                console.log("stop left");
+                $.ajax({
+                    url: '/stopPanTilt/' + ip,
+                    type: 'get',
+                    success: 'success',
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
@@ -603,25 +773,28 @@
                 data.allOutInput = string;
                 data.configName = configName;
                 data.demoId = demoId;
-                if(!configName){
+                if (!configName) {
                     alert("Your scene has no name!");
-                }
-                else{
+                } else {
                     $.ajax({
-                    url: '/saveConfig',
-                    type: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'application/json',
-                    success: function () {
-                        $('#btnSaveAll').css('background-color','green');
-                        $('#btnSaveAll').html('<i class="fas fa-check"></i>');
-                        setTimeout(function(){ $('#btnSaveAll').css('background-color','#449abd'); $('#btnSaveAll').html('Save All <i class="fas fa-save"></i>')}, 1500);
-                        // alert("Current Configuration Saved Successfully !");
-                    },
-                    error: function (request, status, error) {
-                        alert(request.responseText);
-                    }
-                });
+                        url: '/saveConfig',
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        success: function () {
+                            $('#btnSaveAll').css('background-color', 'green');
+                            $('#btnSaveAll').html('<i class="fas fa-check"></i>');
+                            setTimeout(function () {
+                                $('#btnSaveAll').css('background-color', '#449abd');
+                                $('#btnSaveAll').html(
+                                    'Save All <i class="fas fa-save"></i>')
+                            }, 1500);
+                            // alert("Current Configuration Saved Successfully !");
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+                    });
                 }
             })
         });

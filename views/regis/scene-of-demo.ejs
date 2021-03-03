@@ -41,23 +41,23 @@
                 class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
                 <% if (edit == true) { %>
                 <div style="display: flex;justify-content: space-between;">
-                        <div style="display: flex;
+                    <div style="display: flex;
                         flex-direction: row-reverse;
                         margin-left: 8%;
                         margin-top: 3%;
                         font-weight: bold;"><%= c %></div>
-                        <div style="display: flex;
+                    <div style="display: flex;
                         flex-direction: row-reverse;
                         margin-right: 8%;
                         margin-top: 3%;">
-                            <form class="delete-from" action="/admin/delete-product" method="POST">
-                                <input type="hidden" value="<%= product._id %>" name="productId">
-                                <input type="hidden" value="<%= demoId %>" name="demoId">
-                                <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
-                            </form>
-                        </div>
+                        <form class="delete-from" action="/admin/delete-product" method="POST">
+                            <input type="hidden" value="<%= product._id %>" name="productId">
+                            <input type="hidden" value="<%= demoId %>" name="demoId">
+                            <button class="trash-icon" type="submit"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
                 </div>
-                
+
                 <% } %>
                 <header class="card__header">
                     <% if (edit == false) { %>
@@ -88,7 +88,7 @@
                     <% } %>
                 </div>
             </article>
-
+            <% if (edit == true) { %>
             <!-- Modal HTML embedded directly into document -->
             <div id="ex<%=c%>" class="modal">
                 <form class="moveScene">
@@ -106,10 +106,28 @@
                     <button type="submit" class="btn">Move</button>
                 </form>
             </div>
+            <% } %>
 
             <% c++ %>
             <% } %>
         </div>
+        <% if (edit == false) { %>
+        <div style="display: flex;justify-content: center;">
+            <article id="endDemo" class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
+                <header class="card__header">
+                    <h1 class="camera__price">
+                        END
+                    </h1>
+                </header>
+                <div class="card__actions" style="display: flex;justify-content: center;">
+                    <form action="/endDemo" method="GET">
+                        <button type="submit" class="btn">Finish</button>
+                    </form>
+                </div>
+            </article>
+        </div>
+        <% } %>
+
         <% if (edit == true) { %>
         <div style="display: flex;justify-content: center;">
             <form style="width:50%;display: flex;
@@ -117,13 +135,13 @@
             padding: 2%;" action="/get-sort-demo" method="POST">
                 <input type="hidden" name="demoId" value="<%= demoId %>">
                 <button type="submit" class="btn">Sort Scene</button>
-                <a href="/advanced" class="btn">Add Scene</a>
+                <a href="/advanced?demoName=<%= demoName %>" class="btn">Add Scene</a>
             </form>
         </div>
         <% } %>
         <% } else { %>
         <h1>No Scene Found!</h1>
-        <a href="/advanced" class="btn">Add Scene</a>
+        <a href="/advanced?demoName=<%= demoName %>" class="btn">Add Scene</a>
         <% } %>
 
     </main>

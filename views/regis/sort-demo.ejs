@@ -34,10 +34,16 @@
                 padding: 10%;"><input class="little-button" type="submit" value="Change"></div>
             </form>
         </div>
+        <button onclick="goBack()">Go Back</button>
         <% } else { %>
         <h1>No Scene Found!</h1>
         <% } %>
     </main>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {

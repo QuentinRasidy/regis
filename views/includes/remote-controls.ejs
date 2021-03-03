@@ -1,0 +1,348 @@
+<div class="grid">
+    <% var c = 1 %>
+    <% for (let camera of cameras) { %>
+    <article class="card camera-item">
+        <header class="card__header">
+            <div class="card__content">
+                <h2 class="camera__price"><%= camera.description %></h2>
+                <p class="camera__description"><%= camera.name %></p>
+                <p class="camera__description"><%= camera.ip %></p>
+            </div>
+        </header>
+        <div class="image-hover-text-container">
+            <div class="image-hover-image">
+                <img id="image<%=c%>" src="http://<%= camera.ip %>/cgi-bin/camera" alt="<%= camera.ip %>"
+                    data-ip="<%= camera.ip %>">
+            </div>
+            <div class="image-hover-text">
+                <div class="image-hover-text-bubble">
+                    <span id="refresh_img<%=c%>" class="image-hover-text-title" data-ip="<%= camera.ip %>"
+                        data-img="image<%=c%>"><i class="fas fa-sync-alt"></i><br>Refresh</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 1000px;
+        border: 10px solid #4d4d4d;
+        height: 284px;
+        width: 90%;
+        margin: 5%;">
+            <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>"><i
+                        class="fas fa-angle-double-up"></i></button></div>
+
+
+            <div class="card__actions left-right-box">
+                <button id="left<%=c%>" class="button-left" data-ip="<%= camera.ip %>"><i
+                        class="fas fa-angle-double-left"></i></button>
+                <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                        class="far fa-dot-circle"></i></button>
+                <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>"><i
+                        class="fas fa-angle-double-right"></i></button>
+            </div>
+            <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>"><i
+                        class="fas fa-angle-double-down"></i></button></div>
+        </div>
+
+        <div id="advanced-button<%=c%>" style="text-align: center; font-weight: bold; margin-bottom: 5%;"
+            data-num="<%=c%>">
+            <label>Advanced <i class="fas fa-sort-down"></i></label></div>
+        <div id="advanced-container<%=c%>" style="width: 100%;
+        /* height: 165px; */
+        border: 5px solid #4d4d4d;
+        text-align: center;
+        display:none;">
+            <hr>
+            <form id="preset_submit<%=c%>" action="" method="get" class="card__actions">
+                <div class="">
+                    <label for="preset" style="font-weight: bold;">Choose preset :</label>
+                    <select name="preset" id="preset<%=c%>" style="margin-bottom: 2%">
+                        <option value=""></option>
+                        <% for (var i = 0; i<100; i++) { %>
+                        <option value="<%=i%>"><%=i%></option>
+                        <%}%>
+                </select>
+                <input type="hidden" id="ip<%=c%>" name="ip" value="<%= camera.ip %>">
+                </div>
+                <div class="">
+                    <button type="submit" value="Move" class="little-button">Move <i
+                            class="fas fa-exchange-alt"></i></button>
+                    <button type="submit" value="Save" class="little-button">Save <i class="far fa-save"></i></button>
+                </div>
+            </form>
+
+        </div>
+
+
+        <div style="text-align: center; font-weight: bold"><label>zoom</label></div>
+        <div class="card__actions" style="padding-top: 0%">
+            <button id="max" class="plus-minus-button"
+                style="font-size:1rem; margin-right: 10%; font-weight: bold; color: red"
+                data-ip="<%= camera.ip %>">MAX</button>
+            <button id="zoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                    class="far fa-plus-square"></i></button>
+            <button id="dezoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                    class="far fa-minus-square"></i></button>
+            <button id="min" class="plus-minus-button"
+                style="font-size:1rem; margin-left: 10%; font-weight: bold; color: green"
+                data-ip="<%= camera.ip %>">MIN</button>
+        </div>
+
+
+    </article>
+    <% c++ %>
+    <% } %>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/js/modal.js"></script>
+<script>
+    $(document).ready(function () {
+
+        /* Check Device Type (touch or mouse) */
+        var isTouchSupported = "ontouchend" in document; //boolean
+        var myDown = isTouchSupported ? "touchstart" : "mousedown";
+        var myUp = isTouchSupported ? "touchend" : "mouseup";
+
+        $("div[id^='advanced-button']").click(function () {
+            var elem_id = $(this).data('num');
+            var element = $("#advanced-container" + elem_id)
+            if (element.is(':visible')) {
+                element.hide("slow");
+            } else {
+                element.show("slow");
+            }
+        });
+
+
+        $("span[id^='refresh_img']").click(function () {
+            var ip = $(this).data('ip');
+            var id_name_image = $(this).data('img');
+            console.log("refresh", ip, id_name_image);
+            $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+        });
+
+        $("button[id^='button-center']").click(function () {
+            console.log('center');
+            var ip = $(this).data('ip');
+            $.ajax({
+                url: '/center/' + ip,
+                type: 'get',
+                success: 'success',
+            });
+        });
+
+        $("button[id^='zoom']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("zoom in");
+            $.ajax({
+                url: '/zoom/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='zoom']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop zoom in");
+            $.ajax({
+                url: '/stopZoom/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+
+        $("button[id^='dezoom']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("zoom out");
+            $.ajax({
+                url: '/dezoom/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='dezoom']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop zoom out");
+            $.ajax({
+                url: '/stopZoom/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='max']").click(function () {
+            console.log('max');
+            var ip = $(this).data('ip');
+            var string = JSON.stringify({
+                ip: ip,
+                extremum: "min"
+            });
+            $.ajax({
+                url: '/zoomExtremum',
+                type: 'post',
+                data: "ip=" + ip + "&extremum=max",
+                success: 'success'
+            });
+        });
+
+        $("button[id^='min']").click(function () {
+            console.log('min');
+            var ip = $(this).data('ip');
+            $.ajax({
+                url: '/zoomExtremum',
+                type: 'post',
+                data: "ip=" + ip + "&extremum=min",
+                success: 'success'
+            });
+        });
+
+        $("button[id^='right']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("right");
+            $.ajax({
+                url: '/right/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='right']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop right");
+            $.ajax({
+                url: '/stopPanTilt/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='left']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("left");
+            $.ajax({
+                url: '/left/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='left']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop left");
+            $.ajax({
+                url: '/stopPanTilt/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='up']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("left");
+            $.ajax({
+                url: '/up/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='up']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop left");
+            $.ajax({
+                url: '/stopPanTilt/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='down']").bind(myDown, function () {
+            var ip = $(this).data('ip');
+            console.log("left");
+            $.ajax({
+                url: '/down/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        $("button[id^='down']").bind(myUp, function () {
+            var ip = $(this).data('ip');
+            console.log("stop left");
+            $.ajax({
+                url: '/stopPanTilt/' + ip,
+                type: 'get',
+                success: 'success',
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        });
+
+        // Form for saving and setting preset
+        $('.card__actions').on('submit', function (e) {
+            e.preventDefault();
+            var data = $(this).serialize();
+            var button = $(document.activeElement).val();
+            if (button == "Move") {
+                console.log('Move', data);
+                $.ajax({
+                    url: '/preset',
+                    type: 'post',
+                    data: data,
+                    success: function () {}
+                });
+            } else if (button == "Save") {
+                console.log('Save', data);
+                $.ajax({
+                    url: '/savePreset',
+                    type: 'post',
+                    data: data,
+                    success: function () {}
+                });
+            }
+
+        });
+
+    });
+</script>

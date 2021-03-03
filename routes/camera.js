@@ -19,9 +19,11 @@ router.get('/advanced', regisController.getAdvanced);
 
 router.get('/zoom/:ip', regisController.zoom); //route dynamique en fonction de l'id
 router.get('/dezoom/:ip', regisController.dezoom);
+router.get('/stopZoom/:ip', regisController.stopZoom);
 router.post('/zoomExtremum', regisController.zoomExtremum);
 router.get('/left/:ip', regisController.left);
 router.get('/right/:ip', regisController.right);
+router.get('/stopPanTilt/:ip', regisController.stopPanTilt);
 router.get('/up/:ip', regisController.up);
 router.get('/down/:ip', regisController.down);
 router.get('/center/:ip', regisController.center);
@@ -33,6 +35,7 @@ router.get('/stopShare', regisController.stopSharing);
 router.post('/setInOut', regisController.setInOutKrammer);
 router.post('/saveConfig', jsonParser, regisController.saveConfig);
 router.post('/startScenario', regisController.startScenario);
+router.get('/endDemo', regisController.endDemo);
 router.post('/call', regisController.call);
 router.post('/endCall', regisController.endCall);
 
