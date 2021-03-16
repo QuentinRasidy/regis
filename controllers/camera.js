@@ -18,6 +18,9 @@ mongoose.Promise = global.Promise;
 const Save = require('../models/save');
 const Demo = require('../models/demo');
 
+/** GLOBAL VARIABLE SX-80 IP Address */
+var sx80_ip = "10.1.110.140";
+
 exports.zoom = (req, res, next) => {
   console.log("startStop");
   const ip = req.params.ip;
@@ -197,7 +200,7 @@ exports.getAdvanced = (req, res, next) => {
         cameras: products,
         pageTitle: 'Regis',
         krammerConfig: config,
-        sx80Config: await getMainVideoSourceAndshareSource(),
+        sx80Config: await getMainVideoSourceAndshareSource(sx80_ip),
         demoList: await getAllDemo(),
         demoName: demoName,
         path: '/'
@@ -288,12 +291,11 @@ exports.setMainVideoSource = async (req, res, next) => {
   var source = req.body.mainVideoSource;
   disableAllTally();
   await sleep(500);
-  setMainVideoSource(source, res);
+  setMainVideoSource(source, sx80_ip, res);
 }
 
 exports.setShareSource = (req, res, next) => {
   var source = req.body.shareSource;
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
     "<Command>" +
     "<Presentation>" +
@@ -305,7 +307,7 @@ exports.setShareSource = (req, res, next) => {
 
   var options = {
     method: "POST",
-    url: "https://" + ip + "/putxml",
+    url: "https://" + sx80_ip + "/putxml",
     headers: {
       "Content-Type": "text/xml",
       Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
@@ -323,7 +325,7 @@ exports.setShareSource = (req, res, next) => {
 }
 
 exports.stopSharing = (req, res, next) => {
-  stopSharing();
+  stopSharing(sx80_ip);
 }
 
 exports.setInOutKrammer = (req, res, next) => {
@@ -400,14 +402,14 @@ exports.startScenario = (req, res, next) => {
 
 
     if (shareSelection != "") {
-      setShareSource(shareSelection);
+      setShareSource(shareSelection, sx80_ip);
     } else {
-      stopSharing();
+      stopSharing(sx80_ip);
     }
 
     disableAllTally();
     await sleep(1000);
-    setMainVideoSource(mainVideoSource);
+    setMainVideoSource(mainVideoSource, sx80_ip);
 
     //Si GRILLE HDMI ALORS ON NE SET PAS LES CAMERAS
     position.forEach(cam => {
@@ -420,7 +422,7 @@ exports.startScenario = (req, res, next) => {
 }
 
 exports.endDemo = (req, res, next) => {
-  stopSharing();
+  stopSharing(sx80_ip);
   disableAllTally();
   res.redirect('/');
 }
@@ -428,13 +430,13 @@ exports.endDemo = (req, res, next) => {
 exports.call = (req, res, next) => {
   const webexNumber = req.body.webexNumber;
   console.log(webexNumber);
-  callWebexNumber(webexNumber);
+  callWebexNumber(webexNumber, sx80_ip);
   res.status(204).send();
 }
 
 exports.endCall = (req, res, next) => {
   console.log("end call");
-  disconnectCall();
+  disconnectCall(sx80_ip);
   res.status(204).send();
 }
 
@@ -659,7 +661,7 @@ function getAllDemo() {
   });
 }
 
-function setMainVideoSource(source, res = undefined) {
+function setMainVideoSource(source, ip, res = undefined) {
   /* Attention les IP peuvent changer */
   Product.fetchAll(camera => {
     switch (source) {
@@ -682,7 +684,6 @@ function setMainVideoSource(source, res = undefined) {
         break;
     }
   });
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
   var xml =
     "<Command>" +
     "<Video>" +
@@ -715,8 +716,7 @@ function setMainVideoSource(source, res = undefined) {
   });
 }
 
-function setShareSource(source) {
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
+function setShareSource(source, ip) {
   var xml =
     "<Command>" +
     "<Presentation>" +
@@ -743,9 +743,8 @@ function setShareSource(source) {
   });
 }
 
-function getMainVideoSourceAndshareSource() {
+function getMainVideoSourceAndshareSource(ip) {
   return new Promise(resolve => {
-    var ip = "10.1.110.140"; // A surveiller car peut changer 
     var options = {
       method: "GET",
       url: "http://" + ip + "/status.xml", //?location=/Status/Video/Input/MainVideoSource",
@@ -780,8 +779,7 @@ function sleep(ms) {
 }
 
 
-function callWebexNumber(number) {
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
+function callWebexNumber(number, ip) {
   var xml =
     "<Command>" +
     "<Dial>" +
@@ -806,8 +804,7 @@ function callWebexNumber(number) {
   });
 }
 
-function stopSharing() {
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
+function stopSharing(ip) {
   var xml =
     "<Command>" +
     "<Presentation>" +
@@ -835,8 +832,7 @@ function stopSharing() {
   });
 }
 
-function disconnectCall() {
-  var ip = "10.1.110.140"; // A surveiller car peut changer 
+function disconnectCall(ip) {
   var xml =
     "<Command>" +
     "<Call>" +
