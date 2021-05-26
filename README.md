@@ -47,23 +47,23 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
 
 5. Set the IP adresse of your Cisco Room device in the file **controllers/camera.js** on line 22:
 
-```sh
-var sx80_ip = "YOUR_CISCO_DEVICE_IP_ADDRESS";
-```
+   ```sh
+   var sx80_ip = "YOUR_CISCO_DEVICE_IP_ADDRESS";
+   ```
 
 6. You need to implement the function for the kramer matrix management in the file **controllers/camera.js**.
 
-Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
-in the file **controllers/camera.js** on line 583.
+   Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
+   in the file **controllers/camera.js** on line 583.
 
 7. Set the PORT number in the file **app.js** on line 30:
 
-```sh
-app.listen(PORT_NUMBER_HERE);
-```
+   ```sh
+   app.listen(PORT_NUMBER_HERE);
+   ```
 
 8. Start the app:
 
-```sh
-npm start
-```
+   ```sh
+   npm start
+   ```
