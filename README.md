@@ -1,4 +1,4 @@
-# REGIS
+# REGIS 🎥
 
 REGIS : Showroom Video Manager
 
@@ -9,7 +9,12 @@ REGIS is a web application which allows the video management of the Cisco FRANCE
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-screenshot.png" width="1200">
 
 With this WebApp you can create virtual demo which contains 1 or more scenes. Each scene is a fine tuning of the camera position, Webex video endpoint and
-a HDMI matrix. So with REGIS you can in 1 click switch between scenes in order to deliver a fluid virtual demonstration.
+a HDMI matrix. Below is the page called "Demo" where you can see the list of the demo that were created. So with REGIS you can in 1 click switch between scenes in order to deliver a fluid virtual demonstration.
+
+<img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-demo-list.png" width="1200">
+
+When you select a **demo** you are redirected to an other page where you can load all the scenes related to the demo selected before.
+<img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-scenes.png" width="1200">
 
 ## Equipment used
 
@@ -50,3 +55,9 @@ var sx80_ip = "YOUR_CISCO_DEVICE_IP_ADDRESS";
 
 Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
 in the file **controllers/camera.js** on line 583.
+
+7. Set the PORT number in the file **app.js** on line 30
+
+```sh
+app.listen(PORT_NUMBER_HERE);
+```
