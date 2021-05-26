@@ -8,6 +8,9 @@ REGIS is a web application which allows the video management of the Cisco FRANCE
 
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-screenshot.png" width="1200">
 
+With this WebApp you can create virtual demo which contains 1 or more scenes. Each scene is a fine tuning of the camera position, Webex video endpoint and
+a HDMI matrix. So with REGIS you can in 1 click switch between scenes in order to deliver a fluid virtual demonstration.
+
 ## Equipment used
 
 REGIS controls the following elements: 5 cameras Panasonic connected to a Room Kit Pro and a Kramer matrix (computer/mac) in order to select a specific output (screen) for a given input.
