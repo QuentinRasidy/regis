@@ -9,11 +9,11 @@ REGIS is a web application which allows the video management of the Cisco FRANCE
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-screenshot.png" width="1200">
 
 With this WebApp you can create virtual demo which contains 1 or more scenes. Each scene is a fine tuning of the camera position, Webex video endpoint and
-a HDMI matrix. Below is the page called "Demo" where you can see the list of the demo that were created. So with REGIS you can in 1 click switch between scenes in order to deliver a fluid virtual demonstration.
+a HDMI matrix. Below is the page called "Demo" where you can see the list of the demo that were created.
 
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-demo-list.png" width="1200">
 
-When you select a **demo** you are redirected to an other page where you can load all the scenes related to the demo selected before.
+When you select a **demo** you are redirected to an other page where you can load all the scenes related to the selected demo. In order to load a scene from the selected demo, choose a scene and click on the button **Load**. So with REGIS you can in one click switch between scenes in order to deliver a fluid virtual demonstration.
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-scenes.png" width="1200">
 
 ## Equipment used
@@ -36,7 +36,7 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
    npm install
    ```
 
-3. Install mongodb and create 2 collections of objects that you will call "demos" and "saves".
+3. Install mongodb and create 2 collections of objects that you will call **"demos"** and **"saves"**.
 
 4. Set your camera informations in the **product.json** (see example below)
 
@@ -60,4 +60,10 @@ in the file **controllers/camera.js** on line 583.
 
 ```sh
 app.listen(PORT_NUMBER_HERE);
+```
+
+8. Start the app
+
+```sh
+npm start
 ```
