@@ -6,9 +6,13 @@ REGIS : Showroom Video Manager
 
 REGIS is a web application which allows the video management of the Cisco FRANCE Showroom. Indeed, the Showroom has 5 cameras Panasonic 4K 360° configurable and controllable remotely which allows us to visualize the room in its smallest details.
 
+<img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-screenshot.png" width="500">
+
 ## Equipment used
 
-REGIS controls the following elements: 5 cameras Panasonic connected to a Room Kit Pro and a Kramer matrix in order to select a specific output for a given input (a video switch).
+REGIS controls the following elements: 5 cameras Panasonic connected to a Room Kit Pro and a Kramer matrix (computer/mac) in order to select a specific output (screen) for a given input.
+
+<img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-equipement.png" width="500">
 
 ## How to run 🔨
 
