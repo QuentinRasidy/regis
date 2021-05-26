@@ -9,7 +9,7 @@ REGIS is a web application which allows the video management of the Cisco FRANCE
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-screenshot.png" width="1200">
 
 With this WebApp you can create virtual demo which contains 1 or more scenes. Each scene is a fine tuning of the camera position, Webex video endpoint and
-a HDMI matrix. Below is the page called "Demo" where you can see the list of the demo that were created.
+HDMI matrix. Below is the page called "Demo" where you can see the list of the demo that were created.
 
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-demo-list.png" width="1200">
 
@@ -18,7 +18,7 @@ When you select a **demo** you are redirected to an other page where you can loa
 
 ## Equipment used
 
-REGIS controls the following elements: 5 cameras Panasonic connected to a Room Kit Pro and a Kramer matrix (computer/mac) in order to select a specific output (screen) for a given input.
+REGIS controls the following elements: 5 cameras Panasonic connected to a Room Kit Pro and a Kramer matrix (a switch video) in order to select a specific output (screen) for a given input (computer/mac).
 
 <img src="https://raw.githubusercontent.com/SarahCiscoFrance/REGIS/main/regis-equipement.png" width="1200">
 
@@ -36,9 +36,9 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
    npm install
    ```
 
-3. Install mongodb and create 2 collections of objects that you will call **"demos"** and **"saves"**.
+3. Install mongodb and create 2 collections that you will call **"demos"** and **"saves"**.
 
-4. Set your camera informations in the **product.json** (see example below)
+4. Set your camera informations in the **product.json** (see example below):
 
    ```sh
    [{"id":"001","ip":"0.0.0.1","description":"a panasonic camera","name":"Cam n°1"},
@@ -54,7 +54,7 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
 6. You need to implement the function for the kramer matrix management in the file **controllers/camera.js**.
 
    Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
-   in the file **controllers/camera.js** on line 583.
+   in the file **controllers/camera.js** on line 583. Its functions must of course call your REST API.
 
 7. Set the PORT number in the file **app.js** on line 30:
 
