@@ -19,7 +19,7 @@ const Save = require('../models/save');
 const Demo = require('../models/demo');
 
 /** GLOBAL VARIABLE SX-80 IP Address */
-var sx80_ip = "10.1.110.140";
+var sx80_ip = "10.1.110.113";
 
 exports.zoom = (req, res, next) => {
   console.log("startStop");

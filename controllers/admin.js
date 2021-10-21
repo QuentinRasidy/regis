@@ -1,17 +1,15 @@
-const Product = require('../models/product');
-const mongoose = require('mongoose');
+const Product = require("../models/product");
+const mongoose = require("mongoose");
 
-mongoose.connect(
-  'mongodb://localhost:27017/regis', {
-    useNewUrlParser: true,
-  },
-);
+mongoose.connect("mongodb://localhost:27017/regis", {
+  useNewUrlParser: true
+});
 mongoose.Promise = global.Promise;
 
-const Save = require('../models/save');
-const Demo = require('../models/demo');
+const Save = require("../models/save");
+const Demo = require("../models/demo");
 
-const camFunctions = require('../util/camera-move');
+const camFunctions = require("../util/camera-move");
 
 // exports.getAddProduct = (req, res, next) => {
 //   res.render('admin/edit-product', {
@@ -37,43 +35,43 @@ const camFunctions = require('../util/camera-move');
 exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
   const demoId = req.query.demoId;
-  Save.findById(prodId, function (err, save) {
+  Save.findById(prodId, function(err, save) {
     if (!save) {
-      return res.redirect('/');
+      return res.redirect("/");
     }
-
 
     save.position.forEach(cam => {
       camFunctions.setZoom(cam.ip, cam.zoom);
       camFunctions.setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt);
     });
 
-    
-
-    setTimeout( () => {
+    setTimeout(() => {
       Product.fetchAll(products => {
-        getAllDemo().then(allDemo => {
-          res.render('admin/edit-product', {
-            pageTitle: 'Edit Save',
-            path: '/admin/edit-product',
-            demoList: allDemo,
-            //editing: editMode,// true or false
-            product: save,
-            demoId: demoId,
-            cameras: products
+        getAllDemo()
+          .then(allDemo => {
+            res.render("admin/edit-product", {
+              pageTitle: "Edit Save",
+              path: "/admin/edit-product",
+              demoList: allDemo,
+              //editing: editMode,// true or false
+              product: save,
+              demoId: demoId,
+              cameras: products
+            });
+          })
+          .catch(function() {
+            console.log(
+              "Promise Rejected: see getAllDemo() function in file admin.js"
+            );
           });
-        }).catch(function () {
-          console.log("Promise Rejected: see getAllDemo() function in file admin.js");
-        });
       });
     }, 800); // on attend 0.8 sec pour laisser le temps au cameras de ce configurer
-
-
   });
 };
 
-exports.postEditProduct = async (req, res, next) => { // mis a jours des données et remplacement du produit dans la db (gérer par le "model/product" en fonction de l'existence de l'id )
-  const id = req.body.productId //l'id nous est envoyer grace a un input hidden dans la vue edit-product/ qui elle a acces a l'id du produit modifier
+exports.postEditProduct = async (req, res, next) => {
+  // mis a jours des données et remplacement du produit dans la db (gérer par le "model/product" en fonction de l'existence de l'id )
+  const id = req.body.productId; //l'id nous est envoyer grace a un input hidden dans la vue edit-product/ qui elle a acces a l'id du produit modifier
   const name = req.body.name;
   const mainVideoSource = req.body.mainVideoSource;
   const shareSelection = req.body.shareSelection;
@@ -86,32 +84,29 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
   // const zoom = req.body.zoom;
   //OLD//
 
-
   const demoId = req.body.demoName;
   const oldDemoId = req.body.oldDemoId;
 
-
   //si on a changer le scene de Demo alors on la retire de la Demo actuelle et on la met dans la nouvelle
   if (demoId != oldDemoId) {
-
     const oldDemo = await Demo.findById(oldDemoId);
     if (!oldDemo) {
       console.log("Error demo: " + oldDemoId + "doesn't exist in data base");
-      return res.redirect('/');
+      return res.redirect("/");
     }
     console.log(id);
     oldDemo.scene = oldDemo.scene.filter(e => e != id); // on retire la scene courante de l'ancienne demo;
-    oldDemo.save(function (err, save) {
+    oldDemo.save(function(err, save) {
       if (err) return console.error(err);
     });
 
     const demo = await Demo.findById(demoId);
     if (!demo) {
       console.log("Error demo: " + demoId + "doesn't exist in data base");
-      return res.redirect('/');
+      return res.redirect("/");
     }
     demo.scene.push(id);
-    demo.save(function (err, save) {
+    demo.save(function(err, save) {
       if (err) return console.error(err);
     });
   }
@@ -138,35 +133,42 @@ exports.postEditProduct = async (req, res, next) => { // mis a jours des donnée
     allInputOutput: allInputOutput
   };
 
-  Save.findByIdAndUpdate({
-    _id: id
-  }, updatedSave, async () => {
-    const demo = await Demo.findById(oldDemoId);
-    const ids = demo.scene;
-    const demoName = demo.name;
-    Save.find().where('_id').in(ids).exec(async (err, records) => {
-      var list = await sortListWithIds(records, ids);
-      var allDemo = await getAllDemo();
-      res.render('regis/scene-of-demo', {
-        saves: list,
-        pageTitle: 'Scene',
-        path: '/scene-of-demo',
-        demoId: demoId,
-        demoName: demoName,
-        demoList: allDemo,
-        edit: true
-      });
-    });
-  });
+  Save.findByIdAndUpdate(
+    {
+      _id: id
+    },
+    updatedSave,
+    async () => {
+      const demo = await Demo.findById(oldDemoId);
+      const ids = demo.scene;
+      const demoName = demo.name;
+      Save.find()
+        .where("_id")
+        .in(ids)
+        .exec(async (err, records) => {
+          var list = await sortListWithIds(records, ids);
+          var allDemo = await getAllDemo();
+          res.render("regis/scene-of-demo", {
+            saves: list,
+            pageTitle: "Scene",
+            path: "/scene-of-demo",
+            demoId: demoId,
+            demoName: demoName,
+            demoList: allDemo,
+            edit: true
+          });
+        });
+    }
+  );
 };
 
 exports.copyProduct = (req, res, next) => {
   const sceneId = req.body.sceneId;
   const demoId = req.body.demoId;
-  Save.findById(sceneId, function (err, save) {
+  Save.findById(sceneId, function(err, save) {
     if (!save) {
-      console.log("Scene not found in DataBase !")
-      return res.redirect('/');
+      console.log("Scene not found in DataBase !");
+      return res.redirect("/");
     } else {
       var copy = new Save({
         name: save.name + "_copy",
@@ -176,17 +178,17 @@ exports.copyProduct = (req, res, next) => {
         allInputOutput: save.allInputOutput,
         subName: save.name + "_copy" + demoId
       });
-      copy.save(function (err, save) {
+      copy.save(function(err, save) {
         if (err) return console.error(err);
-      })
+      });
     }
 
-    Demo.findById(demoId, function (err, demo) {
+    Demo.findById(demoId, function(err, demo) {
       if (!demo) {
-        console.log("Demo not found in DataBase !")
+        console.log("Demo not found in DataBase !");
       } else {
         demo.scene.push(copy._id);
-        demo.save(function (err, save) {
+        demo.save(function(err, save) {
           if (err) return console.error(err);
           res.sendStatus(200);
         });
@@ -194,7 +196,6 @@ exports.copyProduct = (req, res, next) => {
     });
   });
 };
-
 
 // exports.getProducts = (req, res, next) => {
 //   Product.fetchAll(products => {
@@ -211,73 +212,89 @@ exports.postDeleteProduct = async (req, res, next) => {
   const demoId = req.body.demoId;
   const allDemo = await getAllDemo();
 
-  Save.findByIdAndDelete(saveId, async function () {
+  Save.findByIdAndDelete(saveId, async function() {
     const demo = await Demo.findById(demoId);
     if (!demo) {
-      return res.redirect('/');
+      return res.redirect("/");
     }
-    Demo.updateOne({
-      _id: demoId
-    }, {
-      scene: demo.scene.pull(saveId)
-    }, function (err) {
-      if (err) return console.error(err);
-    });
+    Demo.updateOne(
+      {
+        _id: demoId
+      },
+      {
+        scene: demo.scene.pull(saveId)
+      },
+      function(err) {
+        if (err) return console.error(err);
+      }
+    );
 
     const ids = demo.scene;
     const demoName = demo.name;
-    Save.find().where('_id').in(ids).exec(async (err, records) => {
-      var list = await sortListWithIds(records, ids);
-      res.render('regis/scene-of-demo', {
-        saves: list,
-        pageTitle: 'Scene',
-        path: '/scene-of-demo',
-        demoId: demoId,
-        demoName: demoName,
-        demoList: allDemo,
-        edit: true
+    Save.find()
+      .where("_id")
+      .in(ids)
+      .exec(async (err, records) => {
+        var list = await sortListWithIds(records, ids);
+        res.render("regis/scene-of-demo", {
+          saves: list,
+          pageTitle: "Scene",
+          path: "/scene-of-demo",
+          demoId: demoId,
+          demoName: demoName,
+          demoList: allDemo,
+          edit: true
+        });
       });
-    });
   });
-}
+};
 
 exports.addDemo = (req, res, next) => {
   const demoName = req.body.demoName;
   var demo = new Demo({
     name: demoName,
-    scene: [],
+    scene: []
   });
-  demo.save(function (err, save) {
+  demo.save(function(err, save) {
     if (err) return console.error(err);
-    res.redirect('back');
+    res.redirect("back");
   });
-}
+};
 
 exports.deleteDemo = async (req, res, next) => {
   const demoId = req.body.demoId;
   const demo = await Demo.findById(demoId);
   const ids = demo.scene;
-  Save.deleteMany().where('_id').in(ids).exec((err, records) => { //delete all scene from this Demo
+  Save.deleteMany()
+    .where("_id")
+    .in(ids)
+    .exec((err, records) => {
+      //delete all scene from this Demo
+    });
+  Demo.findByIdAndDelete(demoId, function() {
+    //delete the demo
+    res.redirect("/");
   });
-  Demo.findByIdAndDelete(demoId, function () { //delete the demo
-    res.redirect('/');
-  });
-}
+};
 
 exports.changeNameDemo = (req, res, next) => {
   const demoId = req.body.demoId;
   const demoName = req.body.demoName;
   console.log(demoId, demoName);
 
-  Demo.updateOne({
-    _id: demoId
-  }, {
-    name: demoName
-  }, function (err) {
-    if (err) return console.error(err);
-    res.redirect('/');
-  });
-}
+  Demo.updateOne(
+    {
+      _id: demoId
+    },
+    {
+      name: demoName
+    },
+    function(err) {
+      if (err) return console.error(err);
+      res.redirect("/");
+    }
+  );
+};
 
 exports.moveToDemo = async (req, res, next) => {
   const id = req.body.sceneId;
@@ -286,38 +303,40 @@ exports.moveToDemo = async (req, res, next) => {
 
   console.log(id, demoId, oldDemoId);
 
-
   //si on a changer le scene de Demo alors on la retire de la Demo actuelle et on la met dans la nouvelle
   if (demoId != oldDemoId) {
-
     const oldDemo = await Demo.findById(oldDemoId);
     if (!oldDemo) {
       console.log("Error demo: " + oldDemoId + " doesn't exist in data base");
-      return res.redirect('/');
+      return res.redirect("/");
     }
     console.log(id);
     oldDemo.scene = oldDemo.scene.filter(e => e != id); // on retire la scene courante de l'ancienne demo;
-    oldDemo.save(function (err, save) {
+    oldDemo.save(function(err, save) {
       if (err) return console.error(err);
     });
 
     const save = await Save.findById(id);
 
-    Save.updateOne({
-      _id: id
-    }, {
-      subName: save.name + demoId
-    }, function (err) {
-      if (err) return console.error(err);
-    });
+    Save.updateOne(
+      {
+        _id: id
+      },
+      {
+        subName: save.name + demoId
+      },
+      function(err) {
+        if (err) return console.error(err);
+      }
+    );
 
     const demo = await Demo.findById(demoId);
     if (!demo) {
       console.log("Error demo: " + demoId + "doesn't exist in data base");
-      return res.redirect('/');
+      return res.redirect("/");
     }
     demo.scene.push(id);
-    demo.save(function (err, save) {
+    demo.save(function(err, save) {
       if (err) return console.error(err);
       console.log(save);
       res.sendStatus(200);
@@ -325,33 +344,36 @@ exports.moveToDemo = async (req, res, next) => {
   } else {
     res.sendStatus(200);
   }
-}
+};
 
 exports.changeOrderOfScene = (req, res, next) => {
   const demoId = req.body.demoId;
-  const newArray = req.body.newOrderedList.split(',');
-  Demo.updateOne({
-    _id: demoId
-  }, {
-    scene: newArray
-  }, function (err) {
-    if (err) return console.error(err);
-    res.sendStatus(200);
-  });
-}
+  const newArray = req.body.newOrderedList.split(",");
+  Demo.updateOne(
+    {
+      _id: demoId
+    },
+    {
+      scene: newArray
+    },
+    function(err) {
+      if (err) return console.error(err);
+      res.sendStatus(200);
+    }
+  );
+};
 
 exports.getRegisSetting = (req, res, next) => {
-  res.render('regis/setting', {
-    pageTitle: 'Setting',
-    path: '/setting'
+  res.render("regis/setting", {
+    pageTitle: "Setting",
+    path: "/setting"
   });
-}
-
+};
 
 function getAllDemo() {
   return Demo.find({}, (err, docs) => {
     if (!err) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         resolve(docs);
       });
     }
@@ -359,11 +381,10 @@ function getAllDemo() {
   });
 }
 
-
 /* utils function */
 
 /**
- * 
+ *
  * @param {*} items : Scene Object
  * @param {*} idsList : Scene id List
  */
@@ -380,5 +401,4 @@ function sortListWithIds(items, idsList) {
     }
     resolve(list.reverse());
   });
-
 }

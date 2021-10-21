@@ -31,6 +31,20 @@
         <h2 class="camera__price">Demo "<%= demoName %>"</h2>
         <h1 class="camera__price"> Scenes <%= edit === true ? 'Edition Mode' : '' %></h1>
         <hr>
+        <% if (edit == false) { %>
+            <div style="display: flex;justify-content: center;">
+                <article class="card camera-item">
+                    <form id="callWebexNumber" style="margin:5%; text-align: center" action="/call" method="POST">
+                        <label style="font-weight: bold;">Call Webex Number:</label>
+                        <input id="webexNumber" name="webexNumber" type="text" value="" required>
+                        <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
+                            style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
+                        <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
+                            style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
+                    </form>
+                </article>
+            </div>
+        <% } %>
         <div class="grid">
             <%var c = 1;%>
             <% saves.reverse()%>
@@ -156,6 +170,19 @@
 
     <script>
         $(document).ready(function () {
+            $('#callWebexNumber button').click(function (e) {
+                if ($(this).attr("value") == "startCallWebex" && $("#webexNumber").val().length !== 0) {
+                    $("#callWebexNumber").attr('action', '/call');
+                    $(this).hide();
+                    $('#endCallWebex').show();
+
+                } else if ($(this).attr("value") == "endCallWebex") {
+                    $("#callWebexNumber").attr('action', '/endCall');
+                    $(this).hide();
+                    $('#startCallWebex').show();
+                }
+            });
+            
             $('.launchScene').on('submit', function (e) {
                 e.preventDefault();
                 var data = $(this).serialize();

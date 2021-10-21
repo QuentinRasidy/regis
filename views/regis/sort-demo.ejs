@@ -50,18 +50,6 @@
             var a = "<%=listIdScene%>";
             console.log(a);
 
-            function dynamicSort(property) {
-                var sortOrder = 1;
-                if (property[0] === "-") {
-                    sortOrder = -1;
-                    property = property.substr(1);
-                }
-                return function (a, b) {
-                    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-                    return result * sortOrder;
-                }
-            }
-
             $("#sortForm").submit(function (event) {
                 event.preventDefault();
                 var inputs = [];
@@ -74,7 +62,7 @@
                 if (flag == true) {
                     alert("duplicates index exists");
                 } else {
-                    var values = $(this).serializeArray().sort(dynamicSort("value"));
+                    var values = $(this).serializeArray().sort((a,b)=> parseInt(a.value)-parseInt(b.value));
                     var sortedArray = Array.from(values, x => x.name);
                     $.ajax({
                         url: '/admin/change-order-scene-of-demo',

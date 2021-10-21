@@ -41,19 +41,19 @@
                 height: 284px;
                 width: 90%;
                 margin: 5%;">
-                    <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>"><i
+                    <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="fas fa-angle-double-up"></i></button></div>
 
 
                     <div class="card__actions left-right-box">
-                        <button id="left<%=c%>" class="button-left" data-ip="<%= camera.ip %>"><i
+                        <button id="left<%=c%>" class="button-left" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="fas fa-angle-double-left"></i></button>
-                        <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                        <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="far fa-dot-circle"></i></button>
-                        <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>"><i
+                        <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="fas fa-angle-double-right"></i></button>
                     </div>
-                    <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>"><i
+                    <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="fas fa-angle-double-down"></i></button></div>
                 </div>
 
@@ -104,9 +104,9 @@
                     <button id="max" class="plus-minus-button"
                         style="font-size:1rem; margin-right: 10%; font-weight: bold; color: red"
                         data-ip="<%= camera.ip %>">MAX</button>
-                    <button id="zoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                    <button id="zoom" class="plus-minus-button" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                             class="far fa-plus-square"></i></button>
-                    <button id="dezoom" class="plus-minus-button" data-ip="<%= camera.ip %>"><i
+                    <button id="dezoom" class="plus-minus-button" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                             class="far fa-minus-square"></i></button>
                     <button id="min" class="plus-minus-button"
                         style="font-size:1rem; margin-left: 10%; font-weight: bold; color: green"
@@ -431,6 +431,8 @@
 
             $("button[id^='zoom']").bind(myUp, function () {
                 var ip = $(this).data('ip');
+                var id_name_image = $(this).data('img');
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
                 console.log("stop zoom in");
                 $.ajax({
                     url: '/stopZoom/' + ip,
@@ -458,6 +460,8 @@
 
             $("button[id^='dezoom']").bind(myUp, function () {
                 var ip = $(this).data('ip');
+                var id_name_image = $(this).data('img');
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
                 console.log("stop zoom out");
                 $.ajax({
                     url: '/stopZoom/' + ip,
@@ -520,6 +524,10 @@
 
             $("button[id^='right']").bind(myUp, function () {
                 var ip = $(this).data('ip');
+                var id_name_image = $(this).data('img');
+                setTimeout(() => {
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                }, 200);
                 console.log("stop right");
                 $.ajax({
                     url: '/stopPanTilt/' + ip,
@@ -556,6 +564,10 @@
 
             $("button[id^='left']").bind(myUp, function () {
                 var ip = $(this).data('ip');
+                var id_name_image = $(this).data('img');
+                setTimeout(() => {
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                }, 200);
                 console.log("stop left");
                 $.ajax({
                     url: '/stopPanTilt/' + ip,
@@ -592,7 +604,11 @@
 
             $("button[id^='up']").bind(myUp, function () {
                 var ip = $(this).data('ip');
-                console.log("stop left");
+                var id_name_image = $(this).data('img');
+                setTimeout(() => {
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                }, 200);
+                console.log("stop up");
                 $.ajax({
                     url: '/stopPanTilt/' + ip,
                     type: 'get',
@@ -615,7 +631,7 @@
 
             $("button[id^='down']").bind(myDown, function () {
                 var ip = $(this).data('ip');
-                console.log("left");
+                console.log("down");
                 $.ajax({
                     url: '/down/' + ip,
                     type: 'get',
@@ -628,7 +644,11 @@
 
             $("button[id^='down']").bind(myUp, function () {
                 var ip = $(this).data('ip');
-                console.log("stop left");
+                var id_name_image = $(this).data('img');
+                setTimeout(() => {
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                }, 200);
+                console.log("stop down");
                 $.ajax({
                     url: '/stopPanTilt/' + ip,
                     type: 'get',
