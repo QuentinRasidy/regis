@@ -14,9 +14,8 @@ const router = express.Router();
 router.get('/', regisController.getDemo);
 router.get('/scenario', regisController.getScenario);
 router.get('/advanced', regisController.getAdvanced);
-
-// router.get('/products', regisController.getProducts);
-
+router.post('/updateCamera', regisController.updateCamera);
+router.post('/updateCodecInfo', regisController.updateCodecInfo);
 router.get('/zoom/:ip', regisController.zoom); //route dynamique en fonction de l'id
 router.get('/dezoom/:ip', regisController.dezoom);
 router.get('/stopZoom/:ip', regisController.stopZoom);
@@ -38,20 +37,7 @@ router.post('/startScenario', regisController.startScenario);
 router.get('/endDemo', regisController.endDemo);
 router.post('/call', regisController.call);
 router.post('/endCall', regisController.endCall);
-
 router.post('/demo/:id', regisController.getDemoById);
-
 router.post('/get-sort-demo', regisController.getSortDemo);
-
-
-// router.get('/cart', regisController.getCart);
-
-// router.post('/cart-delete-item', regisController.postCartDelete);
-
-// router.post('/cart', regisController.postCart);
-
-// router.get('/orders', regisController.getOrders);
-
-// router.get('/checkout', regisController.getCheckout);
 
 module.exports = router;

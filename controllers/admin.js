@@ -1,8 +1,10 @@
-const Product = require("../models/product");
+const Camera = require("../models/camera");
 const mongoose = require("mongoose");
 
 mongoose.connect("mongodb://localhost:27017/regis", {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
 });
 mongoose.Promise = global.Promise;
 
@@ -10,27 +12,6 @@ const Save = require("../models/save");
 const Demo = require("../models/demo");
 
 const camFunctions = require("../util/camera-move");
-
-// exports.getAddProduct = (req, res, next) => {
-//   res.render('admin/edit-product', {
-//     pageTitle: 'Add Product',
-//     path: '/admin/add-product',
-//     formsCSS: true,
-//     productCSS: true,
-//     activeAddProduct: true,
-//     editing: false
-//   });
-// };
-
-// exports.postAddProduct = (req, res, next) => {
-//   const title = req.body.title;
-//   const imageUrl = req.body.imageUrl;
-//   const price = req.body.price;
-//   const description = req.body.description;
-//   const product = new Product(null, title, imageUrl, description, price);// null pour l'id qui est généré automatiquement
-//   product.save();
-//   res.redirect('/');
-// };
 
 exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
@@ -46,7 +27,7 @@ exports.getEditProduct = (req, res, next) => {
     });
 
     setTimeout(() => {
-      Product.fetchAll(products => {
+      Camera.find({}, (err, cameras) => {
         getAllDemo()
           .then(allDemo => {
             res.render("admin/edit-product", {
@@ -56,7 +37,7 @@ exports.getEditProduct = (req, res, next) => {
               //editing: editMode,// true or false
               product: save,
               demoId: demoId,
-              cameras: products
+              cameras: cameras
             });
           })
           .catch(function() {
@@ -77,12 +58,6 @@ exports.postEditProduct = async (req, res, next) => {
   const shareSelection = req.body.shareSelection;
   const allInputOutput = req.body.allInputOutput;
 
-  //OLD//
-  //const ip = req.body.ip;
-  // const pan = req.body.pan;
-  // const tilt = req.body.tilt;
-  // const zoom = req.body.zoom;
-  //OLD//
 
   const demoId = req.body.demoName;
   const oldDemoId = req.body.oldDemoId;
@@ -110,20 +85,6 @@ exports.postEditProduct = async (req, res, next) => {
       if (err) return console.error(err);
     });
   }
-
-  //OLD//
-  //var postion = [];
-  // for (let index = 0; index < ip.length; index++) {
-  //   postion.push({
-  //     ip: ip[index],
-  //     zoom: zoom[index],
-  //     panTilt: {
-  //       pan: pan[index],
-  //       tilt: tilt[index]
-  //     }
-  //   })
-  // }
-  //OLD//
 
   var updatedSave = {
     name: name,
@@ -196,16 +157,6 @@ exports.copyProduct = (req, res, next) => {
     });
   });
 };
-
-// exports.getProducts = (req, res, next) => {
-//   Product.fetchAll(products => {
-//     res.render('admin/products', {
-//       prods: products,
-//       pageTitle: 'Admin Products',
-//       path: '/admin/products'
-//     });
-//   });
-// };
 
 exports.postDeleteProduct = async (req, res, next) => {
   const saveId = req.body.productId;

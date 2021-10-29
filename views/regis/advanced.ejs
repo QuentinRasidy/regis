@@ -7,22 +7,27 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
 
-    <main>
+    <main style="background: #f5f5f7; padding: 0;">
         <% if (cameras.length > 0) { %>
-        <div class="grid">
+        <div class="grid" style="position: relative;">
             <% var c = 1 %>
             <% for (let camera of cameras) { %>
-            <article class="card camera-item">
+            <article class="card camera-item" style="filter:grayscale(1); pointer-events:none; position: relative;z-index: 2;">
+                <div style="position: absolute; right: 1rem; top: 1rem;">
+                    <button data-ip="<%= camera.ip %>" data-name="<%= camera.name %>" data-description="<%= camera.description %>"class="edit_camera" style="background: none; color: inherit; border: none;font-size: larger;cursor: pointer;">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
                 <header class="card__header">
                     <div class="card__content">
-                        <h2 class="camera__price"><%= camera.description %></h2>
-                        <p class="camera__description"><%= camera.name %></p>
+                        <h2 class="camera__price"><%= camera.name %></h2>
+                        <p class="camera__description"><%= camera.description%></p>
                         <p class="camera__description"><%= camera.ip %></p>
                     </div>
                 </header>
                 <div class="image-hover-text-container">
                     <div class="image-hover-image">
-                        <img id="image<%=c%>" src="http://<%= camera.ip %>/cgi-bin/camera" alt="<%= camera.ip %>"
+                        <img id="image<%=c%>" src="./images/load-icon.gif" alt="<%= camera.ip %>"
                             data-ip="<%= camera.ip %>">
                     </div>
                     <div class="image-hover-text">
@@ -33,7 +38,7 @@
                     </div>
                 </div>
 
-                <div style="display: flex;
+                <div class="controller" style="display: flex;
                 justify-content: center;
                 flex-direction: column;
                 border-radius: 1000px;
@@ -41,20 +46,20 @@
                 height: 284px;
                 width: 90%;
                 margin: 5%;">
-                    <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
-                                class="fas fa-angle-double-up"></i></button></div>
+                    <div class="card__actions"><button id="up<%=c%>" class="button-up" data-ip="<%= camera.ip %>"
+                            data-img="image<%=c%>"><i class="fas fa-angle-double-up"></i></button></div>
 
 
                     <div class="card__actions left-right-box">
                         <button id="left<%=c%>" class="button-left" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
                                 class="fas fa-angle-double-left"></i></button>
-                        <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
-                                class="far fa-dot-circle"></i></button>
-                        <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
-                                class="fas fa-angle-double-right"></i></button>
+                        <button id="button-center" class="plus-minus-button" data-ip="<%= camera.ip %>"
+                            data-img="image<%=c%>"><i class="far fa-dot-circle"></i></button>
+                        <button id="right<%=c%>" class="button-right" data-ip="<%= camera.ip %>"
+                            data-img="image<%=c%>"><i class="fas fa-angle-double-right"></i></button>
                     </div>
-                    <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>" data-img="image<%=c%>"><i
-                                class="fas fa-angle-double-down"></i></button></div>
+                    <div class="card__actions"><button id="down<%=c%>" class="button-down" data-ip="<%= camera.ip %>"
+                            data-img="image<%=c%>"><i class="fas fa-angle-double-down"></i></button></div>
                 </div>
 
                 <div id="advanced-button<%=c%>" style="text-align: center; font-weight: bold; margin-bottom: 5%;"
@@ -117,140 +122,160 @@
             </article>
             <% c++ %>
             <% } %>
-        </div>
-        <div class="card" style="padding: 5px; margin: 1rem; text-align: center; border-radius: 30px">
-            <h2 style="display: flex;
-            justify-content: center;
-            align-items: center;">Kandinsky-Spycam-SX80 <button class="little-button" style="margin-left: 1%;"
-                    onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
-            <hr>
-            <div style="display: flex; justify-content:center">
-                <ul id="selection_list">
-                    <li>
-                        <form action="/" id="source_selection">
-                            <input id="mainVideoSource" value=""" hidden>
-                            <label for=" sources" style="font-weight: bold;">Select Main Video Source:</label>
-                            <button type="submit" value="1" class="little-button">Spycam Room55</button>
-                            <button type="submit" value="2" class="little-button">Spycam Sarah</button>
-                            <button type="submit" value="3" class="little-button">Spycam Room70D</button>
-                            <button type="submit" value="4" class="little-button">GrilleHDMI</button>
-                        </form>
-                    </li>
-                    <li>
-                        <form id="share_selection">
-                            <label for="share-sources" style="font-weight: bold;">Select Share Source:</label>
-                            <input id="shareSource" value="" hidden>
-                            <button type=" submit" value="1" class="little-button">Spycam Room55</button>
-                            <button type="submit" value="2" class="little-button">Spycam Sarah</button>
-                            <button type="submit" value="3" class="little-button">Spycam Room70D</button>
-                            <button type="submit" value="4" class="little-button">GrilleHDMI</button>
-                            <button id="btnStopSharing" type="submit" value="Stop" class="little-button"
-                                style="background-color: #ff0000c9;" hidden>Stop Sharing</button>
-                        </form>
-                    </li>
-                    <li style="display: flex">
-                        <form id="audio_selection">
-                            <label style="font-weight: bold;">Audio</label>
-                            <select name="audioSource" id="audioSource" disabled>
-                                <option value="1">Microphone 1</option>
-                                <option value="2">Microphone 2</option>
-                                <option value="3">Microphone 3</option>
-                                <option value="4">Microphone 4</option>
-                                <option value="5">Microphone 5</option>
-                                <option value="6">Microphone 6</option>
-                                <option value="7">Microphone 7</option>
-                                <option value="8">Microphone 8</option>
-                            </select>
-                            <button type="submit" value="Set_Audio" class="little-button"
-                                style="background-color: #42c542;" disabled><i class="fas fa-power-off"></i></button>
-                            <button type="submit" value="Stop_Audio" class="little-button"
-                                style="background-color: #ff0000c9;" disabled><i
-                                    class="fas fa-microphone-slash"></i></button>
-                        </form>
-                    </li>
-                    <li>
-                        <form id="callWebexNumber" action="/call" method="POST">
-                            <label style="font-weight: bold;">Call Webex Number:</label>
-                            <input id="webexNumber" name="webexNumber" type="text" value="" required>
-                            <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
-                                style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
-                            <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
-                                style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
+
+            <img style="position: absolute;bottom: 0;left: 0;height: 7rem;width: 100%;overflow: hidden; z-index: 1;" src="./images/borderWavesBlue.svg">
 
         </div>
-        <div class="card"
-            style="padding: 5px; margin: 1rem; display: flex; flex-direction:column ;text-align: center; justify-content: center; border-radius: 30px">
-            <table id="grid" class="matrix">
+        <div style="width: 100%; background: #0769af;border-bottom-left-radius: 30px;border-bottom-right-radius: 25px; padding: 1%;">
+            <div class="card" style="position: relative; padding: 5px; margin-right: 1rem;margin-bottom: 1rem;margin-left: 1rem;text-align: center; border-radius: 30px; background: white;">
+                <div style="position: absolute; right: 2rem; top: 2rem;">
+                    <button id="editCodecBtn" style="background: none; color: inherit; border: none;font-size: larger;cursor: pointer;">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
                 <h2 style="display: flex;
                 justify-content: center;
-                align-items: center;">Krammer matrix <button class="little-button" style="margin-left: 1%;"
-                        onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
+                align-items: center;" class="camera__price"><%= codecInfo.name %><button class="little-button" style="margin-left: 1%;"
+                        onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
                 <hr>
-                <tr>
-                    <td></td>
-                    <td><b>Ecran Haut Droite</b></b><br>Output 1</td>
-                    <td><b>Ecran Haut Centre</b><br>Output 2</td>
-                    <td><b>Ecran Haut Gauche</b><br>Output 1</td>
-                    <td><b>R55</b><br>Output 4</td>
-                    <td><b>R70 Dual</b><br>Output 5</td>
-                    <td><b>...</b><br>Output 6</td>
-                    <td><b>...</b><br>Output 7</td>
-                    <td><b>SpyCam SX80</b><br>Output 8</td>
-                </tr>
-                <% var inputs = ["PC Simon", "PC Pierre", "PC Fabien", "Mac Sarah", "AppleTV", "...", "Output SX80", "Input R70D"] %>
-                <% for (var x = 1; x<=8; x++) { %>
-                <tr>
-                    <td><b><%=inputs[x-1]%></b><br>Input <%=x%></td>
-                    <td id="cell1-<%=x%>" class="cell"></td>
-                    <td id="cell2-<%=x%>" class="cell"></td>
-                    <td id="cell3-<%=x%>" class="cell"></td>
-                    <td id="cell4-<%=x%>" class="cell"></td>
-                    <td id="cell5-<%=x%>" class="cell"></td>
-                    <td id="cell6-<%=x%>" class="cell"></td>
-                    <td id="cell7-<%=x%>" class="cell"></td>
-                    <td id="cell8-<%=x%>" class="cell"></td>
-                </tr>
-                <%}%>
-              </table>
-              <!-- <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
-                <div style="margin: 1%;">
-                  <label for="output">Output: </label>
-                  <input id="output" type="number" name="output" >
+                <%if (sx80Config.codecStatus === "ok") {%>
+                <div style="display: flex; justify-content:center">
+                    <ul id="selection_list">
+                        <li>
+                            <form action="/" id="source_selection">
+                                <input id="mainVideoSource" value="" hidden>
+                                <label for=" sources" style="font-weight: bold;">Select Main Video Source:</label>
+                                <button type="submit" value="1" class="little-button">Spycam Room55</button>
+                                <button type="submit" value="2" class="little-button">Spycam Sarah</button>
+                                <button type="submit" value="3" class="little-button">Spycam Room70D</button>
+                                <button type="submit" value="4" class="little-button">GrilleHDMI</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form id="share_selection">
+                                <label for="share-sources" style="font-weight: bold;">Select Share Source:</label>
+                                <input id="shareSource" value="" hidden>
+                                <button type=" submit" value="1" class="little-button">Spycam Room55</button>
+                                <button type="submit" value="2" class="little-button">Spycam Sarah</button>
+                                <button type="submit" value="3" class="little-button">Spycam Room70D</button>
+                                <button type="submit" value="4" class="little-button">GrilleHDMI</button>
+                                <button id="btnStopSharing" type="submit" value="Stop" class="little-button"
+                                    style="background-color: #ff0000c9;" hidden>Stop Sharing</button>
+                            </form>
+                        </li>
+                        <!-- <li style="display: flex">
+                            <form id="audio_selection">
+                                <label style="font-weight: bold;">Audio</label>
+                                <select name="audioSource" id="audioSource" disabled>
+                                    <option value="1">Microphone 1</option>
+                                    <option value="2">Microphone 2</option>
+                                    <option value="3">Microphone 3</option>
+                                    <option value="4">Microphone 4</option>
+                                    <option value="5">Microphone 5</option>
+                                    <option value="6">Microphone 6</option>
+                                    <option value="7">Microphone 7</option>
+                                    <option value="8">Microphone 8</option>
+                                </select>
+                                <button type="submit" value="Set_Audio" class="little-button"
+                                    style="background-color: #42c542;" disabled><i class="fas fa-power-off"></i></button>
+                                <button type="submit" value="Stop_Audio" class="little-button"
+                                    style="background-color: #ff0000c9;" disabled><i
+                                        class="fas fa-microphone-slash"></i></button>
+                            </form>
+                        </li> -->
+                        <li>
+                            <form id="callWebexNumber" action="/call" method="POST">
+                                <label style="font-weight: bold;">Call Webex Number:</label>
+                                <input id="webexNumber" name="webexNumber" type="text" value="" required>
+                                <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
+                                    style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
+                                <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
+                                    style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
-                <div style="margin: 1%;">
-                  <label for="input">Input: </label>
-                  <input id="input" type="number" name="input" >
-                </div>
-                <div style="margin: 1%;">
-                  <input id="SetInOut" class="little-button" style="display: none;" type="submit" value="Set">
-                </div>
-              </form> -->
-        </div>
-        <div style="    display: flex;
-        flex-direction: column; align-items: center;">
-            <div style="display: flex; width: 100%; justify-content: center;">
-                <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo <i class="fas fa-plus"></i></button>
-                <label style="margin-left: 10px; margin-right: 10px;">OR</label>
-                <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
-                <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
-                    <% for (let demo of demoList) { %>
-                <% if (demoName == demo.name){%>
-                <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
-                <%} else {%>
-                <option value="<%=demo._id%>"> <%=demo.name%> </option>
-                <% }%>
+                <% } else { %>
+                    <h1 style="color: red;">The codec is not responding...</h1><p>Check that the codec is on or the ip address</p>
                 <% } %>
-                </select>
+    
+            </div>
+            <div class="card" style="position: relative; padding: 5px; margin: 1rem; display: flex; flex-direction:column ;text-align: center; justify-content: center; border-radius: 30px; background: white;">
+                <!-- <div style="position: absolute; right: 2rem; top: 2rem;">
+                    <button style="background: none; color: inherit; border: none;font-size: larger;cursor: pointer;">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div> -->
+                <table id="grid" class="matrix">
+                    <h2 style="display: flex;
+                    justify-content: center;
+                    align-items: center;"class="camera__price">Krammer matrix <button class="little-button" style="margin-left: 1%;"
+                            onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
+                    <hr>
+                    <tr>
+                        <td></td>
+                        <td class="cell"><b>Ecran Haut Droite</b></b><br>Output 1<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>Ecran Haut Centre</b><br>Output 2<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>Ecran Haut Gauche</b><br>Output 3<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>R55</b><br>Output 4<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>R70 Dual</b><br>Output 5<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>...</b><br>Output 6<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>...</b><br>Output 7<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <td class="cell"><b>SpyCam SX80</b><br>Output 8<br><p style="font-size: x-small;">Click here for no input</p></td>
+                    </tr>
+                    <% var inputs = ["PC Simon", "PC Pierre", "PC Fabien", "Mac Sarah", "AppleTV", "...", "Output SX80", "Input R70D"] %>
+                    <% for (var x = 1; x<=8; x++) { %>
+                    <tr>
+                        <td><b><%=inputs[x-1]%></b><br>Input <%=x%></td>
+                        <td id="cell1-<%=x%>" class="cell"></td>
+                        <td id="cell2-<%=x%>" class="cell"></td>
+                        <td id="cell3-<%=x%>" class="cell"></td>
+                        <td id="cell4-<%=x%>" class="cell"></td>
+                        <td id="cell5-<%=x%>" class="cell"></td>
+                        <td id="cell6-<%=x%>" class="cell"></td>
+                        <td id="cell7-<%=x%>" class="cell"></td>
+                        <td id="cell8-<%=x%>" class="cell"></td>
+                    </tr>
+                    <%}%>
+                  </table>
+                  <!-- <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
+                    <div style="margin: 1%;">
+                      <label for="output">Output: </label>
+                      <input id="output" type="number" name="output" >
+                    </div>
+                    <div style="margin: 1%;">
+                      <label for="input">Input: </label>
+                      <input id="input" type="number" name="input" >
+                    </div>
+                    <div style="margin: 1%;">
+                      <input id="SetInOut" class="little-button" style="display: none;" type="submit" value="Set">
+                    </div>
+                  </form> -->
+            </div>
         </div>
-        <label for="saveName">Scene Name: </label>
-        <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
-        <button id="btnSaveAll" class="little-button">Save All <i class="fas fa-save"></i></button>
 
+        <div style="display: flex;flex-direction: column; align-items: center;padding: 2%;">
+            <!-- <div> -->
+                <div style="display: flex; width: 100%; justify-content: center;">
+                        <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo <i class="fas fa-plus"></i></button>
+                        <label style="margin-left: 10px; margin-right: 10px;">OR</label>
+                        <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
+                        <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
+                            <% for (let demo of demoList) { %>
+                        <% if (demoName == demo.name){%>
+                        <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                        <%} else {%>
+                        <option value="<%=demo._id%>"> <%=demo.name%> </option>
+                        <% }%>
+                        <% } %>
+                        </select>
+                </div>
+            <label for="saveName">Scene Name: </label>
+            <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
+            <button id="btnSaveAll" class="little-button">Save All <i class="fas fa-save"></i></button>
+            <!-- </div> -->
         </div>
+
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
@@ -264,6 +289,53 @@
             </div>
 
         </div>
+
+        <div id="cameraInfoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form action="/updateCamera" method="POST" class="form-modal">
+                    <h2>Edit camera information</h2>
+                    <input type="text" name="cameraOldIp" id="cameraOldIp" hidden>
+
+                    <div class="form-modal">
+                        <label for="cameraDescription">Change camera description: </label>
+                        <input type="text" name="cameraDescription" id="cameraDescription" required>
+                    </div>
+                    <div class="form-modal">
+                        <label for="cameraName">Change camera name: </label>
+                        <input type="text" name="cameraName" id="cameraName" required>
+                    </div>
+                    <div class="form-modal">
+                        <label for="cameraIp">Change camera ip: </label>
+                        <input type="text" name="cameraIp" id="cameraIp" required>
+                    </div>
+                    <div class="form-modal">
+                        <input id="updateCameraInfoBtn" class="little-button" type="submit" value="Update">
+                    </div>
+                </form>
+              </div>
+        </div>
+
+        <div id="codecInfoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form action="/updateCodecInfo" method="POST" class="form-modal">
+                    <h2>Edit codec information</h2>
+
+                    <div class="form-modal">
+                        <label for="codecName">Change codec name: </label>
+                        <input type="text" name="codecName" id="codecName" value="<%=codecInfo.name%>" required>
+                    </div>
+                    <div class="form-modal">
+                        <label for="codecIp">Change codec ip: </label>
+                        <input type="text" name="codecIp" id="codecIp" value="<%=codecInfo.ip%>" required>
+                    </div>
+                    <div class="form-modal">
+                        <input id="updateCodecInfoBtn" class="little-button" type="submit" value="Update">
+                    </div>
+                </form>
+              </div>
+        </div>
         <% } else { %>
         <h1>No cameras Found!</h1>
         <% } %>
@@ -272,50 +344,29 @@
     <script src="/js/modal.js"></script>
     <script>
         $(document).ready(function () {
+            var cameras = <%-JSON.stringify(cameras)%> ;
+            var krammerConfig = <%-JSON.stringify(krammerConfig)%>;
+            for (let index = 0; index < cameras.length; index++) {
+                const camera = cameras[index];
+                $(`#image${index + 1}`).attr('src', "http://" + camera.ip + "/cgi-bin/camera");
+            }
 
             //KRAMMER CELL COLORATION//
-            var krammerConfig1 = {
-                input: "<%=krammerConfig[0].input%>",
-                output: "<%=krammerConfig[0].output%>"
-            };
-            var krammerConfig2 = {
-                input: "<%=krammerConfig[1].input%>",
-                output: "<%=krammerConfig[1].output%>"
-            };
-            var krammerConfig3 = {
-                input: "<%=krammerConfig[2].input%>",
-                output: "<%=krammerConfig[2].output%>"
-            };
-            var krammerConfig4 = {
-                input: "<%=krammerConfig[3].input%>",
-                output: "<%=krammerConfig[3].output%>"
-            };
-            var krammerConfig5 = {
-                input: "<%=krammerConfig[4].input%>",
-                output: "<%=krammerConfig[4].output%>"
-            };
-            var krammerConfig6 = {
-                input: "<%=krammerConfig[5].input%>",
-                output: "<%=krammerConfig[5].output%>"
-            };
-            var krammerConfig7 = {
-                input: "<%=krammerConfig[6].input%>",
-                output: "<%=krammerConfig[6].output%>"
-            };
-            var krammerConfig8 = {
-                input: "<%=krammerConfig[7].input%>",
-                output: "<%=krammerConfig[7].output%>"
-            };
-            var krammerConfig = [krammerConfig1, krammerConfig2, krammerConfig3, krammerConfig4, krammerConfig5,
-                krammerConfig6, krammerConfig7, krammerConfig8
-            ];
-            console.log(krammerConfig[0].input);
-            var str = ""
-            Array.prototype.forEach.call(krammerConfig, element => {
-                str = "#cell" + element.output + "-" + element.input;
-                console.log(str);
-                $(str).css("background-color", "yellow");
-            });
+            console.log(krammerConfig);
+            if( krammerConfig.length > 0){
+                console.log(krammerConfig[0].input);
+                var str = ""
+                Array.prototype.forEach.call(krammerConfig, element => {
+                    str = "#cell" + element.output + "-" + element.input;
+                    console.log(str);
+                    $(str).css("background-color", "yellow");
+                });
+            }
+            else{
+                $( "#grid" ).replaceWith( "<h2 style='color:red'>Krammer API not available...</h2><p>Check on websvr2 the service called <b>_DEV_KrammerAPI</b></p>" );
+                window.alert("Krammer API do not respond... Check on websvr2 the service called _DEV_KrammerAPI")
+            }
+
             //END KRAMMER CELL COLORATION//
 
             //GET & SET SX80 STATUS//
@@ -323,24 +374,51 @@
             var shareForm = $('#share_selection');
             var buttons = $form.find(":submit").css("background-color", "#ff0000c9");
             var shareButtons = shareForm.find(":submit").css("background-color", "#ff0000c9");
-
-            //ici je cherche à trouver quel btn correspond a la mainVideoSource et je le met en vert
-            for (let index = 0; index < buttons.length; index++) {
-                if (buttons[index].value === "<%=sx80Config.mainVideoSource%>") {
-                    buttons[index].style.backgroundColor = "#42c542";
-                    $('#mainVideoSource').val(buttons[index].value);
+            var codecStatus = "<%=sx80Config.codecStatus%>";
+            
+            if(codecStatus === "ok"){
+             //ici je cherche à trouver quel btn correspond a la mainVideoSource et je le met en vert
+                for (let index = 0; index < buttons.length; index++) {
+                    if (buttons[index].value === "<%=sx80Config.mainVideoSource%>") {
+                        buttons[index].style.backgroundColor = "#42c542";
+                        $('#mainVideoSource').val(buttons[index].value);
+                    }
                 }
-            }
-            if ("<%=sx80Config.shareSource%>" != "Not_Sending") {
-                $('#btnStopSharing').show();
-                for (let index = 0; index < shareButtons.length; index++) {
-                    if (shareButtons[index].value === "<%=sx80Config.shareSource%>") {
-                        shareButtons[index].style.backgroundColor = "#42c542";
-                        $('#shareSource').val(shareButtons[index].value);
+                if ("<%=sx80Config.shareSource%>" != "Not_Sending") {
+                    $('#btnStopSharing').show();
+                    for (let index = 0; index < shareButtons.length; index++) {
+                        if (shareButtons[index].value === "<%=sx80Config.shareSource%>") {
+                            shareButtons[index].style.backgroundColor = "#42c542";
+                            $('#shareSource').val(shareButtons[index].value);
+                        }
                     }
                 }
             }
+            else{
+                window.alert("The codec is not responding ! Check IP adress")
+            }
 
+
+            /*If camera feedback not loading*/
+            $("img").on("load", function () {
+                var ip = $(this).data('ip');
+                console.log("load")
+                if($(this).attr('src') === "./images/no-video.png"){
+                    $(this).closest('.camera-item').css({"filter":"none", "pointer-events":"all"});
+                    $(this).closest('.camera-item').find('.controller').css({"filter":"grayscale(1)", "pointer-events":"none"});
+                    setTimeout(() => {
+                        window.alert(`Cannot find the camera ${ip} !`);
+                    }, 500);
+                }
+                else{
+                    $(this).closest('.camera-item').find('.controller').css({"filter":"none", "pointer-events":"all"});
+                    $(this).closest('.camera-item').css({"filter":"none", "pointer-events":"all"});
+                }
+            });
+
+            $("img").on("error", function () {
+                $(this).attr("src", "./images/no-video.png");  
+            });
 
             /* Check Device Type (touch or mouse) */
             var isTouchSupported = "ontouchend" in document; //boolean
@@ -395,6 +473,44 @@
                     success: 'success',
                 });
             });
+
+            /** Edit camera information modal JS**/
+            var cameraModal = document.getElementById("cameraInfoModal");
+            var closeBtn = document.getElementsByClassName("close")[1];
+            closeBtn.onclick = function () {
+                cameraModal.style.display = "none";
+            }
+
+            $('.edit_camera').on('click', function (e) {
+                e.preventDefault();
+                var ip = $(this).data('ip');
+                var name = $(this).data('name');
+                var description = $(this).data('description');
+                $('input[name="cameraOldIp"]').val(ip);
+                $('input[name="cameraName"]').val(name);
+                $('input[name="cameraDescription"]').val(description);
+                $('input[name="cameraIp"]').val(ip);
+                cameraModal.style.display = "block";
+                console.log("clicked", ip);
+            });
+
+            $('#updateCameraInfoBtn').on('click', function (e) {
+                cameraModal.style.display = "none";
+            });
+            /** End **/
+
+            /** Edit codec information modal JS**/
+            var codecModal = document.getElementById("codecInfoModal");
+            var closeCodecBtn = document.getElementsByClassName("close")[2];
+            closeCodecBtn.onclick = function () {
+                codecModal.style.display = "none";
+            }
+
+            $('#editCodecBtn').on('click', function (e) {
+                codecModal.style.display = "block";
+            });
+            /** End **/
+            
 
             // $("button[id^='zoom']").click(function () { // s'active pour tous boutons ayant l'id zoom
             //     console.log('zoom');
@@ -618,7 +734,7 @@
                     }
                 });
             });
-            
+
             // $("button[id^='down']").click(function () {
             //     var ip = $(this).data('ip');
             //     console.log("down", ip);

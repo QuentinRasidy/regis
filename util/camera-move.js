@@ -1,5 +1,5 @@
 const request = require('request');
-const Product = require('../models/product');
+const Camera = require('../models/camera');
 
 module.exports = {
     setZoom: function (ip, value) {
@@ -34,7 +34,7 @@ module.exports = {
 
     getConfigOfAllCam: function () {
         return new Promise((resolve, reject) => {
-            Product.fetchAll(cameras => {
+            Camera.find({}, (err, cameras) => {
                 var position = [];
                 var count = cameras.length;
                 let completed = 0;

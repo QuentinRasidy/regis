@@ -9,9 +9,11 @@ body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
 }
-.matrix{
+
+.matrix {
   width: 100%;
 }
+
 .matrix tr,
 td {
   padding: 0.6rem;
@@ -311,6 +313,7 @@ hr {
 }
 
 .image-hover-text .image-hover-text-title {
+  cursor: pointer;
   font-size: 25px;
   display: block;
   color: white

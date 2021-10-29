@@ -1,5 +1,3 @@
-const Product = require('../models/product');
-//const Cart = require('../models/cart');
 const request = require('request');
 
 const xml2js = require('xml2js');
@@ -11,29 +9,41 @@ const mongoose = require('mongoose');
 mongoose.connect(
   'mongodb://localhost:27017/regis', {
     useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
   },
 );
 mongoose.Promise = global.Promise;
 
 const Save = require('../models/save');
 const Demo = require('../models/demo');
+const Camera = require("../models/camera");
 
-/** GLOBAL VARIABLE SX-80 IP Address */
-var sx80_ip = "10.1.110.113";
+/** DEFAULT CODEC INFORMATION */
+var codecInfo = {
+  ip: "10.1.110.113",
+  name: "Kandinsky-Spycam-SX80"
+};
 
 exports.zoom = (req, res, next) => {
   console.log("startStop");
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z80&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z80&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with this ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -41,14 +51,20 @@ exports.dezoom = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z20&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z20&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -57,14 +73,20 @@ exports.stopZoom = (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23Z50&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z50&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with this ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -86,9 +108,16 @@ exports.zoomExtremum = async (req, res, next) => {
     }
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log('reponse zoom: ' + response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with this ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 
 
@@ -98,14 +127,20 @@ exports.left = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS2050&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS2050&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -113,14 +148,20 @@ exports.right = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS8050&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS8050&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -128,14 +169,20 @@ exports.stopPanTilt = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5050&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5050&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -143,14 +190,20 @@ exports.up = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5080&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5080&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -158,14 +211,20 @@ exports.down = async (req, res, next) => {
   const ip = req.params.ip;
   var options = {
     'method': 'GET',
-    'url': 'http://'+ ip +'/cgi-bin/aw_ptz?cmd=%23PTS5020&res=1',
-    'headers': {
-    }
+    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5020&res=1',
+    'headers': {}
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
 }
 
@@ -181,32 +240,75 @@ exports.center = (req, res, next) => {
     }
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
-    res.send("ok");
+    if (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Cannot request the camera with the ip: ${ip}`
+      });
+    } else {
+      res.json({
+        code: "204"
+      });
+    }
   });
-}
-
-exports.test = (req, res, next) => {
-  const prodId = req.params.productId;
-  console.log(prodId);
 }
 
 exports.getAdvanced = (req, res, next) => {
   const demoName = (req.query.demoName != undefined) ? req.query.demoName : "";
-  Product.fetchAll(products => {
+    Camera.find({}, (err, cameras) => {
     getKrammerConfig().then(async config => {
       res.render('regis/advanced', {
-        cameras: products,
+        cameras: cameras,
         pageTitle: 'Regis',
         krammerConfig: config,
-        sx80Config: await getMainVideoSourceAndshareSource(sx80_ip),
+        codecInfo: codecInfo,
+        sx80Config: await getMainVideoSourceAndshareSource(codecInfo.ip),
         demoList: await getAllDemo(),
         demoName: demoName,
         path: '/'
       });
     })
   });
+};
+
+exports.updateCamera = (req, res, next) => {
+  const oldCameraIp = req.body.cameraOldIp;
+  const newCameraIp = req.body.cameraIp;
+  const newCameraName = req.body.cameraName;
+  const newCameraDescription = req.body.cameraDescription;
+  console.log(oldCameraIp, newCameraName)
+
+  var obj = {
+    ip : newCameraIp, 
+    description : newCameraDescription,
+    name : newCameraName
+  }
+
+  Camera.findOneAndUpdate({
+      ip: oldCameraIp
+    }, obj, {
+      useFindAndModify: false
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      } else {
+        console.log("Camera updated!");
+        res.redirect(req.get('referer'));
+      }
+    });
+};
+
+exports.updateCodecInfo = (req, res, next) => {
+  const codecIp = req.body.codecIp;
+  const codecName = req.body.codecName;
+
+  codecInfo.ip = codecIp;
+  codecInfo.name = codecName;
+
+  res.redirect(req.get('referer'));
+  
 };
 
 exports.getScenario = (req, res, next) => {
@@ -291,7 +393,7 @@ exports.setMainVideoSource = async (req, res, next) => {
   var source = req.body.mainVideoSource;
   disableAllTally();
   await sleep(500);
-  setMainVideoSource(source, sx80_ip, res);
+  setMainVideoSource(source, codecInfo.ip, res);
 }
 
 exports.setShareSource = (req, res, next) => {
@@ -307,7 +409,7 @@ exports.setShareSource = (req, res, next) => {
 
   var options = {
     method: "POST",
-    url: "https://" + sx80_ip + "/putxml",
+    url: "https://" + codecInfo.ip + "/putxml",
     headers: {
       "Content-Type": "text/xml",
       Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
@@ -325,7 +427,7 @@ exports.setShareSource = (req, res, next) => {
 }
 
 exports.stopSharing = (req, res, next) => {
-  stopSharing(sx80_ip);
+  stopSharing(codecInfo.ip);
 }
 
 exports.setInOutKrammer = (req, res, next) => {
@@ -402,14 +504,14 @@ exports.startScenario = (req, res, next) => {
 
 
     if (shareSelection != "") {
-      setShareSource(shareSelection, sx80_ip);
+      setShareSource(shareSelection, codecInfo.ip);
     } else {
-      stopSharing(sx80_ip);
+      stopSharing(codecInfo.ip);
     }
 
     disableAllTally();
     await sleep(1000);
-    setMainVideoSource(mainVideoSource, sx80_ip);
+    setMainVideoSource(mainVideoSource, codecInfo.ip);
 
     //Si GRILLE HDMI ALORS ON NE SET PAS LES CAMERAS
     position.forEach(cam => {
@@ -422,7 +524,7 @@ exports.startScenario = (req, res, next) => {
 }
 
 exports.endDemo = (req, res, next) => {
-  stopSharing(sx80_ip);
+  stopSharing(codecInfo.ip);
   disableAllTally();
   res.redirect('/');
 }
@@ -430,13 +532,13 @@ exports.endDemo = (req, res, next) => {
 exports.call = (req, res, next) => {
   const webexNumber = req.body.webexNumber;
   console.log(webexNumber);
-  callWebexNumber(webexNumber, sx80_ip);
+  callWebexNumber(webexNumber, codecInfo.ip);
   res.status(204).send();
 }
 
 exports.endCall = (req, res, next) => {
   console.log("end call");
-  disconnectCall(sx80_ip);
+  disconnectCall(codecInfo.ip);
   res.status(204).send();
 }
 
@@ -516,7 +618,7 @@ function setPanTiltValue(ip, pan, tilt) {
 
 function getConfigOfAllCam() {
   return new Promise((resolve, reject) => {
-    Product.fetchAll(cameras => {
+    Camera.find({}, (err, cameras) => {
       var position = [];
       var count = cameras.length;
       let completed = 0;
@@ -633,8 +735,12 @@ function getKrammerConfig() {
       }
     };
     request(options, function (error, response) {
-      if (error) throw new Error(error);
-      resolve(JSON.parse(response.body))
+      if (error) {
+        console.error(error);
+        resolve([]);
+      } else {
+        resolve(JSON.parse(response.body));
+      }
     });
   });
 }
@@ -663,20 +769,20 @@ function getAllDemo() {
 
 function setMainVideoSource(source, ip, res = undefined) {
   /* Attention les IP peuvent changer */
-  Product.fetchAll(camera => {
+  Camera.find({}, (err, cameras) => {
     switch (source) {
       case "1":
         console.log("1")
-        setTally(1, camera[0].ip);
+        setTally(1, cameras[0].ip);
         break;
       case "2":
-          console.log("2")
-        setTally(1, camera[1].ip);
+        console.log("2")
+        setTally(1, cameras[1].ip);
         break;
 
       case "3":
-          console.log("3")
-        setTally(1, camera[2].ip);
+        console.log("3")
+        setTally(1, cameras[2].ip);
         break;
 
       default:
@@ -710,7 +816,7 @@ function setMainVideoSource(source, ip, res = undefined) {
     if (error) throw new Error(error);
     console.log(error);
 
-    if(res != undefined){
+    if (res != undefined) {
       res.send('ok');
     }
   });
@@ -756,20 +862,27 @@ function getMainVideoSourceAndshareSource(ip) {
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
     request(options, function (error, response) {
-      if (error) throw new Error(error);
-      parser.parseString(response.body, function (error, result) {
-        if (error === null) {
-          var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
-          var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
-          console.log(result.Status.Conference[0].Presentation[0].Mode[0])
-          resolve({
-            mainVideoSource: mainVideoSource,
-            shareSource: shareSource
-          });
-        } else {
-          console.log(error);
-        }
-      });
+      if (error) {
+        console.error(error);
+        resolve({
+          codecStatus: "ko"
+        });
+      } else {
+        parser.parseString(response.body, function (error, result) {
+          if (error === null) {
+            var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
+            var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
+            console.log(result.Status.Conference[0].Presentation[0].Mode[0])
+            resolve({
+              mainVideoSource: mainVideoSource,
+              shareSource: shareSource,
+              codecStatus: "ok"
+            });
+          } else {
+            console.log(error);
+          }
+        });
+      }
     });
   });
 }
@@ -880,8 +993,8 @@ function setTally(mode, ip) {
 }
 
 function disableAllTally() {
-  Product.fetchAll(products => {
-    products.forEach(element => {
+  Camera.find({}, (err, cameras) => {
+    cameras.forEach(element => {
       setTally(0, element.ip);
     });
   });
