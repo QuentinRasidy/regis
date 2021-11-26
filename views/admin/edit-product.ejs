@@ -19,10 +19,14 @@
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <h2 class="camera__price">Edit Scene "<%=product.name%>"</h2>
-
-        <form class="product-form card" style="border-radius: 30px; padding: 1%;" action="/admin/edit-product"
-            method="POST">
+        <div method="GET" style="
+            position: absolute;
+            top: 10%;">
+            <button id="goBackBtn" class="btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+        </div>
+        <h2 class="camera__title">Edit Scene "<%=product.name%>"</h2>
+        <form class="product-form card" style="border-radius: 30px; padding: 1%; width: 50rem;"
+            action="/admin/edit-product" method="POST">
             <div class="form-control">
                 <label for="demoName">This Scene belong to Demo</label>
                 <select name="demoName" id="demoName">
@@ -39,8 +43,12 @@
                 <label for="name">Scene Name</label>
                 <input type="text" name="name" id="name" value="<%= product.name%>">
             </div>
+
+            <h4 style="margin-bottom: 0%">Spycam Positions <i class="fas fa-video"></i></h4>
+            <div style="margin: 1%"><a href="#anchor">here</a></div>
+
             <div class="form-control">
-                <label for="mainVideoSource">Main Video Source of SX80</label>
+                <label for="mainVideoSource">Main Video Source of Codec</label>
                 <select name="mainVideoSource" id="mainVideoSource">
                     <% for (let source of [
                      {num:1, name: "Spycam Room55" }, 
@@ -55,7 +63,7 @@
                 </select>
             </div>
             <div class="form-control">
-                <label for="shareSelection">Share Selection of SX80</label>
+                <label for="shareSelection">Share Selection of Codec</label>
                 <select name="shareSelection" id="shareSelection">
                     <% for (let source of [{num:"", name:"Don't Share"},
                      {num:1, name: "Spycam Room55" }, 
@@ -69,46 +77,36 @@
                     <% } } %>
                 </select>
             </div>
-            <div class="form-control">
-                <label for="allInputOutput">Krammer Matrix output & input (input>output)</label>
-                <!-- <div><- include('../includes/matrix.ejs') ></div> -->
-                <input type="text" name="allInputOutput" id="allInputOutput" value="<%= product.allInputOutput%>">
+            <div class="form-control" style="display: flex;flex-direction: column;align-items: center;">
+                <label for="allInputOutput">Krammer Matrix</label>
+
+
+                <table id="grid" class="matrix">
+                    <hr>
+                    <tr>
+                        <td></td>
+                        <% for ([index, output] of hdmiMatrixInfo.outputs.entries()) { %>
+                        <td id="cell<%=index+1%>-0" class="cell clickable" style="font-size: x-small;">
+                            <b><%= output.label %></b></b><br>Output
+                            <%= index + 1 %><br>
+                            <p style="font-size: x-small;">Click here for no input</p>
+                        </td>
+                        <% } %>
+                    </tr>
+
+                    <% for ([index, input] of hdmiMatrixInfo.inputs.entries()) { %>
+                    <tr>
+                        <td style="font-size: x-small;"><b><%=input.label%></b><br>Input <%=index+1%></td>
+                        <% for (var x = 1; x<=8; x++) { %>
+                        <td id="cell<%=x%>-<%=index+1%>" class="cell clickable"></td>
+                        <%}%>
+                    </tr>
+                    <%}%>
+                </table>
+
+                <input type="hidden" type="text" name="allInputOutput" id="allInputOutput"
+                    value="<%= product.allInputOutput%>">
             </div>
-            <h3 style="margin-bottom: 0%">Spycam Positions <i class="fas fa-video"></i></h3>
-            <div style="margin: 1%"><a href="#anchor">here</a></div>
-
-            <!-- <div style="display: flex;">
-                <% for (let cam of product.position) { %>
-                <hr>
-                <div style="padding: 2%">
-                    <label for="Name" style="font-weight: bold;"><%= cam.ip%></label>
-                    <div class="form-control">
-
-                        <details>
-                            <summary>PAN</summary>
-                            Interval 0 to FFFF (HEXADECIMAL).
-                        </details>
-                        <input type="text" name="pan" id="pan" value="<%= cam.panTilt.pan%>">
-
-                        <details>
-                            <summary>TILT</summary>
-                            Interval 0 to FFFF (HEXADECIMAL).
-                        </details>
-                        <input type="text" name="tilt" id="tilt" value="<%= cam.panTilt.tilt%>">
-
-                        <details>
-                            <summary>ZOOM</summary>
-                            Interval 555 to FFF (HEXADECIMAL).
-                        </details>
-                        <input type="text" name="zoom" id="zoom" value="<%= cam.zoom%>">
-                    </div>
-                </div>
-                <input type="hidden" value="<%= cam.ip %>" name="ip">
-                <%}%>
-                <hr>
-            </div> -->
-
-
             <input type="hidden" value="<%= product.id %>" name="productId">
             <input type="hidden" value="<%= demoId %>" name="oldDemoId">
             <div style="display: flex;flex-direction: row;justify-content: center;">
@@ -120,3 +118,76 @@
 
     </main>
     <%- include('../includes/end.ejs') %>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            let isSceneModified = false;
+
+            //KRAMMER CELL COLORATION//
+            let inputs_outputs = "<%-product.allInputOutput%>";
+            inputs_outputs = inputs_outputs.split(',').map(e => ({
+                "input": parseInt(e.split('>')[0], 10),
+                "output": parseInt(e.split('>')[1], 10)
+            }))
+            console.log(inputs_outputs);
+            if (inputs_outputs.length > 0) {
+                var str = ""
+                Array.prototype.forEach.call(inputs_outputs, element => {
+                    str = "#cell" + element.output + "-" + element.input;
+                    console.log(str);
+                    $(str).css("background-color", "yellow");
+                });
+            }
+            //END KRAMMER CELL COLORATION//
+
+            $('.clickable').click(function () {
+                isSceneModified = true;
+                col = $(this).parent().children().index($(this));
+                row = $(this).parent().parent().children().index($(this).parent());
+                const nbCell = 8;
+                for (let index = 0; index <= nbCell; index++) {
+                    $("#cell" + col + "-" + index).css("background-color", "");
+                }
+                $(this).css("background-color", "yellow");
+
+                console.log(col, row)
+                inputs_outputs = inputs_outputs.filter(e => e.output !== col);
+                inputs_outputs.push({
+                    "input": row,
+                    "output": col
+                });
+                console.log(inputs_outputs);
+                $('#allInputOutput').val(inputs_outputs.map(e => e.input + ">" + e.output).join());
+            });
+
+            $('#goBackBtn').click(function () {
+                if (isSceneModified) {
+                    if (confirm(
+                            "You modified the current scene are you sure want to leave without updating the changes ?"
+                            )) {
+                        window.history.back();
+                    }
+                } else {
+                    window.history.back();
+                }
+            });
+
+            $('#name').change(function () {
+                isSceneModified = true;
+            });
+
+            $('#demoName').change(function () {
+                isSceneModified = true;
+            });
+
+            $('#mainVideoSource').change(function () {
+                isSceneModified = true;
+            });
+
+            $('#shareSelection').change(function () {
+                isSceneModified = true;
+            });
+        });
+    </script>

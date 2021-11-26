@@ -18,12 +18,24 @@ mongoose.Promise = global.Promise;
 const Save = require('../models/save');
 const Demo = require('../models/demo');
 const Camera = require("../models/camera");
+const HdmiMatrix = require("../models/matrix");
+const Codec = require("../models/codec");
+
+const appStatus = require('../util/app-status');
+
 
 /** DEFAULT CODEC INFORMATION */
-var codecInfo = {
+let codecInfo = {
   ip: "10.1.110.113",
-  name: "Kandinsky-Spycam-SX80"
+  name: "Kandinsky-Spycam-SX80",
+  inputLabels: []
 };
+
+Codec.findOne({}, (err, codecDetails) => {
+  codecInfo.ip = codecDetails.ip,
+  codecInfo.name = codecDetails.name,
+  codecInfo.inputLabels = codecDetails.inputLabels
+})
 
 exports.zoom = (req, res, next) => {
   console.log("startStop");
@@ -255,19 +267,23 @@ exports.center = (req, res, next) => {
 
 exports.getAdvanced = (req, res, next) => {
   const demoName = (req.query.demoName != undefined) ? req.query.demoName : "";
-    Camera.find({}, (err, cameras) => {
-    getKrammerConfig().then(async config => {
-      res.render('regis/advanced', {
-        cameras: cameras,
-        pageTitle: 'Regis',
-        krammerConfig: config,
-        codecInfo: codecInfo,
-        sx80Config: await getMainVideoSourceAndshareSource(codecInfo.ip),
-        demoList: await getAllDemo(),
-        demoName: demoName,
-        path: '/'
-      });
-    })
+  Camera.find({}, (err, cameras) => {
+    HdmiMatrix.findOne({}, (err, hdmiMatrixInfo) => {
+      getKrammerConfig().then(async config => {
+        res.render('regis/advanced', {
+          appStatus: appStatus.getStatus(),
+          cameras: cameras,
+          pageTitle: 'Regis',
+          hdmiMatrixInfo: hdmiMatrixInfo,
+          krammerConfig: config,
+          codecInfo: codecInfo,
+          sx80Config: await getMainVideoSourceAndshareSource(codecInfo.ip),
+          demoList: await getAllDemo(),
+          demoName: demoName,
+          path: '/'
+        });
+      })
+    });
   });
 };
 
@@ -276,12 +292,11 @@ exports.updateCamera = (req, res, next) => {
   const newCameraIp = req.body.cameraIp;
   const newCameraName = req.body.cameraName;
   const newCameraDescription = req.body.cameraDescription;
-  console.log(oldCameraIp, newCameraName)
 
   var obj = {
-    ip : newCameraIp, 
-    description : newCameraDescription,
-    name : newCameraName
+    ip: newCameraIp,
+    description: newCameraDescription,
+    name: newCameraName
   }
 
   Camera.findOneAndUpdate({
@@ -295,7 +310,19 @@ exports.updateCamera = (req, res, next) => {
         res.sendStatus(500);
       } else {
         console.log("Camera updated!");
-        res.redirect(req.get('referer'));
+        Save.update({
+          'position.ip': oldCameraIp
+        }, {
+          'position.$.ip': newCameraIp
+        }, function (e, r) {
+          if (e) {
+            console.log(err);
+            res.sendStatus(500);
+          } else {
+            res.redirect(req.get('referer'));
+          }
+        });
+
       }
     });
 };
@@ -303,17 +330,49 @@ exports.updateCamera = (req, res, next) => {
 exports.updateCodecInfo = (req, res, next) => {
   const codecIp = req.body.codecIp;
   const codecName = req.body.codecName;
+  const codecInputs = [req.body.labelInput1, req.body.labelInput2, req.body.labelInput3, req.body.labelInput4].map((label, index) => ({
+    "number": index + 1,
+    "name": label
+  }));
 
   codecInfo.ip = codecIp;
   codecInfo.name = codecName;
+  codecInfo.inputLabels = codecInputs;
 
-  res.redirect(req.get('referer'));
-  
+  Codec.findOneAndUpdate({}, {
+    $set: {
+      name: codecName,
+      ip: codecIp,
+      inputLabels: codecInputs
+    }
+  }, {
+    useFindAndModify: false
+  }).then(res.redirect(req.get('referer')));
+
+};
+
+exports.updateMatrixInfo = (req, res, next) => {
+  const newValues = JSON.parse(req.body.changedValues);
+
+  const inputsLabel = newValues.inputs;
+  const outputsLabel = newValues.outputs;
+
+
+  HdmiMatrix.findOneAndUpdate({}, {
+    $set: {
+      inputs: inputsLabel,
+      outputs: outputsLabel
+    }
+  }, {
+    useFindAndModify: false
+  }).then(res.redirect(req.get('referer')));
+
 };
 
 exports.getScenario = (req, res, next) => {
   getSaves().then(save => {
     res.render('regis/scenario', {
+      appStatus: appStatus.getStatus(),
       saves: save,
       pageTitle: 'Scene',
       path: '/scenario'
@@ -324,6 +383,7 @@ exports.getScenario = (req, res, next) => {
 exports.getDemo = (req, res, next) => {
   getAllDemo().then(demoDocs => {
     res.render('regis/demo', {
+      appStatus: appStatus.getStatus(),
       demoList: demoDocs,
       pageTitle: 'demo',
       path: '/demo'
@@ -344,6 +404,7 @@ exports.getDemoById = async (req, res, next) => {
     var list = await sortListWithIds(records, ids);
     var allDemo = await getAllDemo();
     res.render('regis/scene-of-demo', {
+      appStatus: appStatus.getStatus(),
       saves: list,
       pageTitle: 'Scene',
       path: '/scene-of-demo',
@@ -367,6 +428,7 @@ exports.getSortDemo = async (req, res, next) => {
     //mongoose ne renvoi pas les documents dans le meme ordre que ma list de ids
     var list = await sortListWithIds(records, ids);
     res.render('regis/sort-demo', {
+      appStatus: appStatus.getStatus(),
       scenes: list,
       pageTitle: 'Sort Scene',
       path: '/sort-demo',
@@ -419,10 +481,13 @@ exports.setShareSource = (req, res, next) => {
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
   request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
-
-    res.send("ok");
+    if (error) {
+      console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE (${ip}) (see details below)`);
+      console.error(error);
+      res.send("ko");
+    } else {
+      res.send("ok");
+    }
   });
 }
 
@@ -444,6 +509,7 @@ exports.saveConfig = async (req, res, next) => {
     configName,
     demoId
   } = req.body;
+
   getConfigOfAllCam().then((value) => {
     value.forEach(e => console.log(e));
     var save = new Save({
@@ -484,6 +550,8 @@ exports.saveConfig = async (req, res, next) => {
       console.log(save.name + " saved to REGIS db.");
       res.sendStatus(201);
     });
+  }).catch(error => {
+    res.status(401).end(`The save has failed\nDetail: ${error.message}`);
   });
 }
 
@@ -500,32 +568,43 @@ exports.startScenario = (req, res, next) => {
       shareSelection,
       allInputOutput
     } = save;
-    setAllInOut(allInputOutput);
 
+    var promises = [];
+
+    promises.push(setAllInOut(allInputOutput));
 
     if (shareSelection != "") {
-      setShareSource(shareSelection, codecInfo.ip);
+      promises.push(setShareSource(shareSelection, codecInfo.ip));
     } else {
-      stopSharing(codecInfo.ip);
+      promises.push(stopSharing(codecInfo.ip, res));
     }
 
     disableAllTally();
     await sleep(1000);
-    setMainVideoSource(mainVideoSource, codecInfo.ip);
+
+    promises.push(setMainVideoSource(mainVideoSource, codecInfo.ip));
 
     //Si GRILLE HDMI ALORS ON NE SET PAS LES CAMERAS
     position.forEach(cam => {
-      setZoom(cam.ip, cam.zoom);
-      setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt);
+      promises.push(setZoom(cam.ip, cam.zoom));
+      promises.push(setPanTiltValue(cam.ip, cam.panTilt.pan, cam.panTilt.tilt));
     });
-    //console.log(save);
-    res.sendStatus(200);
+
+    Promise.all(promises).then(values => {
+      appStatus.setStatus(true);
+      res.sendStatus(200);
+    }).catch(function (err) {
+      console.error(err);
+      res.status(500).end(`Something went wrong when trying to load scene... \nDetail: ${err.message}`);
+    });
+
   });
 }
 
 exports.endDemo = (req, res, next) => {
   stopSharing(codecInfo.ip);
   disableAllTally();
+  appStatus.setStatus(false);
   res.redirect('/');
 }
 
@@ -546,7 +625,7 @@ exports.endCall = (req, res, next) => {
 
 
 function getZoom(ip) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     var options = {
       'method': 'GET',
       'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ&res=1',
@@ -556,30 +635,44 @@ function getZoom(ip) {
       }
     };
     request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body.substr(3))
-      resolve(response.body.substr(3));
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO GET ZOOM INFO ON CAMERA (${ip}) (see details below)`);
+        //throw new Error(error);
+        reject(error);
+      } else {
+        console.log(response.body.substr(3))
+        resolve(response.body.substr(3));
+      }
     });
   });
 }
 
-function setZoom(ip, value) {
-  var options = {
-    'method': 'GET',
-    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ' + value + '&res=1',
-    'headers': {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log('reponse zoom: ' + response.body);
+function setZoom(ip, value, res = undefined) {
+  return new Promise((resolve, reject) => {
+    var options = {
+      'method': 'GET',
+      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23AXZ' + value + '&res=1',
+      'headers': {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    };
+
+    request(options, function (error, response) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO SET ZOOM ON CAMERA (${ip}) (see details below)`);
+        reject(error);
+      } else {
+        resolve('ok');
+        console.log('reponse zoom: ' + response.body);
+      }
+    });
   });
+
 }
 
 function getPanTiltValue(ip) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     var options = {
       'method': 'GET',
       'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC&res=1',
@@ -589,30 +682,42 @@ function getPanTiltValue(ip) {
       }
     };
     request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body.substr(3, 4))
-      var values = {
-        pan: response.body.substr(3, 4),
-        tilt: response.body.substr(7, 4)
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO GET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
+        //throw new Error(error);
+        reject(error);
+      } else {
+        console.log(response.body.substr(3, 4));
+        var values = {
+          pan: response.body.substr(3, 4),
+          tilt: response.body.substr(7, 4)
+        }
+        resolve(values);
       }
-      resolve(values);
     });
   });
 }
 
-function setPanTiltValue(ip, pan, tilt) {
-  var options = {
-    'method': 'GET',
-    'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + pan + tilt + '&res=1',
-    'headers': {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
+function setPanTiltValue(ip, pan, tilt, res = undefined) {
+  return new Promise((resolve, reject) => {
+    var options = {
+      'method': 'GET',
+      'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23APC' + pan + tilt + '&res=1',
+      'headers': {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    };
+    request(options, function (error, response) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO SET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
+        reject(error);
+      } else {
+        console.log(response.body);
+        resolve("ok");
+      }
+    });
   });
 }
 
@@ -636,6 +741,9 @@ function getConfigOfAllCam() {
           if (completed == count) {
             resolve(position);
           }
+        }).catch(function (err) {
+          console.error(err);
+          reject(err);
         });
       }
     });
@@ -656,10 +764,12 @@ function setPreset(ip, presetNumber, res) {
     }
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
+    if (error) {
+      console.log(`ERROR WHEN TRYING TO SET PRESET ON CAMERA (${ip}) (see details below)`);
+      //throw new Error(error);
+    }
     res.send("ok");
     console.log("Send preset OK");
-    // console.log(response);
   });
 }
 
@@ -676,7 +786,10 @@ function savePreset(ip, presetNumber, res) {
     }
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
+    if (error) {
+      console.log(`ERROR WHEN TRYING TO SAVE PRESET ON CAMERA (${ip}) (see details below)`);
+      //throw new Error(error);
+    }
     res.send("ok");
     console.log("Save preset OK");
   });
@@ -697,7 +810,10 @@ function setInOut(input, output) {
 
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
+    if (error) {
+      console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
+      //throw new Error(error);
+    }
     console.log(response.body);
   });
 }
@@ -705,22 +821,30 @@ function setInOut(input, output) {
 /**
  * Function qui permet de configurer tous les input/ouput de krammer en un appel HTTP
  * @param {*} stringInOut exemple :"1>1,2>2,5>3,8>4,8>5,8>6,7>7,6>8" où INPUT>OUTPUT
+ * @param {responde Object} res : optionnal parameter to responde
  */
-function setAllInOut(stringInOut) {
-  var options = {
-    'method': 'POST',
-    'url': 'http://websrv2.ciscofrance.com:15136/setAllInOut',
-    'headers': {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      "allConfigString": stringInOut
-    })
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
+function setAllInOut(stringInOut, res = undefined) {
+  return new Promise((resolve, reject) => {
+    var options = {
+      'method': 'POST',
+      'url': 'http://websrv2.ciscofrance.com:15136/setAllInOut',
+      'headers': {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "allConfigString": stringInOut
+      })
+    };
+    request(options, function (error, response) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO SET MULTIPLE INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
+        reject(error);
+      } else {
+        resolve("ok");
+      }
+      console.log(response.body);
+    });
   });
 }
 
@@ -768,84 +892,98 @@ function getAllDemo() {
 }
 
 function setMainVideoSource(source, ip, res = undefined) {
-  /* Attention les IP peuvent changer */
-  Camera.find({}, (err, cameras) => {
-    switch (source) {
-      case "1":
-        console.log("1")
-        setTally(1, cameras[0].ip);
-        break;
-      case "2":
-        console.log("2")
-        setTally(1, cameras[1].ip);
-        break;
+  return new Promise((resolve, reject) => {
+    /* Attention les IP peuvent changer */
+    Camera.find({}, (err, cameras) => {
+      switch (source) {
+        case "1":
+          console.log("1")
+          setTally(1, cameras[0].ip);
+          break;
+        case "2":
+          console.log("2")
+          setTally(1, cameras[1].ip);
+          break;
 
-      case "3":
-        console.log("3")
-        setTally(1, cameras[2].ip);
-        break;
+        case "3":
+          console.log("3")
+          setTally(1, cameras[2].ip);
+          break;
 
-      default:
-        disableAllTally();
-        break;
-    }
-  });
-  var xml =
-    "<Command>" +
-    "<Video>" +
-    "<Input>" +
-    "<SetMainVideoSource>" +
-    "<ConnectorId>" + source + "</ConnectorId>" +
-    "</SetMainVideoSource>" +
-    "</Input>" +
-    "</Video>" +
-    "</Command>";
+        default:
+          disableAllTally();
+          break;
+      }
+    });
+    var xml =
+      "<Command>" +
+      "<Video>" +
+      "<Input>" +
+      "<SetMainVideoSource>" +
+      "<ConnectorId>" + source + "</ConnectorId>" +
+      "</SetMainVideoSource>" +
+      "</Input>" +
+      "</Video>" +
+      "</Command>";
 
-  var options = {
-    method: "POST",
-    url: "https://" + ip + "/putxml",
-    headers: {
-      "Content-Type": "text/xml",
-      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
-    },
-    body: xml
-  };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+    var options = {
+      method: "POST",
+      url: "https://" + ip + "/putxml",
+      headers: {
+        "Content-Type": "text/xml",
+        Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+      },
+      body: xml
+    };
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
-
-    if (res != undefined) {
-      res.send('ok');
-    }
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO SET MAIN VIDEO SOURCE ON DEVICE ${ip} (see details below)`);
+        reject(error);
+        if (res != undefined) {
+          res.status(500).end(`Cannot set main video source on device ${ip}\nDetail: ${error.message}`);
+        }
+      } else {
+        if (res != undefined) {
+          res.send('ok');
+        }
+        resolve('ok');
+      }
+    });
   });
 }
 
-function setShareSource(source, ip) {
-  var xml =
-    "<Command>" +
-    "<Presentation>" +
-    "<Start>" +
-    "<ConnectorId>" + source + "</ConnectorId>" +
-    "</Start>" +
-    "</Presentation>" +
-    "</Command>";
+function setShareSource(source, ip, res = undefined) {
+  return new Promise((resolve, reject) => {
+    var xml =
+      "<Command>" +
+      "<Presentation>" +
+      "<Start>" +
+      "<ConnectorId>" + source + "</ConnectorId>" +
+      "</Start>" +
+      "</Presentation>" +
+      "</Command>";
 
-  var options = {
-    method: "POST",
-    url: "https://" + ip + "/putxml",
-    headers: {
-      "Content-Type": "text/xml",
-      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
-    },
-    body: xml
-  };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+    var options = {
+      method: "POST",
+      url: "https://" + ip + "/putxml",
+      headers: {
+        "Content-Type": "text/xml",
+        Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+      },
+      body: xml
+    };
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE ${ip} (see details below)`);
+        reject(error);
+      } else {
+        resolve("ok");
+      }
+    });
   });
 }
 
@@ -912,36 +1050,43 @@ function callWebexNumber(number, ip) {
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
   request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    //console.log(error);
+    if (error) {
+      console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO CALL ${number} (see details below)`);
+      console.error(error);
+      //throw new Error(error);
+    }
   });
 }
 
-function stopSharing(ip) {
-  var xml =
-    "<Command>" +
-    "<Presentation>" +
-    "<Stop>" +
-    "</Stop>" +
-    "</Presentation>" +
-    "</Command>";
+function stopSharing(ip, res = undefined) {
+  return new Promise((resolve, reject) => {
+    var xml =
+      "<Command>" +
+      "<Presentation>" +
+      "<Stop>" +
+      "</Stop>" +
+      "</Presentation>" +
+      "</Command>";
 
-  var options = {
-    method: "POST",
-    url: "https://" + ip + "/putxml",
-    headers: {
-      "Content-Type": "text/xml",
-      Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
-    },
-    body: xml
-  };
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
+    var options = {
+      method: "POST",
+      url: "https://" + ip + "/putxml",
+      headers: {
+        "Content-Type": "text/xml",
+        Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
+      },
+      body: xml
+    };
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(error);
-
-    //res.send("ok");
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log(`ERROR WHEN TRYING TO STOP SHARING ON DEVICE ${ip} (see details below)`);
+        reject(error);
+      } else {
+        resolve("ok");
+      }
+    });
   });
 }
 
@@ -965,8 +1110,11 @@ function disconnectCall(ip) {
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
   request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    //console.log(error);
+    if (error) {
+      console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO DISCONNECT CALL ${number} (see details below)`);
+      //throw new Error(error);
+      console.error(error);
+    }
   });
 }
 
@@ -986,7 +1134,11 @@ function setTally(mode, ip) {
     }
   };
   request(options, function (error, response) {
-    if (error) throw new Error(error);
+    if (error) {
+      console.log(`ERROR ON CAMERA (${ip}) WHEN TRYING TO CHANGE TALLY (ligth on camera) (see details below)`);
+      //throw new Error(error);
+      console.error(error);
+    }
     console.log("set TALLY :")
     console.log("BODY: " + response.body);
   });

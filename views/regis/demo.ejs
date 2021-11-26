@@ -11,8 +11,8 @@
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <% if (demoList.length > 0) { %>
-        <h1 class="camera__price">Demo List</h1>
+        <% if (demoList.length > 0 && !appStatus) { %>
+        <h1 class="camera__title">Demo List <i class="fas fa-list"></i></h1>
         <hr>
         <div class="grid">
             <div>
@@ -48,7 +48,7 @@
                                 </form>
                             </td>
                             <td>
-                                <form action="/admin/delete-demo" method="POST">
+                                <form action="/admin/delete-demo" method="POST" onsubmit="return confirm('Do you really want to delete this demo?');">
                                     <input value="<%= demo._id %>" name="demoId" hidden>
                                     <button type="submit" class="little-button"><i
                                             class="fas fa-trash-alt"></i></button>
@@ -75,8 +75,8 @@
                 <button id="myBtn" class="little-button" style="margin-top: 5%;">Add New Demo</button>
             </div>
         </div>
-        <% } else { %>
-        <h1>No Demo Found!</h1>
+        <% } else if(!appStatus) { %>
+        <h1 class="camera__title">No Demo Found!</h1>
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
@@ -91,6 +91,11 @@
 
         </div>
         <button id="myBtn" class="little-button" style="margin-top: 5%;">Add New Demo</button>
+        <% } else { %>
+            <div style="display: flex; flex-direction:column; align-items: center;justify-content: center; height: 50rem;">
+                <h1 class="camera__title"><i class="fas fa-exclamation-triangle"></i> Demo in progress...</h1>
+                <p>Wait until the person has finished his demo</p>
+            </div>
         <% } %>
     </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

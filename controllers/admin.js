@@ -10,8 +10,10 @@ mongoose.Promise = global.Promise;
 
 const Save = require("../models/save");
 const Demo = require("../models/demo");
+const HdmiMatrix = require("../models/matrix");
 
 const camFunctions = require("../util/camera-move");
+const appStatus = require('../util/app-status');
 
 exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
@@ -28,12 +30,15 @@ exports.getEditProduct = (req, res, next) => {
 
     setTimeout(() => {
       Camera.find({}, (err, cameras) => {
-        getAllDemo()
+        HdmiMatrix.findOne({}, (err, hdmiMatrixInfo) => {
+          getAllDemo()
           .then(allDemo => {
             res.render("admin/edit-product", {
+              appStatus: appStatus.getStatus(),
               pageTitle: "Edit Save",
               path: "/admin/edit-product",
               demoList: allDemo,
+              hdmiMatrixInfo: hdmiMatrixInfo,
               //editing: editMode,// true or false
               product: save,
               demoId: demoId,
@@ -45,6 +50,7 @@ exports.getEditProduct = (req, res, next) => {
               "Promise Rejected: see getAllDemo() function in file admin.js"
             );
           });
+        });
       });
     }, 800); // on attend 0.8 sec pour laisser le temps au cameras de ce configurer
   });
@@ -110,6 +116,7 @@ exports.postEditProduct = async (req, res, next) => {
           var list = await sortListWithIds(records, ids);
           var allDemo = await getAllDemo();
           res.render("regis/scene-of-demo", {
+            appStatus: appStatus.getStatus(),
             saves: list,
             pageTitle: "Scene",
             path: "/scene-of-demo",
@@ -188,6 +195,7 @@ exports.postDeleteProduct = async (req, res, next) => {
       .exec(async (err, records) => {
         var list = await sortListWithIds(records, ids);
         res.render("regis/scene-of-demo", {
+          appStatus: appStatus.getStatus(),
           saves: list,
           pageTitle: "Scene",
           path: "/scene-of-demo",
@@ -261,7 +269,6 @@ exports.moveToDemo = async (req, res, next) => {
       console.log("Error demo: " + oldDemoId + " doesn't exist in data base");
       return res.redirect("/");
     }
-    console.log(id);
     oldDemo.scene = oldDemo.scene.filter(e => e != id); // on retire la scene courante de l'ancienne demo;
     oldDemo.save(function(err, save) {
       if (err) return console.error(err);
@@ -316,6 +323,7 @@ exports.changeOrderOfScene = (req, res, next) => {
 
 exports.getRegisSetting = (req, res, next) => {
   res.render("regis/setting", {
+    appStatus: appStatus.getStatus(),
     pageTitle: "Setting",
     path: "/setting"
   });

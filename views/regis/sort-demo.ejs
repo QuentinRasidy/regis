@@ -3,78 +3,186 @@
 <link rel="stylesheet" href="/css/button.css">
 <link rel="stylesheet" href="/css/table.css">
 </head>
+<style>
+    #sortableContainer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #sortable {
+        border-radius: 30px;
+        box-shadow: 0px 0px 1px rgb(255 255 255 / 50%), 2px 2px 5px rgb(0 0 0 / 50%);
+        counter-reset: my-awesome-counter;
+        list-style-type: none;
+        margin: 0;
+        padding: 10%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    #sortable li {
+        background-color: white;
+        box-shadow: 0px 0px 1px rgb(255 255 255 / 50%), 2px 2px 5px rgb(0 0 0 / 50%);
+        counter-increment: my-awesome-counter;
+        cursor: move;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 3px 3px 3px;
+        padding: 0.4em;
+        border-radius: 30px;
+        margin: 0.5rem;
+        font-size: 1.4em;
+        transition: transform .3s ease-in-out;
+    }
+
+    #sortable li:hover {
+        background-color: #93939326;
+        transform: rotate(-3deg);
+    }
+
+    #sortable li::before {
+        content: "Scene n° "counter(my-awesome-counter)" : ";
+        font-weight: bold;
+    }
+
+    .scene {
+        text-align: center;
+        width: 5em;
+
+    }
+
+    .line-vertical {
+        width: 2px;
+        /* line-width */
+        height: 90%;
+        /* line length */
+        left: 30px;
+        position: absolute;
+        background: #aaa;
+    }
+
+    .arrow-up:after,
+    .arrow-down:before,
+    .arrow-left:after,
+    .arrow-right:before {
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border: 5px solid transparent;
+    }
+
+    /* vertical arrows */
+    .arrow-up:after,
+    .arrow-down:before {
+        left: -4px;
+    }
+
+    .arrow-up:after {
+        top: -15px;
+        border-bottom: 15px solid #aaa;
+    }
+
+    .arrow-down:before {
+        bottom: -15px;
+        border-top: 15px solid #aaa;
+    }
+
+    /* horizontal arrows */
+    .arrow-left:after,
+    .arrow-right:before {
+        top: -4px;
+    }
+
+    .arrow-left:after {
+        left: -15px;
+        border-right: 15px solid #aaa;
+    }
+
+    .arrow-right:before {
+        right: -15px;
+        border-left: 15px solid #aaa;
+    }
+</style>
 
 <body>
     <%- include('../includes/navigation.ejs') %>
 
     <main>
         <% if (scenes.length > 0) { %>
-        <h2 class="camera__price">Demo "<%= demoName %>"</h2>
-        <h1 class="camera__price">Sort Scenes</h1>
+        <h2 class="camera__title">Demo "<%= demoName %>"</h2>
+        <h1 class="camera__title">Sort Scenes <i class="fas fa-sort-numeric-up"></i></h1>
         <hr>
         <div class="grid">
-            <form id="sortForm" action="/" method="POST">
-                <table class="table table-bordered table-hover">
-                    <tr>
-                        <td>Scene List</td>
-                        <td>Order</td>
-                    </tr>
-                    <% var cmp = 1; %>
-                    <% for (let scene of scenes) { %>
-                    <tr>
-                        <td><%= scene.name %></td>
-                        <td><input name="<%= scene.id %>" type="number" value="<%= cmp %>" min="1"
-                                max="<%= scenes.length %>" required></td>
-                    </tr>
-                    <% cmp++ %>
-                    <% } %>
-                </table>
-                <div style="display: flex;
+            <div id="sortableContainer">
+                <p>To change the position of the scenes, drag and drop them.</p>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <ul id="sortable" style="position: initial;">
+                        <% for (let scene of scenes) { %>
+                        <li class="ui-state-default" id="<%= scene.id %>">
+                            <div class="scene">&nbsp;&nbsp;<%= scene.name %></div>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <div class="line-vertical arrow-up arrow-down"></div>
+                    <p class="label" style="position: absolute; top: 1px; left: 45px; color: #aaa;">First</p>
+                    <p class="label" style="position: absolute; bottom: 1px; left: 45px; color: #aaa;">Last</p>
+                </div>
+                <div id="updateBtn" style="display: none;
                 justify-content: center;
-                padding: 10%;"><input class="little-button" type="submit" value="Change"></div>
-            </form>
+                padding: 8%;">
+                    <input id="changeOrder" class="btn" type="submit" value="Change">
+                </div>
+            </div>
         </div>
-        <button onclick="goBack()">Go Back</button>
+
+        <form action="/demo/<%= demoId%>?edit=true" method="POST" style="
+        position: absolute;
+        top: 10%;">
+            <button id="goBackBtn" class="btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+        </form>
+
         <% } else { %>
         <h1>No Scene Found!</h1>
         <% } %>
     </main>
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Import for drag and drop -->
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+
+    <!-- For IOS Android based devices -->
+    <script src="/js/jquery.ui.touch-punch.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            var a = "<%=listIdScene%>";
-            console.log(a);
 
-            $("#sortForm").submit(function (event) {
-                event.preventDefault();
-                var inputs = [];
-                flag = false;
-                $('input').each(function () {
-                    if ($.inArray(this.value, inputs) != -1) flag = true;
-                    inputs.push(this.value);
+            $("#changeOrder").click(function () {
+                var sceneOrder = $('#sortable').sortable("toArray");
+
+                $.ajax({
+                    url: '/admin/change-order-scene-of-demo',
+                    type: 'post',
+                    data: 'newOrderedList=' + sceneOrder + '&demoId=<%= demoId%>',
+                    success: function () {
+                        document.location.reload(true);
+                    }
                 });
+            })
 
-                if (flag == true) {
-                    alert("duplicates index exists");
-                } else {
-                    var values = $(this).serializeArray().sort((a,b)=> parseInt(a.value)-parseInt(b.value));
-                    var sortedArray = Array.from(values, x => x.name);
-                    $.ajax({
-                        url: '/admin/change-order-scene-of-demo',
-                        type: 'post',
-                        data: 'newOrderedList=' + sortedArray + '&demoId=<%= demoId%>',
-                        success: function () {
-                            console.log("ok");
-                            document.location.reload(true);
-                        }
-                    });
-                }
+            $("#sortable").sortable({
+                update: function (e, ui) {
+                    $('#updateBtn').css('display', 'flex')
+                },
             });
+
+            $('#sortable').draggable();
+            $('#sortable').css("position", "sticky")
+
         });
     </script>
     <%- include('../includes/end.ejs') %>

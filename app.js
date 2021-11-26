@@ -3,6 +3,7 @@ var favicon = require("serve-favicon");
 var cors = require("cors");
 const https = require("https");
 const fs = require("fs");
+require('dotenv').config()
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -27,7 +28,7 @@ app.use(regisRoutes);
 
 app.use(errorController.get404);
 
-app.listen(15137);
+app.listen(process.env.PORT || 3000);
 // https.createServer({
 //     key: fs.readFileSync('server.key'),
 //     cert: fs.readFileSync('server.cert')

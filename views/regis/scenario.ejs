@@ -9,7 +9,7 @@
     <main>
         <% if(typeof edit === 'undefined') { var edit = true;} else if(edit === null){var edit = true;}%>
         <% if (saves.length > 0) { %>
-        <h1 class="camera__price">Scenario List</h1>
+        <h1 class="camera__title">Scenario List</h1>
         <hr>
         <div class="grid">
             <% for (let product of saves) { %>
@@ -26,7 +26,7 @@
                 </div>
                 <% } %>
                 <header class="card__header">
-                    <h1 class="camera__price">
+                    <h1 class="camera__title">
                         <%= product.name %>
                     </h1>
                 </header>

@@ -20,7 +20,7 @@
                 </div>
                 <header class="card__header">
                     <div class="card__content">
-                        <h2 class="camera__price"><%= camera.name %></h2>
+                        <h2 class="camera__title"><%= camera.name %></h2>
                         <p class="camera__description"><%= camera.description%></p>
                         <p class="camera__description"><%= camera.ip %></p>
                     </div>
@@ -135,7 +135,7 @@
                 </div>
                 <h2 style="display: flex;
                 justify-content: center;
-                align-items: center;" class="camera__price"><%= codecInfo.name %><button class="little-button" style="margin-left: 1%;"
+                align-items: center;" class="camera__title"><%= codecInfo.name %><button class="little-button" style="margin-left: 1%;"
                         onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></i></h2>
                 <hr>
                 <%if (sx80Config.codecStatus === "ok") {%>
@@ -145,20 +145,18 @@
                             <form action="/" id="source_selection">
                                 <input id="mainVideoSource" value="" hidden>
                                 <label for=" sources" style="font-weight: bold;">Select Main Video Source:</label>
-                                <button type="submit" value="1" class="little-button">Spycam Room55</button>
-                                <button type="submit" value="2" class="little-button">Spycam Sarah</button>
-                                <button type="submit" value="3" class="little-button">Spycam Room70D</button>
-                                <button type="submit" value="4" class="little-button">GrilleHDMI</button>
+                                <% for ( inputLabel of codecInfo.inputLabels) { %>
+                                <button type="submit" value="<%=inputLabel.number%>" class="little-button"><%=inputLabel.name%></button>
+                                <% } %>
                             </form>
                         </li>
                         <li>
                             <form id="share_selection">
                                 <label for="share-sources" style="font-weight: bold;">Select Share Source:</label>
                                 <input id="shareSource" value="" hidden>
-                                <button type=" submit" value="1" class="little-button">Spycam Room55</button>
-                                <button type="submit" value="2" class="little-button">Spycam Sarah</button>
-                                <button type="submit" value="3" class="little-button">Spycam Room70D</button>
-                                <button type="submit" value="4" class="little-button">GrilleHDMI</button>
+                                <% for ( inputLabel of codecInfo.inputLabels) { %>
+                                    <button type=" submit" value="<%=inputLabel.number%>" class="little-button"><%=inputLabel.name%></button>
+                                <% } %>
                                 <button id="btnStopSharing" type="submit" value="Stop" class="little-button"
                                     style="background-color: #ff0000c9;" hidden>Stop Sharing</button>
                             </form>
@@ -201,79 +199,54 @@
     
             </div>
             <div class="card" style="position: relative; padding: 5px; margin: 1rem; display: flex; flex-direction:column ;text-align: center; justify-content: center; border-radius: 30px; background: white;">
-                <!-- <div style="position: absolute; right: 2rem; top: 2rem;">
-                    <button style="background: none; color: inherit; border: none;font-size: larger;cursor: pointer;">
+                <div style="position: absolute; right: 2rem; top: 2rem;">
+                    <button id="editMatrixBtn" style="background: none; color: inherit; border: none;font-size: larger;cursor: pointer;">
                         <i class="fas fa-pen"></i>
                     </button>
-                </div> -->
+                </div>
                 <table id="grid" class="matrix">
                     <h2 style="display: flex;
                     justify-content: center;
-                    align-items: center;"class="camera__price">Krammer matrix <button class="little-button" style="margin-left: 1%;"
+                    align-items: center;"class="camera__title"><%= hdmiMatrixInfo.name %> <button class="little-button" style="margin-left: 1%;"
                             onClick="window.location.reload();"><i class="fas fa-redo-alt"></i></button></h2>
                     <hr>
                     <tr>
                         <td></td>
-                        <td class="cell"><b>Ecran Haut Droite</b></b><br>Output 1<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>Ecran Haut Centre</b><br>Output 2<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>Ecran Haut Gauche</b><br>Output 3<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>R55</b><br>Output 4<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>R70 Dual</b><br>Output 5<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>...</b><br>Output 6<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>...</b><br>Output 7<br><p style="font-size: x-small;">Click here for no input</p></td>
-                        <td class="cell"><b>SpyCam SX80</b><br>Output 8<br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <% for ([index, output] of hdmiMatrixInfo.outputs.entries()) { %>
+                        <td id="cell<%=index+1%>-0" class="cell clickable"><b><%= output.label %></b></b><br>Output <%= index + 1 %><br><p style="font-size: x-small;">Click here for no input</p></td>
+                        <% } %>
                     </tr>
-                    <% var inputs = ["PC Simon", "PC Pierre", "PC Fabien", "Mac Sarah", "AppleTV", "...", "Output SX80", "Input R70D"] %>
-                    <% for (var x = 1; x<=8; x++) { %>
+                    
+                    <% for ([index, input] of hdmiMatrixInfo.inputs.entries()) { %>
                     <tr>
-                        <td><b><%=inputs[x-1]%></b><br>Input <%=x%></td>
-                        <td id="cell1-<%=x%>" class="cell"></td>
-                        <td id="cell2-<%=x%>" class="cell"></td>
-                        <td id="cell3-<%=x%>" class="cell"></td>
-                        <td id="cell4-<%=x%>" class="cell"></td>
-                        <td id="cell5-<%=x%>" class="cell"></td>
-                        <td id="cell6-<%=x%>" class="cell"></td>
-                        <td id="cell7-<%=x%>" class="cell"></td>
-                        <td id="cell8-<%=x%>" class="cell"></td>
+                        <td><b><%=input.label%></b><br>Input <%=index+1%></td>
+                        <% for (var x = 1; x<=8; x++) { %>
+                            <td id="cell<%=x%>-<%=index+1%>" class="cell clickable"></td>
+                        <%}%>
                     </tr>
                     <%}%>
                   </table>
-                  <!-- <form id="krammerForm" action="" method="post" style="display: flex; justify-content: center;">
-                    <div style="margin: 1%;">
-                      <label for="output">Output: </label>
-                      <input id="output" type="number" name="output" >
-                    </div>
-                    <div style="margin: 1%;">
-                      <label for="input">Input: </label>
-                      <input id="input" type="number" name="input" >
-                    </div>
-                    <div style="margin: 1%;">
-                      <input id="SetInOut" class="little-button" style="display: none;" type="submit" value="Set">
-                    </div>
-                  </form> -->
             </div>
         </div>
 
         <div style="display: flex;flex-direction: column; align-items: center;padding: 2%;">
-            <!-- <div> -->
                 <div style="display: flex; width: 100%; justify-content: center;">
                         <button id="myBtn" class="little-button" style="margin-bottom: 0%;">Create New Demo <i class="fas fa-plus"></i></button>
                         <label style="margin-left: 10px; margin-right: 10px;">OR</label>
                         <label for="demoChoose" style="margin-right: 5px; font-weight: bold;">Choose the Demo Package</label>
                         <select name="demoChoose" id="demoChoose" style="width: 8%; text-align: center; padding: 2px;">
-                            <% for (let demo of demoList) { %>
-                        <% if (demoName == demo.name){%>
-                        <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
-                        <%} else {%>
-                        <option value="<%=demo._id%>"> <%=demo.name%> </option>
-                        <% }%>
+                        <% for (let demo of demoList) { %>
+                            <% if (demoName == demo.name){%>
+                            <option value="<%=demo._id%>" selected> <%=demo.name%> </option>
+                            <%} else {%>
+                            <option value="<%=demo._id%>"> <%=demo.name%> </option>
+                            <% }%>
                         <% } %>
                         </select>
                 </div>
             <label for="saveName">Scene Name: </label>
             <input id="saveName" type="text" name="saveName" style="margin-bottom: 1%">
             <button id="btnSaveAll" class="little-button">Save All <i class="fas fa-save"></i></button>
-            <!-- </div> -->
         </div>
 
         <div id="myModal" class="modal">
@@ -293,17 +266,17 @@
         <div id="cameraInfoModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
+                <h2 class="camera__title">Edit camera information</h2>
+                <br>
                 <form action="/updateCamera" method="POST" class="form-modal">
-                    <h2>Edit camera information</h2>
                     <input type="text" name="cameraOldIp" id="cameraOldIp" hidden>
-
-                    <div class="form-modal">
-                        <label for="cameraDescription">Change camera description: </label>
-                        <input type="text" name="cameraDescription" id="cameraDescription" required>
-                    </div>
                     <div class="form-modal">
                         <label for="cameraName">Change camera name: </label>
                         <input type="text" name="cameraName" id="cameraName" required>
+                    </div>
+                    <div class="form-modal">
+                        <label for="cameraDescription">Change camera description: </label>
+                        <input type="text" name="cameraDescription" id="cameraDescription" required>
                     </div>
                     <div class="form-modal">
                         <label for="cameraIp">Change camera ip: </label>
@@ -319,16 +292,58 @@
         <div id="codecInfoModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
+                <h2 class="camera__title">Edit codec information</h2>
                 <form action="/updateCodecInfo" method="POST" class="form-modal">
-                    <h2>Edit codec information</h2>
-
+                    <br>
+                    <h3 style="text-decoration: underline;">General info</h3>
                     <div class="form-modal">
-                        <label for="codecName">Change codec name: </label>
+                        <label for="codecName">Codec name: </label>
                         <input type="text" name="codecName" id="codecName" value="<%=codecInfo.name%>" required>
                     </div>
                     <div class="form-modal">
-                        <label for="codecIp">Change codec ip: </label>
+                        <label for="codecIp">Codec ip: </label>
                         <input type="text" name="codecIp" id="codecIp" value="<%=codecInfo.ip%>" required>
+                    </div>
+                    <br>
+                    <h3 style="text-decoration: underline;">Input label's</h3>
+                    <% for ( inputLabel of codecInfo.inputLabels) { %>
+                        <div class="form-modal">
+                            <label for="<%=inputLabel.number%>">Label of input n°<%= inputLabel.number %>: </label>
+                            <input type="text" name="labelInput<%=inputLabel.number%>" value="<%=inputLabel.name%>" required>
+                        </div>
+                    <% } %>
+
+                    <div class="form-modal">
+                        <input id="updateCodecInfoBtn" class="little-button" type="submit" value="Update">
+                    </div>
+                </form>
+              </div>
+        </div>
+
+
+        <div id="hdmiMatrixInfoModal" class="modal">
+            <div class="modal-content" style="width: 50%; max-width: none; min-width: 45rem;">
+                <span class="close">&times;</span>
+                <h2 class="camera__title">Edit HDMI matrix information</h2>
+                <br>
+                <form id="matrixForm" action="/updateMatrixInfo" method="POST">
+                    <div style="display: flex; flex-direction: row; justify-content: space-around;">
+                        <div>
+                            <% for ([index, output] of hdmiMatrixInfo.outputs.entries()) { %>
+                                <div class="form-modal">
+                                    <label for="labelOutput<%= index + 1 %>">Label for output <%= index + 1 %>: </label>
+                                    <input type="text" name="labelOutput<%= index + 1 %>" id="labelOutput<%= index + 1 %>" value="<%= output.label %>" required>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div>
+                            <% for ([index, input] of hdmiMatrixInfo.inputs.entries()) { %>
+                                <div class="form-modal">
+                                    <label for="labelInput<%= index + 1 %>">Label for input <%= index + 1 %>: </label>
+                                    <input type="text" name="labelInput<%= index + 1 %>" id="labelInput<%= index + 1 %>" value="<%= input.label %>" required>
+                                </div>
+                            <% } %>
+                        </div>
                     </div>
                     <div class="form-modal">
                         <input id="updateCodecInfoBtn" class="little-button" type="submit" value="Update">
@@ -336,6 +351,15 @@
                 </form>
               </div>
         </div>
+
+        <div id="warningInfoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 class="camera__title"><i class="fas fa-exclamation-triangle"></i> Warning</h2>
+                <p> A demonstration is in progress, please do not disturb it</p>
+            </div>
+        </div>
+
         <% } else { %>
         <h1>No cameras Found!</h1>
         <% } %>
@@ -425,17 +449,14 @@
             var myDown = isTouchSupported ? "touchstart" : "mousedown";
             var myUp = isTouchSupported ? "touchend" : "mouseup";
 
-            $('td').click(function () {
+            $('.clickable').click(function () {
                 col = $(this).parent().children().index($(this));
                 row = $(this).parent().parent().children().index($(this).parent());
                 const nbCell = 8;
-                for (let index = 1; index <= nbCell; index++) {
+                for (let index = 0; index <= nbCell; index++) {
                     $("#cell" + col + "-" + index).css("background-color", "");
                 }
                 $(this).css("background-color", "yellow");
-                // $('#input').val(row)
-                // $('#output').val(col)
-                // $('#SetInOut').show()
                 const data = "input=" + row + "&" + "output=" + col;
                 console.log(col, row);
                 $.ajax({
@@ -461,7 +482,9 @@
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
                 console.log("refresh", ip, id_name_image);
-                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                //In the src attribut I use ?time argument to force browser to reload the image
+                //In fact Safari and Firefox doesn't reload the img if the src link do not change
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
             });
 
             $("button[id^='button-center']").click(function () {
@@ -490,7 +513,7 @@
                 $('input[name="cameraName"]').val(name);
                 $('input[name="cameraDescription"]').val(description);
                 $('input[name="cameraIp"]').val(ip);
-                cameraModal.style.display = "block";
+                cameraModal.style.display = "flex";
                 console.log("clicked", ip);
             });
 
@@ -507,30 +530,65 @@
             }
 
             $('#editCodecBtn').on('click', function (e) {
-                codecModal.style.display = "block";
+                codecModal.style.display = "flex";
             });
             /** End **/
+
+            /** Edit HDMI matrix information modal JS**/
+            var matrixModal = document.getElementById("hdmiMatrixInfoModal");
+            var closeMatrixBtn = document.getElementsByClassName("close")[3];
+            closeMatrixBtn.onclick = function () {
+                matrixModal.style.display = "none";
+            }
+
+            $('#editMatrixBtn').on('click', function (e) {
+                matrixModal.style.display = "flex";
+            });
+
+            var $matrixForm = $('#matrixForm');
+            var initialState = $matrixForm.serialize();
+            var initialValues = $matrixForm.serializeArray()
             
+            $matrixForm.submit(function (e) {
+            e.preventDefault();
+            if (initialState === $matrixForm.serialize()) {
+                console.log('Form is unchanged!');
+            } else {
+                console.log('Form has changed!');
+                var currentValues = $matrixForm.serializeArray();
+                const newOutputs = currentValues.filter(v => v.name.includes("Output")).map(e =>  ({number: e.name.substr(e.name.length - 1), label : e.value}) );
+                const newinputs = currentValues.filter(v => v.name.includes("Input")).map(e =>  ({number: e.name.substr(e.name.length - 1), label : e.value}) );
 
-            // $("button[id^='zoom']").click(function () { // s'active pour tous boutons ayant l'id zoom
-            //     console.log('zoom');
-            //     var ip = $(this).data('ip');
-            //     $.ajax({
-            //         url: '/zoom/' + ip,
-            //         type: 'get',
-            //         success: 'success'
-            //     });
-            // });
+                const dataToSend = {outputs: newOutputs, inputs: newinputs }
 
-            // $("button[id^='dezoom']").click(function () {
-            //     console.log('dezoom');
-            //     var ip = $(this).data('ip');
-            //     $.ajax({
-            //         url: '/dezoom/' + ip,
-            //         type: 'get',
-            //         success: 'success'
-            //     });
-            // });
+                $.ajax({
+                    url: '/updateMatrixInfo/',
+                    type: 'POST',
+                    data: {changedValues: JSON.stringify(dataToSend)},
+                    success: function (data) {
+                        location.reload();
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            }
+            });
+            /** End **/
+
+
+            /** Edit warning modal JS**/
+            var warningModal = document.getElementById("warningInfoModal");
+            var closeWarningBtn = document.getElementsByClassName("close")[4];
+            closeWarningBtn.onclick = function () {
+                warningModal.style.display = "none";
+            }
+            let isDemoInProgress = "<%=appStatus%>" === "true";
+            if( isDemoInProgress){
+                warningModal.style.display = "flex";
+            }
+
+            /** End **/
 
             $("button[id^='zoom']").bind(myDown, function () {
                 var ip = $(this).data('ip');
@@ -548,7 +606,7 @@
             $("button[id^='zoom']").bind(myUp, function () {
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
-                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 console.log("stop zoom in");
                 $.ajax({
                     url: '/stopZoom/' + ip,
@@ -577,7 +635,7 @@
             $("button[id^='dezoom']").bind(myUp, function () {
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
-                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 console.log("stop zoom out");
                 $.ajax({
                     url: '/stopZoom/' + ip,
@@ -615,16 +673,6 @@
                 });
             });
 
-            // $("button[id^='right']").click(function () {
-            //     console.log("right");
-            //     var ip = $(this).data('ip');
-            //     $.ajax({
-            //         url: '/right/' + ip,
-            //         type: 'get',
-            //         success: 'success'
-            //     });
-            // });
-
             $("button[id^='right']").bind(myDown, function () {
                 var ip = $(this).data('ip');
                 console.log("right");
@@ -642,7 +690,7 @@
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
                 setTimeout(() => {
-                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 }, 200);
                 console.log("stop right");
                 $.ajax({
@@ -654,16 +702,6 @@
                     }
                 });
             });
-
-            // $("button[id^='left']").click(function () {
-            //     var ip = $(this).data('ip');
-            //     console.log("left");
-            //     $.ajax({
-            //         url: '/left/' + ip,
-            //         type: 'get',
-            //         success: 'success'
-            //     });
-            // });
 
             $("button[id^='left']").bind(myDown, function () {
                 var ip = $(this).data('ip');
@@ -682,7 +720,7 @@
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
                 setTimeout(() => {
-                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 }, 200);
                 console.log("stop left");
                 $.ajax({
@@ -722,7 +760,7 @@
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
                 setTimeout(() => {
-                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 }, 200);
                 console.log("stop up");
                 $.ajax({
@@ -762,7 +800,7 @@
                 var ip = $(this).data('ip');
                 var id_name_image = $(this).data('img');
                 setTimeout(() => {
-                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera");
+                    $("#" + id_name_image).attr('src', "http://" + ip + "/cgi-bin/camera" + "?time=" + new Date().getTime());
                 }, 200);
                 console.log("stop down");
                 $.ajax({
@@ -811,7 +849,10 @@
                     url: '/setMainVideoSource',
                     type: 'post',
                     data: 'mainVideoSource=' + $(this).attr("value"),
-                    success: function () {}
+                    success: function () {},
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
@@ -855,18 +896,6 @@
                 }
             });
 
-            // $('#krammerForm').on('submit', function (e) {
-            //     e.preventDefault();
-            //     var data = $(this).serialize();
-            //     console.log('Set InOut', data);
-            //     $.ajax({
-            //         url: '/setInOut',
-            //         type: 'post',
-            //         data: data,
-            //         success: function () {}
-            //     });
-            // });
-
             $('#btnSaveAll').click(function (e) {
                 var myTableArray = [];
                 var string = "";
@@ -899,8 +928,6 @@
                 const mainVideoSource = $("#mainVideoSource").val();
                 const shareSelection = $("#shareSource").val();
 
-                // const output = $("#output").val();
-                // const input = $("#input").val();
                 const demoId = $("#demoChoose").val();
                 const configName = $("#saveName").val();
                 var data = {};
@@ -925,14 +952,13 @@
                                 $('#btnSaveAll').html(
                                     'Save All <i class="fas fa-save"></i>')
                             }, 1500);
-                            // alert("Current Configuration Saved Successfully !");
                         },
                         error: function (request, status, error) {
                             alert(request.responseText);
                         }
                     });
                 }
-            })
+            });
         });
     </script>
     <%- include('../includes/end.ejs') %>

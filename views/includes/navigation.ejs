@@ -10,12 +10,11 @@
             <li class="main-header__item">
                 <a class="<%= path === '/' ? 'active' : '' %>" href="/advanced">Advanced</a>
             </li>
-
-            <!-- <li class="main-header__item">
-                <a class="<%= path === '/scenario' ? 'active' : '' %>" href="/scenario">Scenario</a>
-            </li> -->
         </ul>
     </nav>
+    <% if (appStatus) {%>
+    <div style="width: 100%; display:flex; flex-direction:row-reverse; color:yellow"><p><i class="fas fa-exclamation-triangle" style="color: red;"></i> Demo in progress...</p></div>
+    <% } %>
 </header>
 
 <nav class="mobile-nav">
@@ -26,9 +25,5 @@
         <li class="mobile-nav__item">
             <a class="<%= path === '/' ? 'active' : '' %>" href="/advanced">Advanced</a>
         </li>
-
-        <!-- <li class="mobile-nav__item">
-            <a class="<%= path === '/scenario' ? 'active' : '' %>" href="/scenario">Scenario</a>
-        </li> -->
     </ul>
 </nav>

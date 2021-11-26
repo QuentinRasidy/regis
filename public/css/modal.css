@@ -4,8 +4,6 @@
   position: fixed;
   /* Stay in place */
   z-index: 999;
-  /* Sit on top */
-  padding-top: 25%;
   /* Location of the box */
   left: 0;
   top: 0;
@@ -23,7 +21,7 @@
 
 /* Modal Content */
 .modal-content {
-  min-width: 360px;
+  min-width: 370px;
   max-width: 400px;
   background-color: #fefefe;
   margin: auto;

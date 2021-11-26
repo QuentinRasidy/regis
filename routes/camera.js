@@ -16,7 +16,8 @@ router.get('/scenario', regisController.getScenario);
 router.get('/advanced', regisController.getAdvanced);
 router.post('/updateCamera', regisController.updateCamera);
 router.post('/updateCodecInfo', regisController.updateCodecInfo);
-router.get('/zoom/:ip', regisController.zoom); //route dynamique en fonction de l'id
+router.post('/updateMatrixInfo', regisController.updateMatrixInfo);
+router.get('/zoom/:ip', regisController.zoom);
 router.get('/dezoom/:ip', regisController.dezoom);
 router.get('/stopZoom/:ip', regisController.stopZoom);
 router.post('/zoomExtremum', regisController.zoomExtremum);

@@ -3,6 +3,53 @@
 <link rel="stylesheet" href="/css/button.css">
 
 <style>
+    .loader-container {
+        display: flex;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 50%;
+        top: 50%;
+        -ms-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        padding: 10px;
+        background-color: #2626309e;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 8px solid;
+        border-color: white rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.1);
+        animation: spin 1s ease infinite;
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        100% {
+            transform: rotate(359deg)
+        }
+    }
+
+    /* .loader {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url('https://hpscans.com/wp-content/uploads/2020/10/loading.gif') 50% 50% no-repeat rgb(255 255 255 / 50%);
+    } */
+
     .unactive-demo {
         background-color: #80808054;
         -webkit-transition: background-color 400ms linear;
@@ -28,28 +75,27 @@
     <main>
         <% if(typeof edit === 'undefined') { var edit = true;} else if(edit === null){var edit = true;}%>
         <% if (saves.length > 0) { %>
-        <h2 class="camera__price">Demo "<%= demoName %>"</h2>
-        <h1 class="camera__price"> Scenes <%= edit === true ? 'Edition Mode' : '' %></h1>
+        <h2 class="camera__title">Demo "<%= demoName %>"</h2>
+        <h1 class="camera__title"> Scenes <%= edit === true ? 'Edition Mode' : '' %> <% if(edit){%><i class="fas fa-user-edit"></i><%} else {%> <i class="fas fa-video"></i><%}%></h1>
         <hr>
         <% if (edit == false) { %>
-            <div style="display: flex;justify-content: center;">
-                <article class="card camera-item">
-                    <form id="callWebexNumber" style="margin:5%; text-align: center" action="/call" method="POST">
-                        <label style="font-weight: bold;">Call Webex Number:</label>
-                        <input id="webexNumber" name="webexNumber" type="text" value="" required>
-                        <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
-                            style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
-                        <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
-                            style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
-                    </form>
-                </article>
-            </div>
+        <div style="display: flex;justify-content: center;">
+            <article class="card camera-item">
+                <form id="callWebexNumber" style="margin:5%; text-align: center" action="/call" method="POST">
+                    <label style="font-weight: bold;">Call Webex Number:</label>
+                    <input id="webexNumber" name="webexNumber" type="text" value="" required>
+                    <button id="startCallWebex" type="submit" value="startCallWebex" class="little-button"
+                        style="background-color: #42c542;"><i class="fas fa-phone-alt"></i></i></button>
+                    <button id="endCallWebex" type="submit" value="endCallWebex" class="little-button"
+                        style="background-color: #ff0000c9;" hidden><i class="fas fa-phone-slash"></i></button>
+                </form>
+            </article>
+        </div>
         <% } %>
         <div class="grid">
             <%var c = 1;%>
             <% saves.reverse()%>
             <% for (let product of saves) { %>
-
 
             <article id="container<%=c%>"
                 class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
@@ -77,7 +123,7 @@
                     <% if (edit == false) { %>
                     <h1 style="background-color: white;width: 15%;border-radius: 39px; text-align: center"><%= c %></h1>
                     <% } %>
-                    <h1 class="camera__price">
+                    <h1 class="camera__title">
                         <%= product.name %>
                     </h1>
                 </header>
@@ -125,11 +171,16 @@
             <% c++ %>
             <% } %>
         </div>
+        <form action="/" method="GET" style="
+            position: absolute;
+            top: 10%;">
+                <button id="goBackBtn" class="btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+            </form>
         <% if (edit == false) { %>
         <div style="display: flex;justify-content: center;">
             <article id="endDemo" class="<%= edit === true ? 'card camera-item' : 'card camera-item unactive-demo' %>">
                 <header class="card__header">
-                    <h1 class="camera__price">
+                    <h1 class="camera__title">
                         END
                     </h1>
                 </header>
@@ -157,8 +208,11 @@
         <h1>No Scene Found!</h1>
         <a href="/advanced?demoName=<%= demoName %>" class="btn">Add Scene</a>
         <% } %>
-
     </main>
+
+    <div id="loadingDiv" class='loader-container'>
+        <div class="loader"></div>
+    </div>
 
 
 
@@ -170,6 +224,17 @@
 
     <script>
         $(document).ready(function () {
+            //ajax configuration for showing/hidding loading animation when ajax Start/Stop
+            var $loading = $('#loadingDiv').hide();
+            $(document)
+                .ajaxStart(function () {
+                    $loading.show();
+                })
+                .ajaxStop(function () {
+                    $loading.hide();
+                });
+            //end configuration
+
             $('#callWebexNumber button').click(function (e) {
                 if ($(this).attr("value") == "startCallWebex" && $("#webexNumber").val().length !== 0) {
                     $("#callWebexNumber").attr('action', '/call');
@@ -182,23 +247,27 @@
                     $('#startCallWebex').show();
                 }
             });
-            
+
             $('.launchScene').on('submit', function (e) {
                 e.preventDefault();
                 var data = $(this).serialize();
                 const length = "<%=saves.length%>";
-                for (let index = 1; index <= length; index++) {
-                    $("#container" + index).css("background-color", "#ff0909b8");
-                    $("#container" + index).removeClass("blink_me");
-                }
                 var container_id = $(this).data('container');
-                $("#container" + container_id).css("background-color", "#06ff5f");
-                $("#container" + (parseInt(container_id) + 1)).addClass("blink_me")
                 $.ajax({
                     url: '/startScenario',
                     type: 'post',
                     data: data,
-                    success: function () {}
+                    success: function () {
+                        for (let index = 1; index <= length; index++) {
+                            $("#container" + index).css("background-color", "#ff0909b8");
+                            $("#container" + index).removeClass("blink_me");
+                        }
+                        $("#container" + container_id).css("background-color", "#06ff5f");
+                        $("#container" + (parseInt(container_id) + 1)).addClass("blink_me")
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
             });
 
@@ -234,6 +303,18 @@
                     event.preventDefault();
                 }
             });
+
+            
+            let isEditMode = "<%=edit%>"==="true";
+
+            if(!isEditMode){
+                window.onbeforeunload = function(){
+                    $.ajax({
+                    url: '/endDemo',
+                    type: 'get'
+                });
+            };
+            }
         });
     </script>
     <%- include('../includes/end.ejs') %>

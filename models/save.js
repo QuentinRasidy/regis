@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+//In fact a save is a scene
 const saveSchema = mongoose.Schema(
   {
     //_id: mongoose.Schema.Types.ObjectId,
