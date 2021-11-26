@@ -11,6 +11,7 @@ mongoose.Promise = global.Promise;
 const Save = require("../models/save");
 const Demo = require("../models/demo");
 const HdmiMatrix = require("../models/matrix");
+const Codec = require("../models/codec");
 
 const camFunctions = require("../util/camera-move");
 const appStatus = require('../util/app-status');
@@ -32,13 +33,14 @@ exports.getEditProduct = (req, res, next) => {
       Camera.find({}, (err, cameras) => {
         HdmiMatrix.findOne({}, (err, hdmiMatrixInfo) => {
           getAllDemo()
-          .then(allDemo => {
+          .then(async allDemo => {
             res.render("admin/edit-product", {
               appStatus: appStatus.getStatus(),
               pageTitle: "Edit Save",
               path: "/admin/edit-product",
               demoList: allDemo,
               hdmiMatrixInfo: hdmiMatrixInfo,
+              codecInfo: await Codec.findOne({}),
               //editing: editMode,// true or false
               product: save,
               demoId: demoId,

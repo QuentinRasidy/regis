@@ -50,30 +50,23 @@
             <div class="form-control">
                 <label for="mainVideoSource">Main Video Source of Codec</label>
                 <select name="mainVideoSource" id="mainVideoSource">
-                    <% for (let source of [
-                     {num:1, name: "Spycam Room55" }, 
-                     {num:2, name:"Spycam Sarah"}, 
-                     {num:3, name:"Spycam Room70D"}, 
-                     {num:4, name:"GrilleHDMI"}]) { %>
-                    <% if (source.num == product.mainVideoSource){%>
-                    <option value="<%=product.mainVideoSource%>" selected><%=source.name%></option>
+                    <% for ( inputLabel of codecInfo.inputLabels) { %>
+                    <% if (inputLabel.number == product.mainVideoSource){%>
+                    <option value="<%=product.mainVideoSource%>" selected><%=inputLabel.name%></option>
                     <%} else {%>
-                    <option value="<%=source.num%>"> <%=source.name%> </option>
+                    <option value="<%=inputLabel.number%>"> <%=inputLabel.name%> </option>
                     <% } } %>
                 </select>
             </div>
             <div class="form-control">
                 <label for="shareSelection">Share Selection of Codec</label>
                 <select name="shareSelection" id="shareSelection">
-                    <% for (let source of [{num:"", name:"Don't Share"},
-                     {num:1, name: "Spycam Room55" }, 
-                     {num:2, name:"Spycam Sarah"}, 
-                     {num:3, name:"Spycam Room70D"}, 
-                     {num:4, name:"GrilleHDMI"}]) { %>
-                    <% if (source.num == product.shareSelection){%>
-                    <option value="<%=product.shareSelection%>" selected><%=source.name%></option>
+                    <option value=""> Don't Share </option>
+                    <% for ( inputLabel of codecInfo.inputLabels) { %>
+                    <% if (inputLabel.number == product.shareSelection){%>
+                    <option value="<%=product.shareSelection%>" selected><%=inputLabel.name%></option>
                     <%} else {%>
-                    <option value="<%=source.num%>"> <%=source.name%> </option>
+                    <option value="<%=inputLabel.number%>"> <%=inputLabel.name%> </option>
                     <% } } %>
                 </select>
             </div>
@@ -130,13 +123,11 @@
             inputs_outputs = inputs_outputs.split(',').map(e => ({
                 "input": parseInt(e.split('>')[0], 10),
                 "output": parseInt(e.split('>')[1], 10)
-            }))
-            console.log(inputs_outputs);
+            }));
             if (inputs_outputs.length > 0) {
                 var str = ""
                 Array.prototype.forEach.call(inputs_outputs, element => {
                     str = "#cell" + element.output + "-" + element.input;
-                    console.log(str);
                     $(str).css("background-color", "yellow");
                 });
             }
@@ -152,13 +143,11 @@
                 }
                 $(this).css("background-color", "yellow");
 
-                console.log(col, row)
                 inputs_outputs = inputs_outputs.filter(e => e.output !== col);
                 inputs_outputs.push({
                     "input": row,
                     "output": col
                 });
-                console.log(inputs_outputs);
                 $('#allInputOutput').val(inputs_outputs.map(e => e.input + ">" + e.output).join());
             });
 
