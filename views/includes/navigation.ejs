@@ -13,7 +13,13 @@
         </ul>
     </nav>
     <% if (appStatus) {%>
-    <div style="width: 100%; display:flex; flex-direction:row-reverse; color:yellow"><p><i class="fas fa-exclamation-triangle" style="color: red;"></i> Demo in progress...</p></div>
+    <div style="width: 100%; display:flex; flex-direction:row-reverse; align-items: center; color:yellow;">
+        <form method="GET" action="/endDemo" style="margin-left: 1%;" onsubmit="return confirm('Do you really want to stop the demo in progress?');">
+             <button type='submit' class="btn"><i class="far fa-times-circle"></i> Stop Demo</button>
+        </form>
+        
+        <p><i class="fas fa-exclamation-triangle" style="color: red;"></i> Demo in progress...</p>
+    </div>
     <% } %>
 </header>
 
