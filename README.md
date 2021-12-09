@@ -36,33 +36,140 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
    npm install
    ```
 
-3. Install mongodb and create 2 collections that you will call **"demos"** and **"saves"**.
+3. Install mongodb and create 5 collections that you will call **"demos"**, **"saves"**, **"cameras"**, **"codec"** and **"matrix"**.
 
-4. Set your camera informations in the **product.json** (see example below):
-
+4. Then you need to add cameras info, Cisco endpoint info and HDMI matrix info. To do this add Documents in mongoDB collections : 
+ 
+**cameras document example :** 
+ 
    ```sh
-   [{"id":"001","ip":"0.0.0.1","description":"a panasonic camera","name":"Cam n°1"},
-    {"id":"002","ip":"0.0.0.2","description":"a panasonic camera","name":"Cam n°2"}]
+   {
+    "ip" : "10.0.0.1",
+    "description" : "CAMERA DESCRIPTION HERE",
+    "name" : "CAMERA NAME HERE"
+   }
    ```
-
-5. Set the IP adresse of your Cisco Room device in the file **controllers/camera.js** on line 22:
-
+   (Add one document per camera)
+   
+**codec document example :** 
+ 
    ```sh
-   var sx80_ip = "YOUR_CISCO_DEVICE_IP_ADDRESS";
+   {
+       "ip" : "10.0.0.1",
+       "name" : "Cisco Webex Endpoint name's",
+       "inputLabels" : [ 
+           {
+               "number" : 1,
+               "name" : "NAME FOR INPUT WITH ID NUMBER 1 (The identifier (ID) of the connector)"
+           }, 
+           {
+               "number" : 2,
+               "name" : "NAME FOR INPUT WITH ID NUMBER 2 (The identifier (ID) of the connector)"
+           }, 
+           {
+               "number" : 3,
+               "name" : "NAME FOR INPUT WITH ID NUMBER 3 (The identifier (ID) of the connector)"
+           }, 
+           {
+               "number" : 4,
+               "name" : "NAME FOR INPUT WITH ID NUMBER 4 (The identifier (ID) of the connector)"
+           }
+       ]
+   }
    ```
+   
+**matrix document example :**
 
-6. You need to implement the function for the kramer matrix management in the file **controllers/camera.js**.
+```sh
+{
+    "name" : "NAME OF HDMI MATRIX HERE",
+    "inputs" : [ 
+        {
+            "number" : "1",
+            "label" : "label of input number 1 HERE"
+        }, 
+        {
+            "number" : "2",
+            "label" : "label of input number 2 HERE"
+        }, 
+        {
+            "number" : "3",
+            "label" : "label of input number 3 HERE"
+        }, 
+        {
+            "number" : "4",
+            "label" : "label of input number 4 HERE"
+        }, 
+        {
+            "number" : "5",
+            "label" : "label of input number 5 HERE"
+        }, 
+        {
+            "number" : "6",
+            "label" : "label of input number 6 HERE"
+        }, 
+        {
+            "number" : "7",
+            "label" : "label of input number 7 HERE"
+        }, 
+        {
+            "number" : "8",
+            "label" : "label of input number 8 HERE"
+        }
+    ],
+    "outputs" : [ 
+        {
+            "number" : "1",
+            "label" : "label of output number 1 HERE"
+        }, 
+        {
+            "number" : "2",
+            "label" : "label of output number 2 HERE"
+        }, 
+        {
+            "number" : "3",
+            "label" : "label of output number 3 HERE"
+        }, 
+        {
+            "number" : "4",
+            "label" : "label of output number 4 HERE"
+        }, 
+        {
+            "number" : "5",
+            "label" : "label of output number 5 HERE"
+        }, 
+        {
+            "number" : "6",
+            "label" : "label of output number 6 HERE"
+        }, 
+        {
+            "number" : "7",
+            "label" : "label of output number 7 HERE"
+        }, 
+        {
+            "number" : "8",
+            "label" : "label of output number 8 HERE"
+        }
+    ]
+}
+
+```
+
+
+**Warning the codec and matrix collections must contain only 1 document**
+
+5. You need to implement the function for the kramer matrix management in the file **controllers/camera.js**.
 
    Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
    in the file **controllers/camera.js** on line 583. Its functions must of course call your REST API.
 
-7. Set the PORT number in the file **app.js** on line 30:
+6. Create a .env file in the project and add the PORT number like this:
 
    ```sh
-   app.listen(PORT_NUMBER_HERE);
+   PORT=3000
    ```
 
-8. Start the app:
+7. Start the app:
 
    ```sh
    npm start
