@@ -161,7 +161,7 @@ REGIS controls the following elements: 5 cameras Panasonic connected to a Room K
 5. You need to implement the function for the kramer matrix management in the file **controllers/camera.js**.
 
    Create a REST API that configure the HDMI matrix and implement the function **setInOut()**, **setAllInOut()** and **getKrammerConfig()**
-   in the file **controllers/camera.js** on line 583. Its functions must of course call your REST API.
+   in the file **controllers/camera.js** on line 798. Its functions must of course call your REST API.
 
 6. Create a .env file in the project and add the PORT number like this:
 
