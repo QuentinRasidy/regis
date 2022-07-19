@@ -46,7 +46,7 @@ exports.zoom = (req, res, next) => {
     'headers': {}
   };
 
-  axios(options).then(()=>{
+  axios(options).then((response)=>{
     res.json({
       code: "204"
     });
@@ -645,7 +645,7 @@ function getZoom(ip) {
     };
 
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       console.log(response.body.substr(3))
       resolve(response.body.substr(3)); 
     }).catch((error)=>{
@@ -669,7 +669,7 @@ function setZoom(ip, value, res = undefined) {
       }
     };
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       resolve('ok');
       console.log('reponse zoom: ' + response.body);
     }).catch((error)=>{
@@ -693,7 +693,7 @@ function getPanTiltValue(ip) {
       }
     };
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       console.log(response.body.substr(3, 4));
       var values = {
         pan: response.body.substr(3, 4),
@@ -723,7 +723,7 @@ function setPanTiltValue(ip, pan, tilt, res = undefined) {
     };
 
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       console.log(response.body);
       resolve("ok");
     }).catch((error)=>{
@@ -823,7 +823,7 @@ function setInOut(input, output) {
     })
 
   };
-  axios(options).then(()=>{
+  axios(options).then((response)=>{
     console.log(response.body); 
   }).catch((error)=>{
     console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
@@ -875,7 +875,7 @@ function getKrammerConfig() {
 
 
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       resolve(JSON.parse(response.body));
     }).catch((error)=>{
       console.error(error);
@@ -1018,7 +1018,7 @@ function getMainVideoSourceAndshareSource(ip) {
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-    axios(options).then(()=>{
+    axios(options).then((response)=>{
       parser.parseString(response.body, function (error, result) {
         if (error === null) {
           var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
@@ -1157,7 +1157,7 @@ function setTally(mode, ip) {
     }
   };
 
-  axios(options).then(()=>{
+  axios(options).then((response)=>{
     console.log("set TALLY :")
     console.log("BODY: " + response.body);
   }).catch((error)=>{
