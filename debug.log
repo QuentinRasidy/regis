@@ -1,0 +1,598 @@
+
+> nodejs-complete-guide@1.0.0 start
+> nodemon app.js
+
+[33m[nodemon] 1.19.4[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching dir(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `node app.js`[39m
+Off
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)
+ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+http://websrv2.ciscofrance.com:15136/setInOut
+ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+http://websrv2.ciscofrance.com:15136/setInOut
+ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)
+[AxiosError: Request failed with status code 400] {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [Function: httpAdapter],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 0,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function] },
+    validateStatus: [Function: validateStatus],
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'axios/0.27.2'
+    },
+    method: 'post',
+    url: 'http://websrv2.ciscofrance.com:15136/setInOut',
+    body: '{"input":"6","output":"5"}',
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      prefinish: [Function: requestOnPrefinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: false,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: false,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: true,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: false,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'websrv2.ciscofrance.com',
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: null,
+      _server: null,
+      parser: null,
+      _httpMessage: [Circular *1],
+      [Symbol(async_id_symbol)]: 136,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: null,
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(RequestTimeout)]: undefined
+    },
+    _header: 'POST /setInOut HTTP/1.1\r\n' +
+      'Accept: application/json\r\n' +
+      'Content-Type: application/json\r\n' +
+      'User-Agent: axios/0.27.2\r\n' +
+      'Host: websrv2.ciscofrance.com:15136\r\n' +
+      'Connection: close\r\n' +
+      'Content-Length: 0\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 80,
+      protocol: 'http:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype] {},
+      keepAliveMsecs: 1000,
+      keepAlive: false,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 1,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'POST',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    path: '/setInOut',
+    _ended: true,
+    res: IncomingMessage {
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      socket: [Socket],
+      httpVersionMajor: 1,
+      httpVersionMinor: 0,
+      httpVersion: '1.0',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 400,
+      statusMessage: 'BAD REQUEST',
+      client: [Socket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      responseUrl: 'http://websrv2.ciscofrance.com:15136/setInOut',
+      redirects: [],
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 8,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0,
+      [Symbol(RequestTimeout)]: undefined
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'websrv2.ciscofrance.com',
+    protocol: 'http:',
+    _redirectable: Writable {
+      _writableState: [WritableState],
+      _events: [Object: null prototype],
+      _eventsCount: 3,
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'http://websrv2.ciscofrance.com:15136/setInOut',
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(kCapture)]: false,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'content-type': [Array],
+      'user-agent': [Array],
+      host: [Array]
+    }
+  },
+  response: {
+    status: 400,
+    statusText: 'BAD REQUEST',
+    headers: {
+      'content-type': 'text/html',
+      'content-length': '192',
+      server: 'Werkzeug/0.14.1 Python/3.7.2',
+      date: 'Tue, 19 Jul 2022 21:09:06 GMT'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Function: httpAdapter],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object],
+      method: 'post',
+      url: 'http://websrv2.ciscofrance.com:15136/setInOut',
+      body: '{"input":"6","output":"5"}',
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: false,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: false,
+      socket: [Socket],
+      _header: 'POST /setInOut HTTP/1.1\r\n' +
+        'Accept: application/json\r\n' +
+        'Content-Type: application/json\r\n' +
+        'User-Agent: axios/0.27.2\r\n' +
+        'Host: websrv2.ciscofrance.com:15136\r\n' +
+        'Connection: close\r\n' +
+        'Content-Length: 0\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'POST',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      path: '/setInOut',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'websrv2.ciscofrance.com',
+      protocol: 'http:',
+      _redirectable: [Writable],
+      [Symbol(kCapture)]: false,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kOutHeaders)]: [Object: null prototype]
+    },
+    data: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n' +
+      '<title>400 Bad Request</title>\n' +
+      '<h1>Bad Request</h1>\n' +
+      '<p>The browser (or proxy) sent a request that this server could not understand.</p>\n'
+  }
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+Off
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+startStop
+zoomStop
+startStop
+zoomStop
+startStop
+zoomStop
+startStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+zoomStop
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+ERROR WHEN TRYING TO STOP SHARING ON DEVICE 10.1.110.121 (see details below)
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+Off
+Off
+Off
+Off
+Off
+Off
+Off
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+ERROR WHEN TRYING TO STOP SHARING ON DEVICE 10.1.110.121 (see details below)
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+Off
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+ERROR WHEN TRYING TO STOP SHARING ON DEVICE 10.1.110.121 (see details below)
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+ERROR WHEN TRYING TO STOP SHARING ON DEVICE 10.1.110.121 (see details below)
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node app.js`[39m
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+Off
+Off
+qrasidym@cisco.com
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+1
+set TALLY :
+BODY: dA1
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+3
+aPC93FD76E1
+aPC7EF57DA8
+aPC71E974F7
+aPC7CDA7E03
+reponse zoom: axz555
+reponse zoom: axz555
+reponse zoom: axzC5B
+reponse zoom: axz555
+set TALLY :
+BODY: dA1
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+3
+aPC7F347C6D
+aPC7EF57DA8
+aPC93FD76E1
+reponse zoom: axz555
+aPC71E974F7
+reponse zoom: axzFD6
+reponse zoom: axz555
+reponse zoom: axz555
+set TALLY :
+BODY: dA1
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+3
+aPC726B8049
+reponse zoom: axzC9E
+aPC83B672A5
+aPC5CB179EC
+aPC868E7D1B
+reponse zoom: axz555
+reponse zoom: axzDA5
+reponse zoom: axz555
+set TALLY :
+BODY: dA1
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+3
+aPC94D17B37
+aPC71E874F6
+aPC8D117438
+aPC70747C9D
+set TALLY :
+BODY: dA1
+reponse zoom: axzAE0
+reponse zoom: axzD90
+reponse zoom: axz844
+reponse zoom: axz555
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+Off
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+set TALLY :
+BODY: dA0
+Off
+zoomStop
+zoomStop
+http://websrv2.ciscofrance.com:15136/setInOut
+InOut set success

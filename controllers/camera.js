@@ -485,7 +485,7 @@ exports.setShareSource = (req, res, next) => {
       "Content-Type": "text/xml",
       Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
     },
-    body: xml
+    data: xml
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
@@ -810,14 +810,16 @@ function savePreset(ip, presetNumber, res) {
 }
 
 function setInOut(input, output) {
+  var url = process.env["KRAMER_URL"]+':'+process.env["KRAMER_PORT"]+'/setInOut'
+  console.log(url)
   var options = {
     'method': 'POST',
-    'url': process.env["KRAMER_URL"]+':'+process.env["KRAMER_PORT"]+'/setInOut',
+    'url': url,
     'headers': {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
+    data: JSON.stringify({
       "input": input,
       "output": output
     })
@@ -827,6 +829,7 @@ function setInOut(input, output) {
     console.log(response.data); 
   }).catch((error)=>{
     console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
+    console.log(error)
   })
 
   
@@ -846,7 +849,7 @@ function setAllInOut(stringInOut, res = undefined) {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
+      data: JSON.stringify({
         "allConfigString": stringInOut
       })
     };
@@ -876,8 +879,9 @@ function getKrammerConfig() {
 
 
     axios(options).then((response)=>{
-      console.log(response.data)
-      resolve(JSON.parse(response.data));
+      
+      resolve(response.data);
+
     }).catch((error)=>{
       console.error(error);
       resolve([]);
@@ -951,7 +955,7 @@ function setMainVideoSource(source, ip, res = undefined) {
         "Content-Type": "text/xml",
         Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
       },
-      body: xml
+      data: xml
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
@@ -991,7 +995,7 @@ function setShareSource(source, ip, res = undefined) {
         "Content-Type": "text/xml",
         Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
       },
-      body: xml
+      data: xml
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
@@ -1065,7 +1069,7 @@ function callWebexNumber(number, ip) {
       "Content-Type": "text/xml",
       Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
     },
-    body: xml
+    data: xml
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
@@ -1096,7 +1100,7 @@ function stopSharing(ip, res = undefined) {
         "Content-Type": "text/xml",
         Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
       },
-      body: xml
+      data: xml
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
@@ -1126,7 +1130,7 @@ function disconnectCall(ip) {
       "Content-Type": "text/xml",
       Authorization: "Basic cHJlc2VuY2U6QzFzYzAxMjM="
     },
-    body: xml
+    data: xml
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
