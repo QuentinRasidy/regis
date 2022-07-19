@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 const Camera = require('../models/camera');
 
 module.exports = {
@@ -11,10 +11,11 @@ module.exports = {
                 'Content-Type': 'application/json'
             }
         };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
+        axios(options).then(()=>{
             console.log('reponse zoom: ' + response.body);
-        });
+        }).catch((error)=>{
+            throw new Error(error);
+        })
     },
     setPanTiltValue: function (ip, pan, tilt) {
         var options = {
@@ -26,10 +27,11 @@ module.exports = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
+        axios(options).then(()=>{
             console.log(response.body);
-        });
+        }).catch((error)=>{
+            throw new Error(error);
+        })
     },
 
     getConfigOfAllCam: function () {
@@ -69,11 +71,13 @@ function getZoom(ip) {
                 'Content-Type': 'application/json'
             }
         };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
+        axios(options).then(()=>{
             console.log(response.body.substr(3))
             resolve(response.body.substr(3));
-        });
+        }).catch((error)=>{
+            throw new Error(error);
+        })
+        
     });
 }
 
@@ -87,14 +91,18 @@ function getPanTiltValue(ip) {
                 'Content-Type': 'application/json'
             }
         };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
+
+        axios(options).then(()=>{
             console.log(response.body.substr(3, 4))
             var values = {
                 pan: response.body.substr(3, 4),
                 tilt: response.body.substr(7, 4)
             }
             resolve(values);
-        });
+        }).catch((error)=>{
+            throw new Error(error);
+        })
+
+        
     });
 }

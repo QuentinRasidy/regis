@@ -798,7 +798,7 @@ function savePreset(ip, presetNumber, res) {
 function setInOut(input, output) {
   var options = {
     'method': 'POST',
-    'url': 'http://websrv2.ciscofrance.com:15136/setInOut',
+    'url': process.env["KRAMER_URL"]+':'+process.env["KRAMER_PORT"]+'/setInOut',
     'headers': {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -827,7 +827,7 @@ function setAllInOut(stringInOut, res = undefined) {
   return new Promise((resolve, reject) => {
     var options = {
       'method': 'POST',
-      'url': 'http://websrv2.ciscofrance.com:15136/setAllInOut',
+      'url': process.env["KRAMER_URL"]+':'+process.env["KRAMER_PORT"]+'/setAllInOut',
       'headers': {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -852,7 +852,7 @@ function getKrammerConfig() {
   return new Promise(resolve => {
     var options = {
       'method': 'GET',
-      'url': 'http://websrv2.ciscofrance.com:15136/actualConfig',
+      'url': process.env["KRAMER_URL"]+':'+process.env["KRAMER_PORT"]+'/actualConfig',
       'headers': {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
