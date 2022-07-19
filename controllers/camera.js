@@ -646,8 +646,8 @@ function getZoom(ip) {
 
 
     axios(options).then((response)=>{
-      console.log(response.body.substr(3))
-      resolve(response.body.substr(3)); 
+      console.log(response.data.substr(3))
+      resolve(response.data.substr(3)); 
     }).catch((error)=>{
       console.log(`ERROR WHEN TRYING TO GET ZOOM INFO ON CAMERA (${ip}) (see details below)`);
       //throw new Error(error);
@@ -671,7 +671,7 @@ function setZoom(ip, value, res = undefined) {
 
     axios(options).then((response)=>{
       resolve('ok');
-      console.log('reponse zoom: ' + response.body);
+      console.log('reponse zoom: ' + response.data);
     }).catch((error)=>{
       console.log(`ERROR WHEN TRYING TO SET ZOOM ON CAMERA (${ip}) (see details below)`);
       reject(error);
@@ -694,10 +694,10 @@ function getPanTiltValue(ip) {
     };
 
     axios(options).then((response)=>{
-      console.log(response.body.substr(3, 4));
+      console.log(response.data.substr(3, 4));
       var values = {
-        pan: response.body.substr(3, 4),
-        tilt: response.body.substr(7, 4)
+        pan: response.data.substr(3, 4),
+        tilt: response.data.substr(7, 4)
       }
       resolve(values);
     }).catch((error)=>{
@@ -724,7 +724,7 @@ function setPanTiltValue(ip, pan, tilt, res = undefined) {
 
 
     axios(options).then((response)=>{
-      console.log(response.body);
+      console.log(response.data);
       resolve("ok");
     }).catch((error)=>{
       console.log(`ERROR WHEN TRYING TO SET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
@@ -824,7 +824,7 @@ function setInOut(input, output) {
 
   };
   axios(options).then((response)=>{
-    console.log(response.body); 
+    console.log(response.data); 
   }).catch((error)=>{
     console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
   })
@@ -877,7 +877,7 @@ function getKrammerConfig() {
 
     axios(options).then((response)=>{
       console.log(response.data)
-      resolve(JSON.parse(response.body));
+      resolve(JSON.parse(response.data));
     }).catch((error)=>{
       console.error(error);
       resolve([]);
@@ -1020,7 +1020,7 @@ function getMainVideoSourceAndshareSource(ip) {
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
     axios(options).then((response)=>{
-      parser.parseString(response.body, function (error, result) {
+      parser.parseString(response.data, function (error, result) {
         if (error === null) {
           var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
           var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
@@ -1160,7 +1160,7 @@ function setTally(mode, ip) {
 
   axios(options).then((response)=>{
     console.log("set TALLY :")
-    console.log("BODY: " + response.body);
+    console.log("BODY: " + response.data);
   }).catch((error)=>{
     console.log(`ERROR ON CAMERA (${ip}) WHEN TRYING TO CHANGE TALLY (ligth on camera) (see details below)`);
     //throw new Error(error);
