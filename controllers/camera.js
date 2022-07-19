@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser({
@@ -45,18 +45,19 @@ exports.zoom = (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z80&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with this ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with this ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.dezoom = async (req, res, next) => {
@@ -66,18 +67,20 @@ exports.dezoom = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z20&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });  
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.stopZoom = (req, res, next) => {
@@ -88,18 +91,19 @@ exports.stopZoom = (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23Z50&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with this ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    }); 
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with this ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.zoomExtremum = async (req, res, next) => {
@@ -119,18 +123,19 @@ exports.zoomExtremum = async (req, res, next) => {
       'Content-Type': 'application/json'
     }
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with this ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with this ip: ${ip}`
+    });
+  })
+
+
 
 
 }
@@ -142,18 +147,19 @@ exports.left = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS2050&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    }); 
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.right = async (req, res, next) => {
@@ -163,18 +169,19 @@ exports.right = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS8050&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.stopPanTilt = async (req, res, next) => {
@@ -184,18 +191,18 @@ exports.stopPanTilt = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5050&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });    
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
 }
 
 exports.up = async (req, res, next) => {
@@ -205,18 +212,19 @@ exports.up = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5080&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.down = async (req, res, next) => {
@@ -226,18 +234,19 @@ exports.down = async (req, res, next) => {
     'url': 'http://' + ip + '/cgi-bin/aw_ptz?cmd=%23PTS5020&res=1',
     'headers': {}
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });   
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
+
 }
 
 exports.center = (req, res, next) => {
@@ -251,18 +260,18 @@ exports.center = (req, res, next) => {
       'X-Requested-With': 'XMLHttpRequest'
     }
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Cannot request the camera with the ip: ${ip}`
-      });
-    } else {
-      res.json({
-        code: "204"
-      });
-    }
-  });
+
+  axios(options).then(()=>{
+    res.json({
+      code: "204"
+    });
+  }).catch((error)=>{
+    console.error(error);
+    res.status(500).send({
+      message: `Cannot request the camera with the ip: ${ip}`
+    });
+  })
+
 }
 
 exports.getAdvanced = (req, res, next) => {
@@ -480,15 +489,15 @@ exports.setShareSource = (req, res, next) => {
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) {
-      console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE (${ip}) (see details below)`);
-      console.error(error);
-      res.send("ko");
-    } else {
-      res.send("ok");
-    }
-  });
+  axios(options).then(()=>{
+    res.send("ok");
+  }).catch((error)=>{
+    console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE (${ip}) (see details below)`);
+    console.error(error);
+    res.send("ko");
+  })
+
+
 }
 
 exports.stopSharing = (req, res, next) => {
@@ -634,16 +643,18 @@ function getZoom(ip) {
         'Content-Type': 'application/json'
       }
     };
-    request(options, function (error, response) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO GET ZOOM INFO ON CAMERA (${ip}) (see details below)`);
-        //throw new Error(error);
-        reject(error);
-      } else {
-        console.log(response.body.substr(3))
-        resolve(response.body.substr(3));
-      }
-    });
+
+
+    axios(options).then(()=>{
+      console.log(response.body.substr(3))
+      resolve(response.body.substr(3)); 
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO GET ZOOM INFO ON CAMERA (${ip}) (see details below)`);
+      //throw new Error(error);
+      reject(error);
+    })
+
+
   });
 }
 
@@ -658,15 +669,15 @@ function setZoom(ip, value, res = undefined) {
       }
     };
 
-    request(options, function (error, response) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO SET ZOOM ON CAMERA (${ip}) (see details below)`);
-        reject(error);
-      } else {
-        resolve('ok');
-        console.log('reponse zoom: ' + response.body);
-      }
-    });
+    axios(options).then(()=>{
+      resolve('ok');
+      console.log('reponse zoom: ' + response.body);
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO SET ZOOM ON CAMERA (${ip}) (see details below)`);
+      reject(error);
+    })
+    
+
   });
 
 }
@@ -681,20 +692,21 @@ function getPanTiltValue(ip) {
         'Content-Type': 'application/json'
       }
     };
-    request(options, function (error, response) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO GET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
-        //throw new Error(error);
-        reject(error);
-      } else {
-        console.log(response.body.substr(3, 4));
-        var values = {
-          pan: response.body.substr(3, 4),
-          tilt: response.body.substr(7, 4)
-        }
-        resolve(values);
+
+    axios(options).then(()=>{
+      console.log(response.body.substr(3, 4));
+      var values = {
+        pan: response.body.substr(3, 4),
+        tilt: response.body.substr(7, 4)
       }
-    });
+      resolve(values);
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO GET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
+      //throw new Error(error);
+      reject(error);
+    })
+
+
   });
 }
 
@@ -709,15 +721,17 @@ function setPanTiltValue(ip, pan, tilt, res = undefined) {
         'X-Requested-With': 'XMLHttpRequest'
       }
     };
-    request(options, function (error, response) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO SET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
-        reject(error);
-      } else {
-        console.log(response.body);
-        resolve("ok");
-      }
-    });
+
+
+    axios(options).then(()=>{
+      console.log(response.body);
+      resolve("ok");
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO SET PAN/TILT VALUES ON CAMERA (${ip}) (see details below)`);
+      reject(error);
+    })
+
+
   });
 }
 
@@ -763,14 +777,14 @@ function setPreset(ip, presetNumber, res) {
       'Content-Type': 'application/json'
     }
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.log(`ERROR WHEN TRYING TO SET PRESET ON CAMERA (${ip}) (see details below)`);
-      //throw new Error(error);
-    }
+  axios(options).then(()=>{
     res.send("ok");
     console.log("Send preset OK");
-  });
+  }).catch((error)=>{
+    console.log(`ERROR WHEN TRYING TO SET PRESET ON CAMERA (${ip}) (see details below)`);
+  })
+
+
 }
 
 function savePreset(ip, presetNumber, res) {
@@ -785,14 +799,14 @@ function savePreset(ip, presetNumber, res) {
       'Content-Type': 'application/json'
     }
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.log(`ERROR WHEN TRYING TO SAVE PRESET ON CAMERA (${ip}) (see details below)`);
-      //throw new Error(error);
-    }
+  axios(options).then(()=>{
     res.send("ok");
-    console.log("Save preset OK");
-  });
+    console.log("Save preset OK"); 
+  }).catch((error)=>{
+    console.log(`ERROR WHEN TRYING TO SAVE PRESET ON CAMERA (${ip}) (see details below)`);
+  })
+
+  
 }
 
 function setInOut(input, output) {
@@ -809,13 +823,13 @@ function setInOut(input, output) {
     })
 
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
-      //throw new Error(error);
-    }
-    console.log(response.body);
-  });
+  axios(options).then(()=>{
+    console.log(response.body); 
+  }).catch((error)=>{
+    console.log(`ERROR WHEN TRYING TO SET INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
+  })
+
+  
 }
 
 /**
@@ -836,15 +850,15 @@ function setAllInOut(stringInOut, res = undefined) {
         "allConfigString": stringInOut
       })
     };
-    request(options, function (error, response) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO SET MULTIPLE INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
-        reject(error);
-      } else {
-        resolve("ok");
-      }
-      console.log(response.body);
-    });
+
+    axios(options).then(()=>{
+      resolve("ok"); 
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO SET MULTIPLE INPUT/OUTPUT ON KRAMER MATRIX (see details below)`);
+      reject(error);
+    })
+
+    
   });
 }
 
@@ -858,14 +872,17 @@ function getKrammerConfig() {
         'Content-Type': 'application/json'
       }
     };
-    request(options, function (error, response) {
-      if (error) {
-        console.error(error);
-        resolve([]);
-      } else {
-        resolve(JSON.parse(response.body));
-      }
-    });
+
+
+
+    axios(options).then(()=>{
+      resolve(JSON.parse(response.body));
+    }).catch((error)=>{
+      console.error(error);
+      resolve([]);
+    })
+
+
   });
 }
 
@@ -937,20 +954,21 @@ function setMainVideoSource(source, ip, res = undefined) {
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-    request(options, function (error, response, body) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO SET MAIN VIDEO SOURCE ON DEVICE ${ip} (see details below)`);
-        reject(error);
-        if (res != undefined) {
-          res.status(500).end(`Cannot set main video source on device ${ip}\nDetail: ${error.message}`);
-        }
-      } else {
-        if (res != undefined) {
-          res.send('ok');
-        }
-        resolve('ok');
+    axios(options).then(()=>{
+      if (res != undefined) {
+        res.send('ok');
       }
-    });
+      resolve('ok');
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO SET MAIN VIDEO SOURCE ON DEVICE ${ip} (see details below)`);
+      reject(error);
+      if (res != undefined) {
+        res.status(500).end(`Cannot set main video source on device ${ip}\nDetail: ${error.message}`);
+      }
+    })
+
+
+
   });
 }
 
@@ -976,14 +994,15 @@ function setShareSource(source, ip, res = undefined) {
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-    request(options, function (error, response, body) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE ${ip} (see details below)`);
-        reject(error);
-      } else {
-        resolve("ok");
-      }
-    });
+    axios(options).then(()=>{
+      resolve("ok");  
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO SET SHARE SOURCE ON DEVICE ${ip} (see details below)`);
+      reject(error);
+    })
+
+
+
   });
 }
 
@@ -999,29 +1018,29 @@ function getMainVideoSourceAndshareSource(ip) {
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-    request(options, function (error, response) {
-      if (error) {
-        console.error(error);
-        resolve({
-          codecStatus: "ko"
-        });
-      } else {
-        parser.parseString(response.body, function (error, result) {
-          if (error === null) {
-            var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
-            var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
-            console.log(result.Status.Conference[0].Presentation[0].Mode[0])
-            resolve({
-              mainVideoSource: mainVideoSource,
-              shareSource: shareSource,
-              codecStatus: "ok"
-            });
-          } else {
-            console.log(error);
-          }
-        });
-      }
-    });
+    axios(options).then(()=>{
+      parser.parseString(response.body, function (error, result) {
+        if (error === null) {
+          var mainVideoSource = result.Status.Video[0].Input[0].MainVideoSource[0];
+          var shareSource = (result.Status.Conference[0].Presentation[0].Mode[0] === "Sending") ? result.Status.Conference[0].Presentation[0].LocalInstance[0].Source[0] : "Not_Sending";
+          console.log(result.Status.Conference[0].Presentation[0].Mode[0])
+          resolve({
+            mainVideoSource: mainVideoSource,
+            shareSource: shareSource,
+            codecStatus: "ok"
+          });
+        } else {
+          console.log(error);
+        }
+      });  
+    }).catch((error)=>{
+      console.error(error);
+      resolve({
+        codecStatus: "ko"
+      });
+    })
+
+
   });
 }
 
@@ -1049,13 +1068,14 @@ function callWebexNumber(number, ip) {
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) {
-      console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO CALL ${number} (see details below)`);
-      console.error(error);
-      //throw new Error(error);
-    }
-  });
+  axios(options).then(()=>{
+            
+  }).catch((error)=>{
+    console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO CALL ${number} (see details below)`);
+    console.error(error);
+  })
+
+
 }
 
 function stopSharing(ip, res = undefined) {
@@ -1079,14 +1099,14 @@ function stopSharing(ip, res = undefined) {
     };
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-    request(options, function (error, response, body) {
-      if (error) {
-        console.log(`ERROR WHEN TRYING TO STOP SHARING ON DEVICE ${ip} (see details below)`);
-        reject(error);
-      } else {
-        resolve("ok");
-      }
-    });
+
+    axios(options).then(()=>{
+      resolve("ok");
+    }).catch((error)=>{
+      console.log(`ERROR WHEN TRYING TO STOP SHARING ON DEVICE ${ip} (see details below)`);
+      reject(error);
+    })
+
   });
 }
 
@@ -1109,13 +1129,16 @@ function disconnectCall(ip) {
   };
   process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0; //permet de contourner l'erreur "error self signed certificate"
 
-  request(options, function (error, response, body) {
-    if (error) {
-      console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO DISCONNECT CALL ${number} (see details below)`);
-      //throw new Error(error);
-      console.error(error);
-    }
-  });
+
+  axios(options).then(()=>{
+            
+  }).catch((error)=>{
+    console.log(`ERROR WHEN ENDPOINT (${ip}) TRYING TO DISCONNECT CALL ${number} (see details below)`);
+    //throw new Error(error);
+    console.error(error);
+  })
+
+
 }
 
 
@@ -1133,15 +1156,17 @@ function setTally(mode, ip) {
       'Cookie': 'Session=0'
     }
   };
-  request(options, function (error, response) {
-    if (error) {
-      console.log(`ERROR ON CAMERA (${ip}) WHEN TRYING TO CHANGE TALLY (ligth on camera) (see details below)`);
-      //throw new Error(error);
-      console.error(error);
-    }
+
+  axios(options).then(()=>{
     console.log("set TALLY :")
     console.log("BODY: " + response.body);
-  });
+  }).catch((error)=>{
+    console.log(`ERROR ON CAMERA (${ip}) WHEN TRYING TO CHANGE TALLY (ligth on camera) (see details below)`);
+    //throw new Error(error);
+    console.error(error);
+  })
+
+
 }
 
 function disableAllTally() {
