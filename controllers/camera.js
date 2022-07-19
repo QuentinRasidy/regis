@@ -876,7 +876,7 @@ function getKrammerConfig() {
 
 
     axios(options).then((response)=>{
-      console.log(response.body)
+      console.log(response.data)
       resolve(JSON.parse(response.body));
     }).catch((error)=>{
       console.error(error);
