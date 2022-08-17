@@ -11,7 +11,7 @@ module.exports = {
                 'Content-Type': 'application/json'
             }
         };
-        axios(options).then(()=>{
+        axios(options).then((response)=>{
             console.log('reponse zoom: ' + response.body);
         }).catch((error)=>{
             throw new Error(error);
@@ -27,7 +27,7 @@ module.exports = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         };
-        axios(options).then(()=>{
+        axios(options).then((response)=>{
             console.log(response.body);
         }).catch((error)=>{
             throw new Error(error);
@@ -71,7 +71,7 @@ function getZoom(ip) {
                 'Content-Type': 'application/json'
             }
         };
-        axios(options).then(()=>{
+        axios(options).then((response)=>{
             console.log(response.body.substr(3))
             resolve(response.body.substr(3));
         }).catch((error)=>{
@@ -92,7 +92,7 @@ function getPanTiltValue(ip) {
             }
         };
 
-        axios(options).then(()=>{
+        axios(options).then((response)=>{
             console.log(response.body.substr(3, 4))
             var values = {
                 pan: response.body.substr(3, 4),
